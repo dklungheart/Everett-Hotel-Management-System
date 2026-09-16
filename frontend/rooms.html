@@ -1,0 +1,450 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse our luxurious rooms and suites at Everett Hotel. Find the perfect accommodation for your stay.">
+  <title>Rooms & Suites | Everett Hotel</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="preload" href="/vendor/fontawesome/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css"></noscript>
+  <link rel="stylesheet" href="/vendor/swiper/swiper-bundle.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: { navy: '#8B5E34', 'navy-light': '#A67C52', gold: '#D4AF37', 'gold-light': '#D4BC8A', beige: '#FAF7F2', charcoal: '#211A14', emerald: '#0F766E' },
+        fontFamily: { inter: ['Inter', 'sans-serif'] },
+      },
+    },
+  }
+  </script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #FAF7F2; color: #211A14; overflow-x: hidden; }
+    .gold-gradient-text { background: linear-gradient(135deg, #D4AF37 0%, #D4BC8A 50%, #D4AF37 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .btn-gold { background: #D4AF37; color: #8B5E34; font-weight: 700; letter-spacing: 0.5px; transition: all 0.3s ease; }
+    .btn-gold:hover { background: #D4BC8A; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,169,106,0.35); }
+    .btn-outline-gold { border: 2px solid #D4AF37; color: #D4AF37; font-weight: 600; transition: all 0.3s ease; }
+    .btn-outline-gold:hover { background: #D4AF37; color: #8B5E34; }
+    .section-divider { width: 60px; height: 2px; background: linear-gradient(90deg, #D4AF37, #D4BC8A); }
+    .nav-scrolled { background: rgba(139,94,52,0.95) !important; backdrop-filter: blur(20px) !important; box-shadow: 0 4px 30px rgba(0,0,0,0.15) !important; }
+    .page-loader { position: fixed; inset: 0; background: #24180F; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; transition: opacity 0.6s ease, visibility 0.6s ease; }
+    .page-loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-text { font-family: 'Playfair Display', serif; font-size: 3.2rem; letter-spacing: 14px; color: #D4AF37; font-weight: 400; animation: loaderPulse 1.6s ease-in-out infinite; }
+    .loader-sub { color: rgba(255,255,255,0.35); font-size: 0.65rem; letter-spacing: 8px; text-transform: uppercase; margin-top: 10px; }
+    .loader-line { width: 160px; height: 1px; background: rgba(212,175,55,0.2); margin-top: 24px; overflow: hidden; }
+    .loader-line::after { content: ''; display: block; width: 50%; height: 100%; background: #D4AF37; animation: loaderLine 1.4s ease-in-out infinite; }
+    @keyframes loaderPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+    @keyframes loaderLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+    .room-card-new { background: white; border-radius: 20px; overflow: hidden; border: 1px solid rgba(0,0,0,0.06); transition: all 0.4s cubic-bezier(0.25,0.46,0.45,0.94); }
+    .room-card-new:hover { transform: translateY(-8px); box-shadow: 0 20px 60px rgba(139,94,52,0.12); }
+    .room-card-new:hover .room-img { transform: scale(1.05); }
+    .room-img { transition: transform 0.6s ease; }
+    .filter-sidebar { background: white; border-radius: 20px; border: 1px solid rgba(0,0,0,0.06); }
+    .booking-input:focus { border-color: #D4AF37; box-shadow: 0 0 0 3px rgba(200,169,106,0.15); outline: none; }
+    .amenity-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 9999px; font-size: 12px; background: rgba(200,169,106,0.08); color: #8B5E34; }
+  </style>
+</head>
+<body class="font-inter">
+
+  <!-- Page Loader -->
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-text">EVERETT</div>
+    <div class="loader-sub">Luxury Hotel</div>
+    <div class="loader-line"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" style="padding: 20px 0;">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <a href="index.html" class="flex flex-col items-center group">
+        <span class="text-white text-xl tracking-[10px] font-light group-hover:text-gold transition-colors">EVERETT</span>
+        <span class="text-gold text-[9px] tracking-[6px] font-medium uppercase">Hotel Nairobi</span>
+      </a>
+      <div class="hidden lg:flex items-center gap-8">
+        <a href="index.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Home</a>
+        <a href="about.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">About</a>
+        <a href="rooms.html" class="text-gold text-sm tracking-wide transition-colors font-semibold">Rooms</a>
+        <a href="services.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Services</a>
+        <a href="menu.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Menu</a>
+        <a href="gallery.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Gallery</a>
+        <a href="testimonials.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Reviews</a>
+        <a href="contact.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Contact</a>
+      </div>
+      <div class="hidden lg:flex items-center gap-4">
+        <button onclick="Theme.toggle()" class="text-white/60 hover:text-gold transition-colors" aria-label="Toggle theme">
+          <i class="fas fa-sun" id="themeIcon"></i>
+        </button>
+        <a href="login.html" class="text-white/80 hover:text-gold text-sm transition-colors" id="navLoginLink">Sign In</a>
+        <a href="booking.html" class="btn-gold px-6 py-2.5 rounded-full text-sm">Book Now</a>
+      </div>
+      <button class="lg:hidden text-white" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" aria-label="Menu">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
+    <div id="mobileMenu" class="hidden fixed inset-0 bg-navy/98 backdrop-blur-xl z-50 flex flex-col items-center justify-center gap-8">
+      <button onclick="this.parentElement.classList.add('hidden')" class="absolute top-6 right-6 text-white/60 hover:text-white"><i class="fas fa-times text-2xl"></i></button>
+      <a href="index.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Home</a>
+      <a href="about.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">About</a>
+      <a href="rooms.html" class="text-gold text-2xl font-light tracking-widest">Rooms</a>
+      <a href="services.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Services</a>
+      <a href="menu.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Menu</a>
+      <a href="gallery.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Gallery</a>
+      <a href="testimonials.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Reviews</a>
+      <a href="contact.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Contact</a>
+      <div class="mt-4 flex gap-4">
+        <a href="login.html" class="btn-outline-gold px-8 py-3 rounded-full text-sm">Sign In</a>
+        <a href="booking.html" class="btn-gold px-8 py-3 rounded-full text-sm">Book Now</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="relative min-h-[60vh] flex items-center justify-center overflow-hidden" style="background: linear-gradient(135deg, #8B5E34 0%, #A67C52 40%, #3B2A1A 100%);">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-20 left-20 w-72 h-72 bg-gold rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 right-20 w-96 h-96 bg-gold/30 rounded-full blur-3xl"></div>
+    </div>
+    <div class="absolute inset-0 opacity-[0.03]" style="background: url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;><rect fill=&quot;none&quot; width=&quot;60&quot; height=&quot;60&quot;/><path d=&quot;M30 0L60 30L30 60L0 30Z&quot; fill=&quot;none&quot; stroke=&quot;rgba(200,169,106,0.3)&quot; stroke-width=&quot;0.5&quot;/></svg>') repeat;"></div>
+    <div class="relative z-10 text-center px-6">
+      <nav class="flex items-center justify-center gap-2 text-sm text-white/50 mb-8">
+        <a href="index.html" class="hover:text-gold transition-colors">Home</a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <span class="text-gold">Rooms & Suites</span>
+      </nav>
+      <span class="inline-block px-5 py-2 rounded-full text-xs font-semibold tracking-widest uppercase mb-6" style="background:rgba(200,169,106,0.15);color:#D4AF37;">Accommodations</span>
+      <h1 class="text-5xl md:text-7xl font-extralight text-white mb-6" style="line-height:1.05;">Rooms & <span class="gold-gradient-text font-light">Suites</span></h1>
+      <p class="text-lg text-white/60 max-w-xl mx-auto font-light">Find your perfect retreat from our collection of beautifully designed rooms and suites.</p>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 h-32" style="background: linear-gradient(to top, #FAF7F2, transparent);"></div>
+  </section>
+
+  <!-- Rooms Section -->
+  <section class="py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid lg:grid-cols-[280px_1fr] gap-8" id="rooms-section">
+
+        <!-- Filter Sidebar -->
+        <aside class="reveal-left">
+          <div class="filter-sidebar p-8" style="position:sticky;top:100px;">
+            <h4 class="text-lg font-bold mb-6 flex items-center gap-2" style="color:#8B5E34;">
+              <i class="fas fa-sliders" style="color:#D4AF37;"></i> Filter Rooms
+            </h4>
+            <div class="mb-5">
+              <label class="block text-sm font-semibold mb-2" style="color:#8B5E34;">Category</label>
+              <select class="booking-input w-full p-3 rounded-xl border border-gray-200 text-sm" id="filterCategory">
+                <option value="">All Categories</option>
+                <option value="standard">Standard</option>
+                <option value="deluxe">Deluxe</option>
+                <option value="suite">Suite</option>
+                <option value="presidential">Presidential</option>
+              </select>
+            </div>
+            <div class="mb-5">
+              <label class="block text-sm font-semibold mb-2" style="color:#8B5E34;">Price Range</label>
+              <select class="booking-input w-full p-3 rounded-xl border border-gray-200 text-sm" id="filterPrice">
+                <option value="">Any Price</option>
+                <option value="0-15000">Under KSh 15,000</option>
+                <option value="15000-30000">KSh 15,000 - 30,000</option>
+                <option value="30000-50000">KSh 30,000 - 50,000</option>
+                <option value="50000-9999999">KSh 50,000+</option>
+              </select>
+            </div>
+            <div class="mb-5">
+              <label class="block text-sm font-semibold mb-2" style="color:#8B5E34;">Capacity</label>
+              <select class="booking-input w-full p-3 rounded-xl border border-gray-200 text-sm" id="filterCapacity">
+                <option value="">Any</option>
+                <option value="1">1 Guest</option>
+                <option value="2">2 Guests</option>
+                <option value="3">3 Guests</option>
+                <option value="4">4+ Guests</option>
+              </select>
+            </div>
+            <button class="btn-gold w-full py-3 rounded-xl text-sm flex items-center justify-center gap-2" id="applyFilters">
+              <i class="fas fa-filter"></i> Apply Filters
+            </button>
+          </div>
+        </aside>
+
+        <!-- Rooms Grid -->
+        <div>
+          <div class="grid sm:grid-cols-2 gap-8" id="roomsGrid">
+
+            <!-- Room 1 -->
+            <div class="room-card-new reveal-up" data-category="standard" data-price="12900" data-capacity="2">
+              <div class="relative overflow-hidden h-56">
+                <img src="images/room-1.1.jpg" alt="Standard Room" class="room-img w-full h-full object-cover">
+                <div class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold" style="background:#D4AF37;color:#8B5E34;">Popular</div>
+              </div>
+              <div class="p-6">
+                <div class="text-xs font-bold tracking-widest uppercase mb-2" style="color:#D4AF37;">Standard</div>
+                <h3 class="text-xl font-bold mb-2" style="color:#8B5E34;">Deluxe Standard Room</h3>
+                <p class="text-sm mb-4" style="color:#666;line-height:1.7;">A beautifully appointed room with modern amenities and plush bedding for a comfortable stay.</p>
+                <div class="flex flex-wrap gap-2 mb-5">
+                  <span class="amenity-badge"><i class="fas fa-wifi text-gold text-[10px]"></i> WiFi</span>
+                  <span class="amenity-badge"><i class="fas fa-tv text-gold text-[10px]"></i> TV</span>
+                  <span class="amenity-badge"><i class="fas fa-snowflake text-gold text-[10px]"></i> AC</span>
+                  <span class="amenity-badge"><i class="fas fa-mug-saucer text-gold text-[10px]"></i> Mini Bar</span>
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div><span class="text-2xl font-extrabold" style="color:#8B5E34;">KSh 12,900</span><span class="text-xs ml-1" style="color:#999;">/night</span></div>
+                  <a href="booking.html" class="btn-gold px-5 py-2.5 rounded-full text-sm">Book Now</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Room 2 -->
+            <div class="room-card-new reveal-up" data-category="deluxe" data-price="24900" data-capacity="2">
+              <div class="relative overflow-hidden h-56">
+                <img src="images/room-1.2.jpg" alt="Deluxe Room" class="room-img w-full h-full object-cover">
+                <div class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold" style="background:#8B5E34;color:white;">Best Value</div>
+              </div>
+              <div class="p-6">
+                <div class="text-xs font-bold tracking-widest uppercase mb-2" style="color:#D4AF37;">Deluxe</div>
+                <h3 class="text-xl font-bold mb-2" style="color:#8B5E34;">Premium Deluxe Room</h3>
+                <p class="text-sm mb-4" style="color:#666;line-height:1.7;">Spacious living with a separate seating area, premium furnishings, and breathtaking city views.</p>
+                <div class="flex flex-wrap gap-2 mb-5">
+                  <span class="amenity-badge"><i class="fas fa-wifi text-gold text-[10px]"></i> WiFi</span>
+                  <span class="amenity-badge"><i class="fas fa-tv text-gold text-[10px]"></i> Smart TV</span>
+                  <span class="amenity-badge"><i class="fas fa-spa text-gold text-[10px]"></i> Spa Access</span>
+                  <span class="amenity-badge"><i class="fas fa-mountain-sun text-gold text-[10px]"></i> City View</span>
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div><span class="text-2xl font-extrabold" style="color:#8B5E34;">KSh 24,900</span><span class="text-xs ml-1" style="color:#999;">/night</span></div>
+                  <a href="booking.html" class="btn-gold px-5 py-2.5 rounded-full text-sm">Book Now</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Room 3 -->
+            <div class="room-card-new reveal-up" data-category="suite" data-price="44900" data-capacity="3">
+              <div class="relative overflow-hidden h-56">
+                <img src="images/room-1.3.jpg" alt="Executive Suite" class="room-img w-full h-full object-cover">
+                <div class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1" style="background:#0F766E;color:white;"><i class="fas fa-gem text-[10px]"></i> Premium</div>
+              </div>
+              <div class="p-6">
+                <div class="text-xs font-bold tracking-widest uppercase mb-2" style="color:#D4AF37;">Suite</div>
+                <h3 class="text-xl font-bold mb-2" style="color:#8B5E34;">Executive Suite</h3>
+                <p class="text-sm mb-4" style="color:#666;line-height:1.7;">Elegant suite with a private lounge, dining area, and premium amenities for discerning guests.</p>
+                <div class="flex flex-wrap gap-2 mb-5">
+                  <span class="amenity-badge"><i class="fas fa-wifi text-gold text-[10px]"></i> WiFi</span>
+                  <span class="amenity-badge"><i class="fas fa-hot-tub-person text-gold text-[10px]"></i> Jacuzzi</span>
+                  <span class="amenity-badge"><i class="fas fa-utensils text-gold text-[10px]"></i> Dining</span>
+                  <span class="amenity-badge"><i class="fas fa-mountain-sun text-gold text-[10px]"></i> Panoramic</span>
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div><span class="text-2xl font-extrabold" style="color:#8B5E34;">KSh 44,900</span><span class="text-xs ml-1" style="color:#999;">/night</span></div>
+                  <a href="booking.html" class="btn-gold px-5 py-2.5 rounded-full text-sm">Book Now</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Room 4 -->
+            <div class="room-card-new reveal-up" data-category="presidential" data-price="59900" data-capacity="4">
+              <div class="relative overflow-hidden h-56">
+                <img src="images/room-1.4.jpg" alt="Presidential Suite" class="room-img w-full h-full object-cover">
+                <div class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1" style="background:linear-gradient(135deg,#D4AF37,#D4BC8A);color:#8B5E34;"><i class="fas fa-crown text-[10px]"></i> Luxury</div>
+              </div>
+              <div class="p-6">
+                <div class="text-xs font-bold tracking-widest uppercase mb-2" style="color:#D4AF37;">Presidential</div>
+                <h3 class="text-xl font-bold mb-2" style="color:#8B5E34;">Presidential Suite</h3>
+                <p class="text-sm mb-4" style="color:#666;line-height:1.7;">The pinnacle of luxury with private jacuzzi, butler service, panoramic views, and rooftop terrace.</p>
+                <div class="flex flex-wrap gap-2 mb-5">
+                  <span class="amenity-badge"><i class="fas fa-wifi text-gold text-[10px]"></i> WiFi</span>
+                  <span class="amenity-badge"><i class="fas fa-hot-tub-person text-gold text-[10px]"></i> Jacuzzi</span>
+                  <span class="amenity-badge"><i class="fas fa-concierge-bell text-gold text-[10px]"></i> Butler</span>
+                  <span class="amenity-badge"><i class="fas fa-sun text-gold text-[10px]"></i> Rooftop</span>
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div><span class="text-2xl font-extrabold" style="color:#8B5E34;">KSh 59,900</span><span class="text-xs ml-1" style="color:#999;">/night</span></div>
+                  <a href="booking.html" class="btn-gold px-5 py-2.5 rounded-full text-sm">Book Now</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Room 5 -->
+            <div class="room-card-new reveal-up" data-category="standard" data-price="13900" data-capacity="2">
+              <div class="relative overflow-hidden h-56">
+                <img src="images/room-1.5.jpg" alt="Cozy Standard" class="room-img w-full h-full object-cover">
+              </div>
+              <div class="p-6">
+                <div class="text-xs font-bold tracking-widest uppercase mb-2" style="color:#D4AF37;">Standard</div>
+                <h3 class="text-xl font-bold mb-2" style="color:#8B5E34;">Cozy Standard Room</h3>
+                <p class="text-sm mb-4" style="color:#666;line-height:1.7;">A warm and inviting room with all the essentials for a relaxing getaway.</p>
+                <div class="flex flex-wrap gap-2 mb-5">
+                  <span class="amenity-badge"><i class="fas fa-wifi text-gold text-[10px]"></i> WiFi</span>
+                  <span class="amenity-badge"><i class="fas fa-tv text-gold text-[10px]"></i> TV</span>
+                  <span class="amenity-badge"><i class="fas fa-snowflake text-gold text-[10px]"></i> AC</span>
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div><span class="text-2xl font-extrabold" style="color:#8B5E34;">KSh 13,900</span><span class="text-xs ml-1" style="color:#999;">/night</span></div>
+                  <a href="booking.html" class="btn-gold px-5 py-2.5 rounded-full text-sm">Book Now</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Room 6 -->
+            <div class="room-card-new reveal-up" data-category="deluxe" data-price="27900" data-capacity="3">
+              <div class="relative overflow-hidden h-56">
+                <img src="images/room-1.1.jpg" alt="Deluxe Ocean View" class="room-img w-full h-full object-cover">
+                <div class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold" style="background:#0F766E;color:white;">New</div>
+              </div>
+              <div class="p-6">
+                <div class="text-xs font-bold tracking-widest uppercase mb-2" style="color:#D4AF37;">Deluxe</div>
+                <h3 class="text-xl font-bold mb-2" style="color:#8B5E34;">Deluxe Ocean View</h3>
+                <p class="text-sm mb-4" style="color:#666;line-height:1.7;">Wake up to stunning ocean views in this beautifully designed deluxe room.</p>
+                <div class="flex flex-wrap gap-2 mb-5">
+                  <span class="amenity-badge"><i class="fas fa-wifi text-gold text-[10px]"></i> WiFi</span>
+                  <span class="amenity-badge"><i class="fas fa-water text-gold text-[10px]"></i> Ocean View</span>
+                  <span class="amenity-badge"><i class="fas fa-spa text-gold text-[10px]"></i> Spa Access</span>
+                  <span class="amenity-badge"><i class="fas fa-mug-saucer text-gold text-[10px]"></i> Mini Bar</span>
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div><span class="text-2xl font-extrabold" style="color:#8B5E34;">KSh 27,900</span><span class="text-xs ml-1" style="color:#999;">/night</span></div>
+                  <a href="booking.html" class="btn-gold px-5 py-2.5 rounded-full text-sm">Book Now</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Pagination -->
+          <div class="flex items-center justify-center gap-2 mt-12 reveal-up">
+            <button class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all bg-gray-200 text-gray-400 cursor-not-allowed"><i class="fas fa-chevron-left text-xs"></i></button>
+            <button class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all" style="background:#8B5E34;color:white;">1</button>
+            <button class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all bg-white text-gray-600 hover:bg-navy hover:text-white border border-gray-200">2</button>
+            <button class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all bg-white text-gray-600 hover:bg-navy hover:text-white border border-gray-200">3</button>
+            <button class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all bg-white text-gray-600 hover:bg-navy hover:text-white border border-gray-200"><i class="fas fa-chevron-right text-xs"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-20" style="background:linear-gradient(135deg, #8B5E34, #A67C52);">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-12 mb-16">
+        <div>
+          <div class="flex flex-col items-start mb-6">
+            <span class="text-white text-xl tracking-[8px] font-light">EVERETT</span>
+            <span class="text-gold text-[10px] tracking-[4px] font-medium">HOTEL</span>
+          </div>
+          <p class="text-white/40 text-sm leading-relaxed mb-6">Where timeless elegance meets contemporary comfort. A sanctuary of refined luxury in the heart of Nairobi City.</p>
+          <div class="flex gap-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 transition-all"><i class="fab fa-facebook-f text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 transition-all"><i class="fab fa-instagram text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 transition-all"><i class="fab fa-twitter text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 transition-all"><i class="fab fa-linkedin-in text-sm"></i></a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-6">Quick Links</h4>
+          <ul class="space-y-3">
+            <li><a href="about.html" class="text-white/40 text-sm hover:text-gold transition-colors">About Us</a></li>
+            <li><a href="rooms.html" class="text-white/40 text-sm hover:text-gold transition-colors">Rooms & Suites</a></li>
+            <li><a href="services.html" class="text-white/40 text-sm hover:text-gold transition-colors">Services</a></li>
+            <li><a href="menu.html" class="text-white/40 text-sm hover:text-gold transition-colors">Restaurant Menu</a></li>
+            <li><a href="gallery.html" class="text-white/40 text-sm hover:text-gold transition-colors">Gallery</a></li>
+            <li><a href="testimonials.html" class="text-white/40 text-sm hover:text-gold transition-colors">Guest Reviews</a></li>
+            <li><a href="contact.html" class="text-white/40 text-sm hover:text-gold transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-6">Contact</h4>
+          <ul class="space-y-3">
+            <li class="flex items-center gap-3 text-white/40 text-sm"><i class="fas fa-map-marker-alt text-gold text-xs"></i> Westlands, Nairobi, Kenya</li>
+            <li class="flex items-center gap-3 text-white/40 text-sm"><i class="fas fa-phone text-gold text-xs"></i> +254 700 123 456</li>
+            <li class="flex items-center gap-3 text-white/40 text-sm"><i class="fas fa-envelope text-gold text-xs"></i> info@everetthotel.com</li>
+            <li class="flex items-center gap-3 text-white/40 text-sm"><i class="fas fa-clock text-gold text-xs"></i> 24/7 Front Desk</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-6">Newsletter</h4>
+          <p class="text-white/40 text-sm mb-4">Get exclusive deals and travel inspiration.</p>
+          <form class="flex gap-2" onsubmit="return false;">
+            <input type="email" placeholder="Your email" class="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-white placeholder-white/30 text-sm focus:outline-none focus:border-gold transition-colors">
+            <button class="btn-gold px-5 py-2.5 rounded-full text-xs font-semibold"><i class="fas fa-paper-plane"></i></button>
+          </form>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-white/30 text-xs">&copy; 2026 Everett Hotel. All rights reserved.</p>
+        <div class="flex gap-6">
+          <a href="privacy-policy.html" class="text-white/30 text-xs hover:text-gold transition-colors">Privacy Policy</a>
+          <a href="terms.html" class="text-white/30 text-xs hover:text-gold transition-colors">Terms & Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/vendor/gsap/gsap.min.js" defer></script>
+  <script src="/vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="/vendor/lenis/lenis.min.js" defer></script>
+  <script src="/vendor/swiper/swiper-bundle.min.js" defer></script>
+  <script src="/vendor/sweetalert2/sweetalert2.min.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/theme.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/animations.js" defer></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() { document.getElementById('pageLoader').classList.add('hidden'); }, 1200);
+
+    window.addEventListener('scroll', function() {
+      var nav = document.getElementById('mainNav');
+      if (window.scrollY > 80) { nav.classList.add('nav-scrolled'); } else { nav.classList.remove('nav-scrolled'); }
+    });
+
+    if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+      var link = document.getElementById('navLoginLink');
+      if (link) { link.href = 'profile.html'; link.textContent = 'Dashboard'; }
+    }
+
+    var lenis = new Lenis({ duration: 1.2, smoothWheel: true });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.utils.toArray('.reveal-up').forEach(function(el) {
+      gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }, y: 60, opacity: 0, duration: 1, ease: 'power3.out' });
+    });
+    gsap.utils.toArray('.reveal-left').forEach(function(el) {
+      gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }, x: -80, opacity: 0, duration: 1.2, ease: 'power3.out' });
+    });
+
+    var filterBtn = document.getElementById('applyFilters');
+    if (filterBtn) {
+      filterBtn.addEventListener('click', function() {
+        var cat = document.getElementById('filterCategory').value;
+        var price = document.getElementById('filterPrice').value;
+        var capacity = document.getElementById('filterCapacity').value;
+        var cards = document.querySelectorAll('#roomsGrid .room-card-new');
+        cards.forEach(function(card) {
+          var show = true;
+          if (cat && card.dataset.category !== cat) show = false;
+          if (price) {
+            var parts = price.split('-');
+            var p = parseInt(card.dataset.price) || 0;
+            if (p < parseInt(parts[0]) || p > parseInt(parts[1])) show = false;
+          }
+          if (capacity && parseInt(card.dataset.capacity) < parseInt(capacity)) show = false;
+          card.style.display = show ? '' : 'none';
+        });
+      });
+    }
+  });
+  </script>
+</body>
+</html>

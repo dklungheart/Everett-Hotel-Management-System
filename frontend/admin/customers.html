@@ -1,0 +1,332 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Management | Everett Hotel Admin</title>
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { DEFAULT: '#8B5E34', light: '#A67C52', dark: '#24180F' },
+            gold: { DEFAULT: '#D4AF37', dark: '#B0924E', light: '#E3D5A0', pale: 'rgba(212,175,55,0.10)' },
+            beige: { DEFAULT: '#FAF7F2', dark: '#EDE9E0' }
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+  <link href="/vendor/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #FAF7F2; color: #211A14; overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #FAF7F2; }
+    ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
+
+    .admin-sidebar {
+      position: fixed; top: 0; left: 0; width: 260px; height: 100vh;
+      background: linear-gradient(180deg, #8B5E34 0%, #24180F 100%);
+      z-index: 1040; display: flex; flex-direction: column;
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); overflow-y: auto;
+      border-right: 1px solid rgba(212,175,55,0.08);
+    }
+    .sidebar-logo {
+      padding: 22px 24px; display: flex; align-items: center; gap: 14px;
+      border-bottom: 1px solid rgba(212,175,55,0.1);
+    }
+    .sidebar-logo .logo-icon {
+      width: 42px; height: 42px; background: linear-gradient(135deg, #D4AF37, #B0924E);
+      border-radius: 11px; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 16px; color: #8B5E34; letter-spacing: -0.5px;
+    }
+    .sidebar-logo .logo-text {
+      color: #ffffff; font-size: 17px; font-weight: 700; letter-spacing: 0.5px;
+    }
+    .sidebar-logo .logo-text span { color: #D4AF37; }
+
+    .sidebar-nav { flex: 1; padding: 14px 0; }
+    .sidebar-nav .nav-section {
+      padding: 10px 26px 6px; font-size: 10.5px; text-transform: uppercase;
+      letter-spacing: 0.1em; color: rgba(212,175,55,0.4); font-weight: 700;
+    }
+    .sidebar-nav a {
+      display: flex; align-items: center; gap: 13px; padding: 10px 26px;
+      color: rgba(255,255,255,0.55); text-decoration: none; font-size: 13.5px; font-weight: 500;
+      transition: all 0.25s ease; border-left: 3px solid transparent; margin: 1px 0;
+    }
+    .sidebar-nav a:hover { color: #ffffff; background: rgba(212,175,55,0.06); }
+    .sidebar-nav a.active {
+      color: #D4AF37; background: rgba(212,175,55,0.1);
+      border-left-color: #D4AF37; font-weight: 600;
+    }
+    .sidebar-nav a i { width: 20px; text-align: center; font-size: 14px; }
+
+    .admin-topbar {
+      position: fixed; top: 0; left: 260px; right: 0; height: 64px;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 1030; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; border-bottom: 1px solid rgba(212,175,55,0.12);
+      transition: left 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .sidebar-toggle {
+      display: none; background: none; border: none; font-size: 20px;
+      color: #8B5E34; cursor: pointer; padding: 6px 10px; border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .sidebar-toggle:hover { background: rgba(212,175,55,0.1); }
+    .topbar-search { position: relative; }
+    .topbar-search input {
+      padding: 9px 16px 9px 38px; border: 1px solid rgba(212,175,55,0.2); border-radius: 10px;
+      font-size: 13.5px; width: 280px; background: #FAF7F2; outline: none;
+      font-family: 'Inter', sans-serif; transition: all 0.25s;
+    }
+    .topbar-search input:focus { border-color: #D4AF37; background: #fff; box-shadow: 0 0 0 3px rgba(212,175,55,0.1); }
+    .topbar-search i { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #B0924E; font-size: 13px; }
+
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .topbar-icon-btn {
+      position: relative; background: none; border: none; font-size: 17px;
+      color: #7A6E5F; cursor: pointer; padding: 9px; border-radius: 10px; transition: all 0.2s;
+    }
+    .topbar-icon-btn:hover { background: rgba(212,175,55,0.1); color: #8B5E34; }
+    .topbar-icon-btn .badge-dot {
+      position: absolute; top: 7px; right: 7px; width: 8px; height: 8px;
+      background: #ef4444; border-radius: 50%; border: 2px solid #fff;
+    }
+    .admin-profile {
+      display: flex; align-items: center; gap: 10px; cursor: pointer;
+      padding: 5px 14px 5px 5px; border-radius: 10px; position: relative;
+      transition: background 0.2s;
+    }
+    .admin-profile:hover { background: rgba(212,175,55,0.08); }
+    .admin-avatar {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, #D4AF37, #B0924E);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 13px; color: #8B5E34;
+    }
+    .admin-profile .admin-name { font-size: 13.5px; font-weight: 600; color: #8B5E34; }
+    .admin-profile .admin-role { font-size: 11px; color: #94a3b8; }
+
+    .profile-dropdown {
+      position: absolute; top: calc(100% + 8px); right: 0; background: #fff;
+      border-radius: 12px; box-shadow: 0 12px 40px rgba(139,94,52,0.12); min-width: 180px;
+      display: none; z-index: 1050; overflow: hidden;
+      border: 1px solid rgba(212,175,55,0.1);
+    }
+    .profile-dropdown.show { display: block; }
+    .profile-dropdown a {
+      display: flex; align-items: center; gap: 10px; padding: 11px 18px;
+      color: #475569; text-decoration: none; font-size: 13.5px; transition: background 0.2s;
+    }
+    .profile-dropdown a:hover { background: #FAF7F2; }
+    .profile-dropdown a.text-danger { color: #ef4444; }
+    .profile-dropdown hr { margin: 0; border-color: rgba(212,175,55,0.12); }
+
+    .admin-content {
+      margin-left: 260px; margin-top: 64px; padding: 28px;
+      min-height: calc(100vh - 64px); transition: margin-left 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h2 { font-weight: 800; font-size: 24px; color: #8B5E34; margin-bottom: 4px; }
+    .page-header p { color: #7A6E5F; font-size: 14px; }
+
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(139,94,52,0.5);
+      z-index: 1035; backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.show { display: block; }
+
+    .customer-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0;
+    }
+
+    .status-badge {
+      display: inline-flex; align-items: center; padding: 5px 12px;
+      border-radius: 20px; font-size: 12px; font-weight: 600; letter-spacing: 0.01em;
+    }
+    .status-badge.active { background: rgba(34,197,94,0.12); color: #16a34a; }
+    .status-badge.inactive { background: rgba(239,68,68,0.12); color: #dc2626; }
+
+    .table-row-hover { transition: all 0.2s; }
+    .table-row-hover:hover { background: rgba(212,175,55,0.04) !important; }
+
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(139,94,52,0.6);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      z-index: 2000; align-items: center; justify-content: center; padding: 24px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-panel {
+      background: #fff; border-radius: 16px; width: 100%; max-width: 560px;
+      box-shadow: 0 24px 80px rgba(139,94,52,0.25); overflow: hidden;
+      animation: modalIn 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @media (max-width: 991px) {
+      .admin-sidebar { transform: translateX(-100%); }
+      .admin-sidebar.open { transform: translateX(0); }
+      .admin-topbar { left: 0; }
+      .admin-content { margin-left: 0; }
+      .sidebar-toggle { display: block; }
+      .topbar-search input { width: 180px; }
+    }
+    @media (max-width: 576px) {
+      .topbar-search { display: none; }
+      .admin-content { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">EH</div>
+      <div class="logo-text">EVERETT <span>HOTEL</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      <div class="nav-section">Management</div>
+      <a href="rooms.html"><i class="fa-solid fa-bed"></i> Rooms</a>
+      <a href="bookings.html"><i class="fa-solid fa-calendar-check"></i> Bookings</a>
+      <a href="customers.html" class="active"><i class="fa-solid fa-users"></i> Customers</a>
+      <a href="employees.html"><i class="fa-solid fa-user-tie"></i> Employees</a>
+            <a href="attendance.html"><i class="fa-solid fa-fingerprint"></i> Attendance</a>
+      <div class="nav-section">Operations</div>
+      <a href="housekeeping.html"><i class="fa-solid fa-broom"></i> Housekeeping</a>
+      <a href="restaurant.html"><i class="fa-solid fa-utensils"></i> Restaurant</a>
+      <a href="payments.html"><i class="fa-solid fa-credit-card"></i> Payments</a>
+      <a href="promotions.html"><i class="fa-solid fa-tags"></i> Promotions</a>
+      <div class="nav-section">Content</div>
+      <a href="cms.html" class="nav-link">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    CMS
+</a>
+      <a href="gallery.html"><i class="fa-solid fa-images"></i> Gallery</a>
+      <a href="reviews.html"><i class="fa-solid fa-star"></i> Reviews</a>
+      <a href="messages.html"><i class="fa-solid fa-envelope"></i> Messages</a>
+      <a href="newsletter.html"><i class="fa-solid fa-newspaper"></i> Newsletter</a>
+      <div class="nav-section">System</div>
+      <a href="reports.html"><i class="fa-solid fa-chart-line"></i> Reports</a>
+      <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+    </nav>
+  </aside>
+
+  <header class="admin-topbar">
+    <div class="topbar-left">
+      <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <div class="topbar-search">
+        <i class="fa-solid fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search customers..." oninput="loadCustomers()">
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-icon-btn theme-toggle"><i class="fa-solid fa-moon"></i></button>
+      <button class="topbar-icon-btn"><i class="fa-solid fa-bell"></i><span class="badge-dot"></span></button>
+      <div class="admin-profile" onclick="toggleProfileDropdown()">
+        <div class="admin-avatar" id="adminAvatar">A</div>
+        <div>
+          <div class="admin-name" id="adminName">Admin</div>
+          <div class="admin-role">Administrator</div>
+        </div>
+        <i class="fa-solid fa-chevron-down" style="font-size:10px;color:#94a3b8;"></i>
+        <div class="profile-dropdown" id="profileDropdown">
+          <a href="settings.html"><i class="fa-solid fa-user"></i> Profile</a>
+          <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+          <hr>
+          <a href="#" class="text-danger" onclick="Auth.logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-content">
+    <div class="page-header">
+      <h2>Customer Management</h2>
+      <p>View and manage hotel customers</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gold/10 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="border-b border-beige-dark">
+              <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-400">Customer</th>
+              <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-400">Email</th>
+              <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-400">Phone</th>
+              <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-400">Total Bookings</th>
+              <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-400">Total Spent</th>
+              <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-400">Status</th>
+              <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-400">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="customersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="profileModal" onclick="if(event.target===this)closeProfileModal()">
+    <div class="modal-panel">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-beige-dark">
+        <h5 class="font-bold text-navy text-lg">Customer Profile</h5>
+        <button onclick="closeProfileModal()" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-navy hover:bg-beige transition-all">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+      <div class="p-6" id="profileBody"></div>
+    </div>
+  </div>
+
+  <script src="/vendor/sweetalert2/sweetalert2.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/animations.js"></script>
+  <script>
+    (function(){if(!Auth.adminGuard())return;var user=Auth.getCurrentUser();if(user){var n=user.name||(user.firstName+' '+(user.lastName||''));document.getElementById('adminName').textContent=n;document.getElementById('adminAvatar').textContent=Utils.getInitials(n);}
+    window.toggleSidebar=function(){document.getElementById('adminSidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('show');};window.toggleProfileDropdown=function(){document.getElementById('profileDropdown').classList.toggle('show');};document.addEventListener('click',function(e){if(!e.target.closest('.admin-profile'))document.getElementById('profileDropdown').classList.remove('show');});
+
+    var customers=[];
+    var colors=['#D4AF37','#3b82f6','#22c55e','#8b5cf6','#ef4444','#ec4899'];
+
+    function loadCustomers(){var search=(document.getElementById('searchInput').value||'').toLowerCase();var filtered=customers.filter(function(c){if(search&&!c.name.toLowerCase().includes(search)&&!c.email.toLowerCase().includes(search))return false;return true;});
+    document.getElementById('customersTableBody').innerHTML=filtered.map(function(c,i){
+      return '<tr class="border-b border-beige-dark table-row-hover"><td class="px-6 py-4 align-middle"><div class="flex items-center gap-3"><div class="customer-avatar" style="background:'+colors[i%colors.length]+'">'+Utils.getInitials(c.name)+'</div><div><strong class="text-navy text-sm">'+c.name+'</strong><br><small class="text-gray-400">ID: '+c._id+'</small></div></div></td><td class="px-6 py-4 align-middle text-sm text-gray-600">'+c.email+'</td><td class="px-6 py-4 align-middle text-sm text-gray-600">'+c.phone+'</td><td class="px-6 py-4 align-middle text-sm text-gray-600">'+c.bookings+'</td><td class="px-6 py-4 align-middle text-sm font-semibold text-navy">KSh '+Number(c.spent||0).toLocaleString('en-KE')+'</td><td class="px-6 py-4 align-middle"><span class="status-badge '+c.status+'">'+c.status.charAt(0).toUpperCase()+c.status.slice(1)+'</span></td><td class="px-6 py-4 align-middle"><div class="flex gap-1.5"><button class="w-8 h-8 rounded-lg border border-gold/30 text-gold hover:bg-gold hover:text-navy flex items-center justify-center transition-all text-xs" onclick="viewProfile(\''+c._id+'\')"><i class="fa-solid fa-eye"></i></button><button class="w-8 h-8 rounded-lg border flex items-center justify-center transition-all text-xs '+(c.status==='active'?'border-red-200 text-red-500 hover:bg-red-500 hover:text-white':'border-green-200 text-green-500 hover:bg-green-500 hover:text-white')+'" onclick="toggleStatus(\''+c._id+'\')"><i class="fa-solid fa-'+(c.status==='active'?'ban':'check')+'"></i></button></div></td></tr>';
+    }).join('')||'<tr><td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">No customers found</td></tr>';}
+
+    window.closeProfileModal=function(){document.getElementById('profileModal').classList.remove('show');};
+    window.viewProfile=function(id){var c=customers.find(function(x){return x._id===id;});if(!c);var ci=customers.indexOf(c);
+    document.getElementById('profileBody').innerHTML='<div class="text-center mb-6"><div class="customer-avatar mx-auto mb-3" style="background:'+colors[ci%colors.length]+';width:80px;height:80px;font-size:28px;">'+Utils.getInitials(c.name)+'</div><h4 class="text-xl font-bold text-navy">'+c.name+'</h4><p class="text-gray-400 text-sm mt-1">'+c.email+'</p></div><div class="grid grid-cols-2 gap-4"><div class="bg-beige rounded-xl p-4"><p class="text-xs text-gray-400 uppercase tracking-wide mb-1">Phone</p><p class="text-sm font-semibold text-navy">'+c.phone+'</p></div><div class="bg-beige rounded-xl p-4"><p class="text-xs text-gray-400 uppercase tracking-wide mb-1">Joined</p><p class="text-sm font-semibold text-navy">'+Utils.formatDate(c.joined)+'</p></div><div class="bg-beige rounded-xl p-4"><p class="text-xs text-gray-400 uppercase tracking-wide mb-1">Total Bookings</p><p class="text-sm font-semibold text-navy">'+c.bookings+'</p></div><div class="bg-beige rounded-xl p-4"><p class="text-xs text-gray-400 uppercase tracking-wide mb-1">Total Spent</p><p class="text-sm font-semibold text-navy">KSh '+Number(c.spent||0).toLocaleString('en-KE')+'</p></div></div>';
+    document.getElementById('profileModal').classList.add('show');};
+
+    window.toggleStatus=function(id){var c=customers.find(function(x){return x._id===id;});if(!c)return;
+    c.status=c.status==='active'?'inactive':'active';loadCustomers();Swal.fire({icon:'success',title:'Status Updated',text:c.name+' is now '+c.status,confirmButtonColor:'#D4AF37',customClass:{confirmButton:'swal2-confirm-gold'}});};
+    loadCustomers();})();
+  </script>
+</body>
+</html>

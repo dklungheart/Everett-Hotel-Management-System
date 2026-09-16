@@ -1,0 +1,193 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Housekeeping | Everett Hotel Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css"><link href="/vendor/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { DEFAULT: '#8B5E34', light: '#A67C52', lighter: '#3B2A1A', dark: '#24180F' },
+            gold: { DEFAULT: '#D4AF37', light: '#D4BA82', dark: '#B8954E', muted: 'rgba(212,175,55,0.12)' },
+            beige: { DEFAULT: '#FAF7F2', warm: '#EDE9E0', light: '#FAF9F6' }
+          },
+          fontFamily: { inter: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Inter',sans-serif;background:#FAF7F2;color:#8B5E34;overflow-x:hidden;}
+    .sidebar-scroll::-webkit-scrollbar{width:4px;}.sidebar-scroll::-webkit-scrollbar-track{background:transparent;}.sidebar-scroll::-webkit-scrollbar-thumb{background:rgba(212,175,55,.3);border-radius:4px;}
+    .admin-sidebar{position:fixed;top:0;left:0;width:260px;height:100vh;background:#8B5E34;z-index:1040;display:flex;flex-direction:column;transition:transform .3s ease;overflow-y:auto;}
+    .sidebar-logo{padding:20px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(212,175,55,.1);}
+    .sidebar-logo .logo-icon{width:42px;height:42px;background:linear-gradient(135deg,#D4AF37,#B8954E);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#8B5E34;letter-spacing:-.5px;}
+    .sidebar-logo .logo-text{font-family:'Inter',sans-serif;color:#fff;font-size:18px;font-weight:700;letter-spacing:-.3px;}.sidebar-logo .logo-text span{color:#D4AF37;}
+    .sidebar-nav .nav-section{padding:14px 24px 6px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:rgba(212,175,55,.45);font-weight:700;}
+    .sidebar-nav a{display:flex;align-items:center;gap:12px;padding:10px 24px;color:rgba(255,255,255,.55);text-decoration:none;font-size:13.5px;font-weight:500;transition:all .2s;border-left:3px solid transparent;margin:1px 0;}
+    .sidebar-nav a:hover{color:rgba(255,255,255,.9);background:rgba(212,175,55,.06);}
+    .sidebar-nav a.active{color:#D4AF37;background:rgba(212,175,55,.08);border-left-color:#D4AF37;font-weight:600;}
+    .sidebar-nav a i{width:20px;text-align:center;font-size:14px;}
+    .admin-topbar{position:fixed;top:0;left:260px;right:0;height:60px;background:#fff;z-index:1030;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid rgba(139,94,52,.06);transition:left .3s ease;}
+    .topbar-search{position:relative;}.topbar-search input{padding:9px 16px 9px 38px;border:1px solid rgba(139,94,52,.1);border-radius:10px;font-size:13.5px;font-family:'Inter',sans-serif;width:280px;background:#FAF7F2;outline:none;transition:all .2s;}.topbar-search input:focus{border-color:#D4AF37;background:#fff;box-shadow:0 0 0 3px rgba(212,175,55,.1);}.topbar-search i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:rgba(139,94,52,.3);font-size:13px;}
+    .topbar-icon-btn{position:relative;background:none;border:none;font-size:17px;color:#8B5E34;cursor:pointer;padding:8px;border-radius:10px;transition:all .15s;}.topbar-icon-btn:hover{background:#FAF7F2;}.topbar-icon-btn .badge-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff;}
+    .admin-profile{display:flex;align-items:center;gap:10px;cursor:pointer;padding:4px 12px 4px 4px;border-radius:10px;position:relative;transition:all .15s;}.admin-profile:hover{background:#FAF7F2;}
+    .admin-avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#D4AF37,#B8954E);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#8B5E34;}
+    .admin-profile .admin-name{font-size:13.5px;font-weight:600;color:#8B5E34;}.admin-profile .admin-role{font-size:11px;color:rgba(139,94,52,.4);font-weight:500;}
+    .profile-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:#fff;border-radius:12px;box-shadow:0 12px 48px rgba(139,94,52,.12);min-width:180px;display:none;z-index:1050;overflow:hidden;border:1px solid rgba(139,94,52,.06);}.profile-dropdown.show{display:block;}.profile-dropdown a{display:flex;align-items:center;gap:10px;padding:10px 16px;color:#8B5E34;text-decoration:none;font-size:13.5px;font-weight:500;transition:background .15s;}.profile-dropdown a:hover{background:#FAF7F2;}.profile-dropdown a i{width:16px;color:rgba(139,94,52,.4);}.profile-dropdown hr{border:none;border-top:1px solid rgba(139,94,52,.06);margin:4px 0;}.text-danger{color:#dc3545!important;}
+    .admin-content{margin-left:260px;margin-top:60px;padding:28px;min-height:calc(100vh - 60px);transition:margin-left .3s;}
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(139,94,52,.5);z-index:1035;backdrop-filter:blur(2px);}.sidebar-overlay.show{display:block;}
+    .priority-badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:.01em;}.priority-badge.high{background:rgba(220,38,38,.08);color:#dc2626;}.priority-badge.medium{background:rgba(217,119,6,.08);color:#d97706;}.priority-badge.low{background:rgba(5,150,105,.08);color:#059669;}
+    .task-status{display:inline-flex;align-items:center;padding:4px 12px;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:.01em;}.task-status.pending{background:rgba(217,119,6,.08);color:#d97706;}.task-status.in_progress{background:rgba(37,99,235,.08);color:#2563eb;}.task-status.completed{background:rgba(5,150,105,.08);color:#059669;}
+    .filter-bar select{padding:9px 14px;border:1px solid rgba(139,94,52,.1);border-radius:10px;font-size:13.5px;font-family:'Inter',sans-serif;background:#fff;outline:none;color:#8B5E34;font-weight:500;transition:all .2s;appearance:auto;}.filter-bar select:focus{border-color:#D4AF37;box-shadow:0 0 0 3px rgba(212,175,55,.1);}
+    .task-table th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:rgba(139,94,52,.35);font-weight:700;padding:14px 16px;background:#FAF9F6;border-bottom:1px solid rgba(139,94,52,.05);}.task-table td{padding:14px 16px;font-size:13.5px;vertical-align:middle;border-bottom:1px solid rgba(139,94,52,.04);font-weight:400;}.task-table tbody tr{transition:background .15s;}.task-table tbody tr:hover{background:rgba(212,175,55,.04);}
+    .btn-table{padding:5px 10px;border-radius:8px;font-size:12px;border:1px solid rgba(139,94,52,.1);background:#fff;color:#8B5E34;cursor:pointer;transition:all .15s;}.btn-table:hover{background:#FAF7F2;}.btn-table.primary{border-color:rgba(37,99,235,.2);color:#2563eb;}.btn-table.primary:hover{background:rgba(37,99,235,.06);}.btn-table.success{border-color:rgba(5,150,105,.2);color:#059669;}.btn-table.success:hover{background:rgba(5,150,105,.06);}.btn-table.danger{border-color:rgba(220,38,38,.2);color:#dc2626;}.btn-table.danger:hover{background:rgba(220,38,38,.06);}
+    .modal-overlay{position:fixed;inset:0;background:rgba(139,94,52,.5);backdrop-filter:blur(4px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;}.modal-overlay.show{display:flex;}.modal-box{background:#fff;border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(139,94,52,.2);border:1px solid rgba(139,94,52,.06);}.modal-box-header{padding:24px 28px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(139,94,52,.06);}.modal-box-header h3{font-size:18px;font-weight:700;color:#8B5E34;}.modal-box-header button{background:none;border:none;font-size:20px;color:rgba(139,94,52,.3);cursor:pointer;padding:4px;border-radius:8px;transition:all .15s;}.modal-box-header button:hover{background:#FAF7F2;color:#8B5E34;}
+    .form-group label{display:block;font-size:12.5px;font-weight:700;color:rgba(139,94,52,.6);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border:1px solid rgba(139,94,52,.1);border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;color:#8B5E34;outline:none;transition:all .2s;background:#FAF9F6;}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#D4AF37;background:#fff;box-shadow:0 0 0 3px rgba(212,175,55,.1);}.form-group textarea{resize:vertical;min-height:60px;}
+    @media(max-width:991px){.admin-sidebar{transform:translateX(-100%);}.admin-sidebar.open{transform:translateX(0);}.admin-topbar{left:0;}.admin-content{margin-left:0;}.sidebar-toggle{display:flex!important;}.topbar-search input{width:180px;}}@media(max-width:576px){.topbar-search{display:none!important;}.admin-content{padding:16px;}.page-header{flex-direction:column;align-items:flex-start;}.modal-box{max-width:100%}}
+  </style>
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-logo"><div class="logo-icon">EH</div><div class="logo-text">EVERETT <span>HOTEL</span></div></div>
+    <nav class="sidebar-nav sidebar-scroll">
+      <div class="nav-section">Main</div>
+      <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      <div class="nav-section">Management</div>
+      <a href="rooms.html"><i class="fa-solid fa-bed"></i> Rooms</a>
+      <a href="bookings.html"><i class="fa-solid fa-calendar-check"></i> Bookings</a>
+      <a href="customers.html"><i class="fa-solid fa-users"></i> Customers</a>
+      <a href="employees.html"><i class="fa-solid fa-user-tie"></i> Employees</a>
+            <a href="attendance.html"><i class="fa-solid fa-fingerprint"></i> Attendance</a>
+      <div class="nav-section">Operations</div>
+      <a href="housekeeping.html" class="active"><i class="fa-solid fa-broom"></i> Housekeeping</a>
+      <a href="restaurant.html"><i class="fa-solid fa-utensils"></i> Restaurant</a>
+      <a href="payments.html"><i class="fa-solid fa-credit-card"></i> Payments</a>
+      <a href="promotions.html"><i class="fa-solid fa-tags"></i> Promotions</a>
+      <div class="nav-section">Content</div>
+      <a href="cms.html" class="nav-link">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    CMS
+</a>
+      <a href="gallery.html"><i class="fa-solid fa-images"></i> Gallery</a>
+      <a href="reviews.html"><i class="fa-solid fa-star"></i> Reviews</a>
+      <a href="messages.html"><i class="fa-solid fa-envelope"></i> Messages</a>
+      <a href="newsletter.html"><i class="fa-solid fa-newspaper"></i> Newsletter</a>
+      <div class="nav-section">System</div>
+      <a href="reports.html"><i class="fa-solid fa-chart-line"></i> Reports</a>
+      <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+    </nav>
+  </aside>
+
+  <header class="admin-topbar">
+    <div class="flex items-center gap-4">
+      <button class="sidebar-toggle hidden items-center justify-center bg-transparent border-none text-xl text-navy cursor-pointer p-2 rounded-lg" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <div class="topbar-search"><i class="fa-solid fa-search"></i><input type="text" placeholder="Search tasks..."></div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="topbar-icon-btn theme-toggle"><i class="fa-solid fa-moon"></i></button>
+      <button class="topbar-icon-btn relative"><i class="fa-solid fa-bell"></i><span class="badge-dot"></span></button>
+      <div class="admin-profile" onclick="toggleProfileDropdown()">
+        <div class="admin-avatar" id="adminAvatar">A</div>
+        <div>
+          <div class="admin-name" id="adminName">Admin</div>
+          <div class="admin-role">Administrator</div>
+        </div>
+        <i class="fa-solid fa-chevron-down" style="font-size:10px;color:rgba(139,94,52,.3);"></i>
+        <div class="profile-dropdown" id="profileDropdown">
+          <a href="settings.html"><i class="fa-solid fa-user"></i> Profile</a>
+          <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+          <hr><a href="#" class="text-danger" onclick="Auth.logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-content">
+    <div class="flex items-center justify-between flex-wrap gap-3 mb-6">
+      <div>
+        <h2 class="text-2xl font-bold text-navy tracking-tight" style="font-family:'Inter',sans-serif;">Housekeeping</h2>
+        <p class="text-sm text-navy/40 font-medium mt-0.5">Manage cleaning tasks and schedules</p>
+      </div>
+      <button class="flex items-center gap-2 bg-gold hover:bg-gold-dark text-navy font-semibold text-sm px-5 py-2.5 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-gold/20" onclick="openTaskModal()"><i class="fa-solid fa-plus text-xs"></i> Add Task</button>
+    </div>
+
+    <div class="filter-bar flex gap-3 flex-wrap mb-5">
+      <select id="filterPriority" onchange="loadTasks()"><option value="">All Priorities</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+      <select id="filterTaskStatus" onchange="loadTasks()"><option value="">All Status</option><option value="pending">Pending</option><option value="in_progress">In Progress</option><option value="completed">Completed</option></select>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-navy/5 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full task-table"><thead><tr>
+          <th class="text-left">Room</th><th class="text-left">Task</th><th class="text-left">Priority</th><th class="text-left">Assigned To</th><th class="text-left">Status</th><th class="text-left">Due Date</th><th class="text-left">Actions</th>
+        </tr></thead><tbody id="tasksTableBody"></tbody></table>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="taskModal">
+    <div class="modal-box">
+      <div class="modal-box-header">
+        <h3 id="taskModalTitle">Add Task</h3>
+        <button onclick="document.getElementById('taskModal').classList.remove('show')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="p-7">
+        <input type="hidden" id="taskId">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="form-group">
+            <label>Room</label>
+            <select id="taskRoom"><option>Room 101</option><option>Room 102</option><option>Room 201</option><option>Room 202</option><option>Room 301</option><option>Room 302</option></select>
+          </div>
+          <div class="form-group">
+            <label>Task Type</label>
+            <select id="taskType"><option>Deep Cleaning</option><option>Regular Cleaning</option><option>Checkout Cleaning</option><option>Maintenance</option><option>Restocking</option></select>
+          </div>
+          <div class="form-group">
+            <label>Priority</label>
+            <select id="taskPriority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select>
+          </div>
+          <div class="form-group">
+            <label>Assigned To</label>
+            <input type="text" id="taskAssignee" placeholder="Staff name">
+          </div>
+          <div class="form-group md:col-span-2">
+            <label>Notes</label>
+            <textarea id="taskNotes" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 px-7 pb-7">
+        <button class="px-5 py-2.5 rounded-xl text-sm font-semibold text-navy/50 bg-navy/5 hover:bg-navy/10 transition-all border-none cursor-pointer" onclick="document.getElementById('taskModal').classList.remove('show')">Cancel</button>
+        <button class="flex items-center gap-2 bg-gold hover:bg-gold-dark text-navy font-semibold text-sm px-5 py-2.5 rounded-xl transition-all duration-200" onclick="saveTask()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/vendor/sweetalert2/sweetalert2.min.js"></script>
+  <script src="../js/config.js"></script><script src="../js/api.js"></script><script src="../js/auth.js"></script><script src="../js/utils.js"></script>
+  <script src="../js/theme.js"></script><script src="../js/components.js"></script><script src="../js/animations.js"></script>
+  <script>
+    (function(){if(!Auth.adminGuard())return;var user=Auth.getCurrentUser();if(user){var n=user.name||(user.firstName+' '+(user.lastName||''));document.getElementById('adminName').textContent=n;document.getElementById('adminAvatar').textContent=Utils.getInitials(n);}
+    window.toggleSidebar=function(){document.getElementById('adminSidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('show');};window.toggleProfileDropdown=function(){document.getElementById('profileDropdown').classList.toggle('show');};document.addEventListener('click',function(e){if(!e.target.closest('.admin-profile'))document.getElementById('profileDropdown').classList.remove('show');});
+
+    var tasks=[];
+
+    function loadTasks(){var pr=document.getElementById('filterPriority').value;var st=document.getElementById('filterTaskStatus').value;
+    var filtered=tasks.filter(function(t){if(pr&&t.priority!==pr)return false;if(st&&t.status!==st)return false;return true;});
+    document.getElementById('tasksTableBody').innerHTML=filtered.map(function(t){return '<tr><td><strong>'+t.room+'</strong></td><td>'+t.type+'</td><td><span class="priority-badge '+t.priority+'">'+t.priority.charAt(0).toUpperCase()+t.priority.slice(1)+'</span></td><td>'+t.assignee+'</td><td><span class="task-status '+t.status+'">'+t.status.replace(/_/g,' ').replace(/\b\w/g,function(l){return l.toUpperCase();})+'</span></td><td>'+Utils.formatDate(t.dueDate)+'</td><td><div class="flex gap-1"><button class="btn-table primary" onclick="editTask(\''+t._id+'\')"><i class="fa-solid fa-pen text-xs"></i></button><button class="btn-table success" onclick="completeTask(\''+t._id+'\')"><i class="fa-solid fa-check text-xs"></i></button><button class="btn-table danger" onclick="deleteTask(\''+t._id+'\')"><i class="fa-solid fa-trash text-xs"></i></button></div></td></tr>';}).join('')||'<tr><td colspan="7" class="text-center py-8 text-navy/30 font-medium">No tasks found</td></tr>';}
+
+    window.openTaskModal=function(t){document.getElementById('taskModalTitle').textContent=t?'Edit Task':'Add Task';document.getElementById('taskId').value=t?t._id:'';document.getElementById('taskRoom').value=t?t.room:'Room 101';document.getElementById('taskType').value=t?t.type:'Regular Cleaning';document.getElementById('taskPriority').value=t?t.priority:'medium';document.getElementById('taskAssignee').value=t?t.assignee:'';document.getElementById('taskNotes').value=t?t.notes||'':'';document.getElementById('taskModal').classList.add('show');};
+    window.editTask=function(id){var t=tasks.find(function(x){return x._id===id;});if(t)openTaskModal(t);};
+    window.saveTask=function(){var data={room:document.getElementById('taskRoom').value,type:document.getElementById('taskType').value,priority:document.getElementById('taskPriority').value,assignee:document.getElementById('taskAssignee').value,notes:document.getElementById('taskNotes').value};var id=document.getElementById('taskId').value;if(id){var idx=tasks.findIndex(function(t){return t._id===id;});if(idx>-1)tasks[idx]=Object.assign(tasks[idx],data);}else{data._id='T'+String(tasks.length+1).padStart(3,'0');data.status='pending';data.dueDate=new Date().toISOString().split('T')[0];tasks.push(data);}document.getElementById('taskModal').classList.remove('show');loadTasks();Swal.fire({icon:'success',title:id?'Task Updated':'Task Added',confirmButtonColor:'#D4AF37'});};
+    window.completeTask=function(id){var t=tasks.find(function(x){return x._id===id;});if(t)t.status='completed';loadTasks();Swal.fire({icon:'success',title:'Task Completed',confirmButtonColor:'#D4AF37'});};
+    window.deleteTask=function(id){Swal.fire({title:'Delete Task?',icon:'warning',showCancelButton:true,confirmButtonColor:'#D4AF37',confirmButtonText:'Delete'}).then(function(r){if(r.isConfirmed){tasks=tasks.filter(function(t){return t._id!==id;});loadTasks();Swal.fire({icon:'success',title:'Deleted',confirmButtonColor:'#D4AF37'});}});};
+    loadTasks();})();
+  </script>
+</body>
+</html>

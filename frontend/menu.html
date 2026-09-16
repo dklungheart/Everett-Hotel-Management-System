@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Explore the restaurant menu at Everett Hotel. From gourmet appetizers and succulent main courses to indulgent desserts and refreshments.">
+  <title>Restaurant Menu | Everett Hotel</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="preload" href="/vendor/fontawesome/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css"></noscript>
+  <link rel="stylesheet" href="css/main.css">
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: { navy: '#8B5E34', 'navy-light': '#A67C52', gold: '#D4AF37', 'gold-light': '#D4BC8A', beige: '#FAF7F2', charcoal: '#211A14', emerald: '#0F766E' },
+        fontFamily: { inter: ['Inter', 'sans-serif'] },
+      },
+    },
+  }
+  </script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #FAF7F2; color: #211A14; overflow-x: hidden; }
+    .gold-gradient-text { background: linear-gradient(135deg, #D4AF37 0%, #D4BC8A 50%, #D4AF37 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .btn-gold { background: #D4AF37; color: #8B5E34; font-weight: 700; letter-spacing: 0.5px; transition: all 0.3s ease; }
+    .btn-gold:hover { background: #D4BC8A; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,169,106,0.35); }
+    .nav-scrolled { background: rgba(139,94,52,0.95) !important; backdrop-filter: blur(20px) !important; box-shadow: 0 4px 30px rgba(0,0,0,0.15) !important; }
+    .page-loader { position: fixed; inset: 0; background: #24180F; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; transition: opacity 0.6s ease, visibility 0.6s ease; }
+    .page-loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-text { font-family: 'Playfair Display', serif; font-size: 3.2rem; letter-spacing: 14px; color: #D4AF37; font-weight: 400; animation: loaderPulse 1.6s ease-in-out infinite; }
+    .loader-sub { color: rgba(255,255,255,0.35); font-size: 0.65rem; letter-spacing: 8px; text-transform: uppercase; margin-top: 10px; }
+    .loader-line { width: 160px; height: 1px; background: rgba(212,175,55,0.2); margin-top: 24px; overflow: hidden; }
+    .loader-line::after { content: ''; display: block; width: 50%; height: 100%; background: #D4AF37; animation: loaderLine 1.4s ease-in-out infinite; }
+    @keyframes loaderPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+    @keyframes loaderLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+    .menu-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid rgba(0,0,0,0.06); transition: all 0.4s cubic-bezier(0.25,0.46,0.45,0.94); }
+    .menu-card:hover { transform: translateY(-8px); box-shadow: 0 20px 60px rgba(139,94,52,0.12); }
+    .menu-card:hover .menu-img { transform: scale(1.05); }
+    .menu-img-wrap { position: relative; height: 200px; overflow: hidden; background: #EFE7D9; }
+    .menu-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .menu-img-placeholder { display: flex; align-items: center; justify-content: center; height: 100%; color: rgba(139,94,52,0.35); font-size: 3rem; }
+    .cat-badge { position: absolute; top: 12px; left: 12px; padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; background: rgba(139,94,52,0.92); color: #D4AF37; }
+    .tag-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 9999px; font-size: 10px; font-weight: 500; background: rgba(200,169,106,0.1); color: #8B5E34; }
+    .price-dots { flex: 1; border-bottom: 2px dotted rgba(139,94,52,0.25); margin: 0 8px; }
+  </style>
+</head>
+<body class="font-inter">
+
+  <!-- Page Loader -->
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-text">EVERETT</div>
+    <div class="loader-sub">Luxury Hotel</div>
+    <div class="loader-line"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" style="padding: 20px 0;">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <a href="index.html" class="flex flex-col items-center group">
+        <span class="text-white text-xl tracking-[10px] font-light group-hover:text-gold transition-colors">EVERETT</span>
+        <span class="text-gold text-[9px] tracking-[6px] font-medium uppercase">Hotel Nairobi</span>
+      </a>
+      <div class="hidden lg:flex items-center gap-8">
+        <a href="index.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Home</a>
+        <a href="about.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">About</a>
+        <a href="rooms.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Rooms</a>
+        <a href="services.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Services</a>
+        <a href="menu.html" class="text-gold text-sm tracking-wide transition-colors font-semibold">Menu</a>
+        <a href="gallery.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Gallery</a>
+        <a href="testimonials.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Reviews</a>
+        <a href="contact.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Contact</a>
+      </div>
+      <div class="hidden lg:flex items-center gap-4">
+        <button onclick="Theme.toggle()" class="text-white/60 hover:text-gold transition-colors" aria-label="Toggle theme">
+          <i class="fas fa-sun" id="themeIcon"></i>
+        </button>
+        <a href="login.html" class="text-white/80 hover:text-gold text-sm transition-colors" id="navLoginLink">Sign In</a>
+        <a href="booking.html" class="btn-gold px-6 py-2.5 rounded-full text-sm">Book Now</a>
+      </div>
+      <button class="lg:hidden text-white" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" aria-label="Menu">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
+    <div id="mobileMenu" class="hidden fixed inset-0 bg-navy/98 backdrop-blur-xl z-50 flex flex-col items-center justify-center gap-8">
+      <button onclick="this.parentElement.classList.add('hidden')" class="absolute top-6 right-6 text-white/60 hover:text-white"><i class="fas fa-times text-2xl"></i></button>
+      <a href="index.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Home</a>
+      <a href="about.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">About</a>
+      <a href="rooms.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Rooms</a>
+      <a href="services.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Services</a>
+      <a href="menu.html" class="text-gold text-2xl font-light tracking-widest">Menu</a>
+      <a href="gallery.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Gallery</a>
+      <a href="testimonials.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Reviews</a>
+      <a href="contact.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Contact</a>
+      <div class="mt-4 flex gap-4">
+        <a href="login.html" class="btn-outline-gold px-8 py-3 rounded-full text-sm">Sign In</a>
+        <a href="booking.html" class="btn-gold px-8 py-3 rounded-full text-sm">Book Now</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="relative min-h-[60vh] flex items-center justify-center overflow-hidden" style="background: url('images/restaurant.jpg') center/cover no-repeat, linear-gradient(135deg, #8B5E34 0%, #A67C52 40%, #3B2A1A 100%);">
+    <div class="absolute inset-0" style="background: rgba(27,19,11,0.55);"></div>
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-20 left-20 w-72 h-72 bg-gold rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 right-20 w-96 h-96 bg-gold/30 rounded-full blur-3xl"></div>
+    </div>
+    <div class="relative z-10 text-center px-6">
+      <nav class="flex items-center justify-center gap-2 text-sm text-white/50 mb-8">
+        <a href="index.html" class="hover:text-gold transition-colors">Home</a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <span class="text-gold">Restaurant Menu</span>
+      </nav>
+      <span class="inline-block px-5 py-2 rounded-full text-xs font-semibold tracking-widest uppercase mb-6" style="background:rgba(200,169,106,0.15);color:#D4AF37;">Dining</span>
+      <h1 class="text-5xl md:text-7xl font-extralight text-white mb-6" style="line-height:1.05;">Dine at <span class="gold-gradient-text font-light">Everett</span></h1>
+      <p class="text-lg text-white/60 max-w-xl mx-auto font-light">A curated selection of gourmet dishes crafted by our chefs, made with the freshest local ingredients.</p>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 h-32" style="background: linear-gradient(to top, #FAF7F2, transparent);"></div>
+  </section>
+
+  <!-- Category Nav -->
+  <section class="pt-12">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-wrap items-center justify-center gap-3" id="categoryNav">
+        <button class="cat-link px-6 py-2.5 rounded-full text-sm font-semibold transition-all active" data-cat="all" style="background:#8B5E34;color:white;">All</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Menu Loader -->
+  <section class="py-10" id="menuLoading">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <div class="inline-block w-10 h-10 border-4 border-gold/30 border-t-gold rounded-full animate-spin"></div>
+      <p class="mt-4 text-sm text-navy/60 font-light">Loading our menu...</p>
+    </div>
+  </section>
+
+  <!-- Menu Display -->
+  <section class="py-12 md:py-16">
+    <div class="max-w-7xl mx-auto px-6">
+      <div id="menuItems" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+      <div id="menuEmpty" class="hidden text-center py-20">
+        <i class="fas fa-utensils text-5xl" style="color:#D4AF37;"></i>
+        <p class="mt-6 text-navy/70 text-lg font-light">No menu items available at the moment.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-16">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="rounded-3xl p-12 text-center relative overflow-hidden" style="background:linear-gradient(135deg, #8B5E34, #A67C52);">
+        <div class="absolute inset-0 opacity-10">
+          <div class="absolute top-10 left-10 w-64 h-64 bg-gold rounded-full blur-3xl"></div>
+        </div>
+        <div class="relative z-10">
+          <h2 class="text-3xl md:text-4xl font-extralight text-white mb-4">Reserve Your Table</h2>
+          <p class="text-white/60 max-w-md mx-auto mb-8 font-light">Experience our gourmet dining for yourself. Book your stay or table today.</p>
+          <div class="flex flex-wrap items-center justify-center gap-4">
+            <a href="booking.html" class="btn-gold px-8 py-3 rounded-full text-sm">Book a Stay</a>
+            <a href="contact.html" class="px-8 py-3 rounded-full text-sm border border-white/30 text-white hover:bg-white/10 transition-colors">Contact Us</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-20" style="background:linear-gradient(135deg, #8B5E34, #A67C52);">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-12 mb-16">
+        <div>
+          <div class="flex flex-col items-start mb-6">
+            <span class="text-white text-xl tracking-[8px] font-light">EVERETT</span>
+            <span class="text-gold text-[10px] tracking-[4px] font-medium">HOTEL</span>
+          </div>
+          <p class="text-white/40 text-sm leading-relaxed mb-6">Where timeless elegance meets contemporary comfort. A sanctuary of refined luxury in the heart of Nairobi City.</p>
+          <div class="flex gap-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 transition-all"><i class="fab fa-facebook-f text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 transition-all"><i class="fab fa-instagram text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 transition-all"><i class="fab fa-twitter text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 transition-all"><i class="fab fa-linkedin-in text-sm"></i></a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-6">Quick Links</h4>
+          <ul class="space-y-3">
+            <li><a href="about.html" class="text-white/40 text-sm hover:text-gold transition-colors">About Us</a></li>
+            <li><a href="rooms.html" class="text-white/40 text-sm hover:text-gold transition-colors">Rooms & Suites</a></li>
+            <li><a href="services.html" class="text-white/40 text-sm hover:text-gold transition-colors">Services</a></li>
+            <li><a href="menu.html" class="text-white/40 text-sm hover:text-gold transition-colors">Restaurant Menu</a></li>
+            <li><a href="gallery.html" class="text-white/40 text-sm hover:text-gold transition-colors">Gallery</a></li>
+            <li><a href="contact.html" class="text-white/40 text-sm hover:text-gold transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-6">Contact</h4>
+          <ul class="space-y-3">
+            <li class="flex items-center gap-3 text-white/40 text-sm"><i class="fas fa-map-marker-alt text-gold text-xs"></i> Westlands, Nairobi, Kenya</li>
+            <li class="flex items-center gap-3 text-white/40 text-sm"><i class="fas fa-phone text-gold text-xs"></i> +254 700 123 456</li>
+            <li class="flex items-center gap-3 text-white/40 text-sm"><i class="fas fa-envelope text-gold text-xs"></i> info@everetthotel.com</li>
+            <li class="flex items-center gap-3 text-white/40 text-sm"><i class="fas fa-clock text-gold text-xs"></i> 24/7 Front Desk</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-6">Newsletter</h4>
+          <p class="text-white/40 text-sm mb-4">Get exclusive deals and travel inspiration.</p>
+          <form class="flex gap-2" onsubmit="return false;">
+            <input type="email" placeholder="Your email" class="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-white placeholder-white/30 text-sm focus:outline-none focus:border-gold transition-colors">
+            <button class="btn-gold px-5 py-2.5 rounded-full text-xs font-semibold"><i class="fas fa-paper-plane"></i></button>
+          </form>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-white/30 text-xs">&copy; 2026 Everett Hotel. All rights reserved.</p>
+        <div class="flex gap-6">
+          <a href="privacy-policy.html" class="text-white/30 text-xs hover:text-gold transition-colors">Privacy Policy</a>
+          <a href="terms.html" class="text-white/30 text-xs hover:text-gold transition-colors">Terms & Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/vendor/gsap/gsap.min.js" defer></script>
+  <script src="/vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="/vendor/lenis/lenis.min.js" defer></script>
+  <script src="/vendor/swiper/swiper-bundle.min.js" defer></script>
+  <script src="/vendor/sweetalert2/sweetalert2.min.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/theme.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/animations.js" defer></script>
+  <script>
+  var CATEGORY_META = {
+    appetizer:   { label: 'Appetizers',   icon: 'fa-leaf' },
+    main_course: { label: 'Main Courses', icon: 'fa-drumstick-bite' },
+    dessert:     { label: 'Desserts',     icon: 'fa-cake-candles' },
+    beverage:    { label: 'Beverages',    icon: 'fa-martini-glass-citrus' },
+    breakfast:   { label: 'Breakfast',    icon: 'fa-mug-saucer' },
+    lunch:       { label: 'Lunch',        icon: 'fa-bowl-food' },
+    dinner:      { label: 'Dinner',       icon: 'fa-plate-wheat' },
+    special:     { label: 'Special',      icon: 'fa-star' }
+  };
+
+  var IMAGE_MAP = {
+    'Bruschetta': 'images/menu-1.1.jpg',
+    'Caesar Salad': 'images/menu-1.1.jpg',
+    'Grilled Salmon': 'images/menu-1.2.jpg',
+    'Filet Mignon': 'images/menu-1.3.jpg',
+    'Chicken Marsala': 'images/menu-1.5.jpg',
+    'Mushroom Risotto': 'images/menu-1.4.jpg',
+    'Tiramisu': 'images/menu-1.6.jpg',
+    'Chocolate Lava Cake': 'images/menu-1.6.jpg',
+    'Fresh Fruit Platter': 'images/menu-1.4.jpg',
+    'Cocktail': 'images/menu-1.5.jpg',
+    'Red Wine': 'images/menu-1.5.jpg',
+    'Sparkling Water': null
+  };
+
+  var menuItems = [];
+  var activeCat = 'all';
+
+  function categoryLabel(cat) {
+    var meta = CATEGORY_META[cat];
+    return meta ? meta.label : cat.replace(/_/g, ' ').replace(/\b\w/g, function(c){return c.toUpperCase();});
+  }
+  function categoryIcon(cat) {
+    var meta = CATEGORY_META[cat];
+    return meta ? meta.icon : 'fa-utensils';
+  }
+
+  function itemImage(item) {
+    if (item.image) return item.image;
+    return IMAGE_MAP[item.name] || null;
+  }
+
+  function formatPrice(p) {
+    var n = parseFloat(p);
+    return isNaN(n) ? '' : 'KSh ' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  function tagIcon(tag) {
+    if (tag === 'isVegetarian') return { icon: 'fa-leaf', label: 'Vegetarian' };
+    if (tag === 'isVegan') return { icon: 'fa-seedling', label: 'Vegan' };
+    if (tag === 'isGlutenFree') return { icon: 'fa-wheat-awn-circle-exclamation', label: 'Gluten-Free' };
+    return null;
+  }
+
+  function cardHtml(item) {
+    var img = itemImage(item);
+    var imgHtml = img
+      ? '<img src="' + img + '" alt="' + item.name + '" class="menu-img" onerror="this.outerHTML=\'<div class=&quot;menu-img-placeholder&quot;><i class=&quot;fas ' + categoryIcon(item.category) + '&quot;></i></div>\';">'
+      : '<div class="menu-img-placeholder"><i class="fas ' + categoryIcon(item.category) + '"></i></div>';
+
+    var tags = '';
+    var tagDefs = [['isVegetarian', item.is_vegetarian], ['isVegan', item.is_vegan], ['isGlutenFree', item.is_gluten_free]];
+    tagDefs.forEach(function(t) {
+      var def = tagIcon(t[0]);
+      if (t[1] && def) {
+        tags += '<span class="tag-pill"><i class="fas ' + def.icon + '" style="color:#D4AF37;"></i> ' + def.label + '</span>';
+      }
+    });
+
+    var desc = item.description ? '<div style="line-height:1.7;"><p class="text-sm" style="color:#666;">' + item.description + '</p></div>' : '';
+
+    return '<div class="menu-card reveal-up" data-category="' + item.category + '">' +
+      '<div class="menu-img-wrap">' +
+        '<span class="cat-badge">' + categoryLabel(item.category) + '</span>' +
+        imgHtml +
+      '</div>' +
+      '<div class="p-6">' +
+        '<div class="flex items-end justify-between mb-3">' +
+          '<h3 class="text-lg font-bold" style="color:#8B5E34;">' + item.name + '</h3>' +
+          '<span class="flex items-center gap-2 whitespace-nowrap text-sm font-semibold" style="color:#8B5E34;">' + formatPrice(item.price) + '</span>' +
+        '</div>' +
+        (desc || '') +
+        (item.preparation_time ? '<p class="text-xs mt-3 flex items-center gap-1" style="color:#999;"><i class="fas fa-clock" style="color:#D4AF37;"></i> ' + item.preparation_time + ' min</p>' : '') +
+        (tags ? '<div class="flex flex-wrap gap-2 mt-3">' + tags + '</div>' : '') +
+      '</div>' +
+    '</div>';
+  }
+
+  function render() {
+    var grid = document.getElementById('menuItems');
+    var empty = document.getElementById('menuEmpty');
+    var filtered = activeCat === 'all' ? menuItems : menuItems.filter(function(i){ return i.category === activeCat; });
+
+    grid.innerHTML = filtered.map(cardHtml).join('');
+    empty.classList.toggle('hidden', filtered.length > 0);
+
+    animateCards();
+  }
+
+  function animateCards() {
+    if (typeof gsap === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.refresh();
+    gsap.utils.toArray('#menuItems .menu-card').forEach(function(el) {
+      gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }, y: 40, opacity: 0, duration: 0.8, ease: 'power3.out' });
+    });
+  }
+
+  function buildCategoryNav() {
+    var nav = document.getElementById('categoryNav');
+    var cats = Object.keys(menuItems.reduce(function(acc, i){ acc[i.category] = true; return acc; }, {}));
+    var html = '<button class="cat-link px-6 py-2.5 rounded-full text-sm font-semibold transition-all active" data-cat="all" style="background:#8B5E34;color:white;">All</button>';
+    cats.forEach(function(c) {
+      html += '<button class="cat-link px-6 py-2.5 rounded-full text-sm font-semibold transition-all" data-cat="' + c + '" style="background:white;color:#8B5E34;border:1px solid rgba(200,169,106,0.3);">' + categoryLabel(c) + '</button>';
+    });
+    nav.innerHTML = html;
+
+    nav.querySelectorAll('.cat-link').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        activeCat = btn.dataset.cat;
+        nav.querySelectorAll('.cat-link').forEach(function(b) {
+          b.style.background = b === btn ? '#8B5E34' : 'white';
+          b.style.color = b === btn ? 'white' : '#8B5E34';
+        });
+        render();
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() { document.getElementById('pageLoader').classList.add('hidden'); }, 1200);
+
+    window.addEventListener('scroll', function() {
+      var nav = document.getElementById('mainNav');
+      if (window.scrollY > 80) { nav.classList.add('nav-scrolled'); } else { nav.classList.remove('nav-scrolled'); }
+    });
+
+    if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+      var link = document.getElementById('navLoginLink');
+      if (link) { link.href = 'profile.html'; link.textContent = 'Dashboard'; }
+    }
+
+    if (typeof Lenis !== 'undefined') {
+      var lenis = new Lenis({ duration: 1.2, smoothWheel: true });
+      function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+    }
+
+    function loadMenu() {
+      var grid = document.getElementById('menuItems');
+      return fetch('/api/restaurant/menu?limit=100')
+        .then(function(r) { return r.json(); })
+        .then(function(json) {
+          document.getElementById('menuLoading').classList.add('hidden');
+          if (json && json.success && json.data && json.data.items) {
+            menuItems = json.data.items.filter(function(i){ return i.is_available; });
+            buildCategoryNav();
+            render();
+          }
+        })
+        .catch(function(err) {
+          document.getElementById('menuLoading').classList.add('hidden');
+          grid.innerHTML = '<div class="col-span-full text-center py-20"><i class="fas fa-exclamation-triangle text-4xl" style="color:#D4AF37;"></i><p class="mt-4 text-navy/70 font-light">Unable to load the menu. Please try again later.</p></div>';
+        });
+    }
+
+    loadMenu();
+
+    if (typeof gsap !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+    }
+  });
+  </script>
+</body>
+</html>

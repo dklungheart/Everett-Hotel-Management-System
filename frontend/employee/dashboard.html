@@ -1,0 +1,1266 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Portal - Everett Hotel</title>
+    <script src="/vendor/tailwindcss/tailwind.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#8B5E34',
+                        'navy-light': '#A67C52',
+                        gold: '#D4AF37',
+                        beige: '#FAF7F2',
+                        charcoal: '#211A14',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #8B5E34; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 3px; }
+
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            z-index: 40; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .admin-sidebar {
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
+            background: linear-gradient(180deg, #8B5E34 0%, #24180F 100%);
+            z-index: 50; transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+        .admin-sidebar.open { left: 0; }
+
+        .nav-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 20px; color: rgba(255,255,255,0.6);
+            font-size: 13.5px; font-weight: 500; transition: all 0.2s;
+            border-left: 3px solid transparent; text-decoration: none; cursor: pointer;
+        }
+        .nav-link:hover { color: #D4AF37; background: rgba(212,175,55,0.08); }
+        .nav-link.active {
+            color: #D4AF37; background: rgba(212,175,55,0.12);
+            border-left-color: #D4AF37; font-weight: 600;
+        }
+        .nav-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .nav-section-label {
+            padding: 18px 20px 6px; font-size: 10px; font-weight: 700;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            color: rgba(212,175,55,0.45);
+        }
+
+        .topbar {
+            position: fixed; top: 0; left: 0; right: 0; height: 64px;
+            background: rgba(139,94,52,0.92); backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(212,175,55,0.12);
+            z-index: 30; display: flex; align-items: center;
+            padding: 0 24px; gap: 16px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #FAFAF7 100%);
+            border: 1px solid rgba(212,175,55,0.15);
+            border-radius: 14px; padding: 20px 22px;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .stat-card::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 4px; height: 100%; background: #D4AF37; border-radius: 0 4px 4px 0;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(139,94,52,0.08); }
+
+        .table-card {
+            background: #FFFFFF; border: 1px solid rgba(212,175,55,0.12);
+            border-radius: 14px; overflow: hidden;
+        }
+
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .badge-pending { background: rgba(245,158,11,0.12); color: #d97706; }
+        .badge-confirmed { background: rgba(34,197,94,0.12); color: #16a34a; }
+        .badge-checked_in { background: rgba(212,175,55,0.15); color: #a16207; }
+        .badge-checked_out { background: rgba(107,114,128,0.12); color: #6b7280; }
+        .badge-cancelled { background: rgba(239,68,68,0.12); color: #dc2626; }
+
+        .room-status-dot { width: 8px; height: 8px; border-radius: 9999px; display: inline-block; }
+
+        .profile-dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            background: #FFFFFF; border: 1px solid rgba(212,175,55,0.15);
+            border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            min-width: 200px; opacity: 0; pointer-events: none;
+            transform: translateY(-8px); transition: all 0.25s ease; z-index: 60;
+        }
+        .profile-dropdown.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+        .notif-dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            background: #3B2A1A; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            width: 320px; max-height: 380px; overflow: hidden; z-index: 60;
+            display: none;
+        }
+        .notif-dropdown.show { display: block; }
+
+        .menu-btn { display: none; }
+        @media (max-width: 1023px) {
+            .menu-btn { display: flex; }
+            .main-content { margin-left: 0 !important; }
+            .topbar { left: 0; }
+        }
+    </style>
+</head>
+<body class="bg-beige min-h-screen">
+
+    <!-- Sidebar Overlay -->
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside id="adminSidebar" class="admin-sidebar">
+        <div class="flex items-center gap-3 px-6 py-5 border-b border-white/5">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold to-yellow-600 flex items-center justify-center">
+                <span class="text-navy font-extrabold text-sm">EH</span>
+            </div>
+            <div>
+                <span class="text-white font-semibold text-sm tracking-[6px]">EVERETT</span>
+                <div class="text-white/30 text-[11px] font-medium">Employee Portal</div>
+            </div>
+        </div>
+
+        <nav class="py-3">
+            <div class="nav-section-label">My Desk</div>
+            <a href="#overview" class="nav-link active">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                Overview
+            </a>
+            <a href="#rooms" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                Room Status
+            </a>
+
+            <div class="nav-section-label" id="frontDeskLabel" style="display:none;">Front Desk</div>
+            <a href="#arrivals" class="nav-link" id="navArrivals" style="display:none;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Arrivals
+            </a>
+            <a href="#departures" class="nav-link" id="navDepartures" style="display:none;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m7-7l-7 7 7 7"/></svg>
+                Departures
+            </a>
+            <a href="#bookings" class="nav-link" id="navBookings" style="display:none;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Recent Bookings
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Topbar -->
+    <header class="topbar">
+        <button onclick="toggleSidebar()" class="menu-btn w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-white hover:bg-gold/20 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+
+        <div class="hidden sm:flex items-center gap-2.5 flex-1">
+            <span id="roleLabel" class="text-white font-semibold text-sm">Employee</span>
+            <span id="todayLabel" class="text-white/40 text-xs font-medium"></span>
+        </div>
+
+        <div class="flex items-center gap-3 ml-auto">
+            <div class="relative">
+                <button id="notifBtn" class="relative w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-white/60 hover:text-gold hover:bg-gold/10 transition">
+                    <i class="fas fa-bell w-[18px] h-[18px] text-sm flex items-center justify-center"></i>
+                    <span id="notifBadge" class="hidden absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 bg-red-500 rounded-full text-[9px] text-white items-center justify-center font-bold"></span>
+                </button>
+                <div id="notifDropdown" class="notif-dropdown">
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-white/10">
+                        <span class="text-white text-sm font-semibold">Notifications</span>
+                        <button id="notifMarkAll" class="text-gold text-xs hover:underline">Mark all read</button>
+                    </div>
+                    <div id="notifList" class="max-h-[320px] overflow-y-auto"></div>
+                    <div id="notifEmpty" class="px-4 py-8 text-center text-white/40 text-sm">No notifications</div>
+                </div>
+            </div>
+
+            <div class="relative">
+                <button id="profileToggle" class="flex items-center gap-2.5 bg-white/5 rounded-xl pl-1.5 pr-3 py-1.5 hover:bg-gold/10 transition">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-gold to-yellow-600 flex items-center justify-center">
+                        <span id="profileInitials" class="text-navy text-xs font-bold">EH</span>
+                    </div>
+                    <div class="hidden sm:block text-left">
+                        <div id="profileName" class="text-white text-xs font-semibold leading-tight">Employee</div>
+                        <div class="text-white/40 text-[10px]">Everett Hotel Staff</div>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div id="profileDropdown" class="profile-dropdown">
+                    <div class="px-4 py-3 border-b border-gray-100">
+                        <div id="profileName2" class="text-sm font-semibold text-gray-800">Employee</div>
+                        <div id="profileEmail" class="text-xs text-gray-400">staff@everetthotel.com</div>
+                    </div>
+                    <div class="border-t border-gray-100">
+                        <a href="#" id="logoutBtn" class="flex items-center gap-2 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content pt-[64px] ml-[280px] min-h-screen lg:ml-[280px]">
+        <div class="p-6 lg:p-8">
+            <!-- Page Header -->
+            <div id="overview" class="mb-8">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-navy tracking-tight">Employee Overview</h1>
+                        <p id="welcomeMsg" class="text-gray-500 text-sm mt-1">Welcome! Here is today's status at a glance.</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button id="newBookingBtn" onclick="openBookingModal()" style="display:none;" class="bg-gradient-to-r from-gold to-yellow-600 text-navy font-bold text-sm px-5 py-2.5 rounded-xl hover:shadow-lg hover:shadow-gold/25 transition-all">
+                            <i class="fas fa-plus mr-2 text-xs"></i>New Booking
+                        </button>
+                        <button onclick="refreshAll()" class="bg-white border border-gold/30 text-navy font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-gold/10 transition-all">
+                            <i class="fas fa-rotate mr-2 text-xs"></i>Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Biometric Attendance -->
+            <div class="bg-gradient-to-r from-navy to-[#3B2A1A] rounded-2xl p-6 mb-8 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -right-8 -top-8 w-48 h-48 bg-gold/10 rounded-full"></div>
+                <div class="absolute right-24 -bottom-16 w-40 h-40 bg-gold/5 rounded-full"></div>
+                <div class="relative flex flex-col lg:flex-row lg:items-center gap-6">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-gold text-[10px] font-bold uppercase tracking-widest">Biometric Attendance</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                        </div>
+                        <h2 id="attHello" class="text-2xl font-extrabold tracking-tight">Good day!</h2>
+                        <p id="attMeta" class="text-white/60 text-sm mt-1">Today's attendance at a glance.</p>
+                        <div class="flex flex-wrap items-center gap-2 mt-4">
+                            <span id="attStatusBadge" class="badge bg-gold/15 text-gold">Not clocked in</span>
+                            <span id="attShiftBadge" class="badge bg-white/10 text-white/80">Shift: --</span>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="grid grid-cols-3 gap-3 text-center">
+                            <div class="bg-white/5 border border-white/10 rounded-xl py-3">
+                                <div id="attClockIn" class="text-lg font-extrabold text-gold">--:--</div>
+                                <div class="text-white/50 text-[10px] uppercase tracking-wider mt-0.5">Clock In</div>
+                            </div>
+                            <div class="bg-white/5 border border-white/10 rounded-xl py-3">
+                                <div id="attClockOut" class="text-lg font-extrabold text-gold">--:--</div>
+                                <div class="text-white/50 text-[10px] uppercase tracking-wider mt-0.5">Clock Out</div>
+                            </div>
+                            <div class="bg-white/5 border border-white/10 rounded-xl py-3">
+                                <div id="attHours" class="text-lg font-extrabold text-gold">--</div>
+                                <div class="text-white/50 text-[10px] uppercase tracking-wider mt-0.5">Hours</div>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-white/60">
+                            <span><i class="fas fa-user-tag mr-1.5 text-gold"></i><span id="attEmpCode">--</span></span>
+                            <span><i class="fas fa-building mr-1.5 text-gold"></i><span id="attDept">--</span></span>
+                            <span id="attLateWrap" style="display:none;"><i class="fas fa-clock mr-1.5 text-red-400"></i><span id="attLate" class="text-red-400">--</span></span>
+                            <span id="attRemoteWrap" style="display:none;"><i class="fas fa-globe mr-1.5 text-amber-400"></i><span id="attRemote" class="text-amber-400">Remote - awaiting review</span></span>
+                        </div>
+                    </div>
+                    <div class="flex lg:flex-col gap-3">
+                        <button id="attClockInBtn" onclick="openCameraModal('in')" class="bg-gradient-to-r from-gold to-yellow-600 text-navy font-bold text-sm px-6 py-3.5 rounded-xl hover:shadow-lg hover:shadow-gold/30 transition-all flex items-center justify-center gap-2 min-w-[160px]">
+                            <i class="fas fa-sign-in-alt"></i>Clock In
+                        </button>
+                        <button id="attClockOutBtn" onclick="openCameraModal('out')" disabled style="display:none;" class="bg-white/10 border border-white/20 text-white font-bold text-sm px-6 py-3.5 rounded-xl hover:bg-white/20 transition-all flex items-center justify-center gap-2 min-w-[160px]">
+                            <i class="fas fa-sign-out-alt"></i>Clock Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stat Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+                <div class="stat-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center">
+                            <i class="fas fa-sign-in-alt text-green-600"></i>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-navy"><span id="statArrivals">0</span></div>
+                    <div class="text-gray-400 text-xs font-medium mt-1">Arrivals Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center">
+                            <i class="fas fa-sign-out-alt text-red-500"></i>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-navy"><span id="statDepartures">0</span></div>
+                    <div class="text-gray-400 text-xs font-medium mt-1">Departures Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-11 h-11 rounded-xl bg-gold/10 flex items-center justify-center">
+                            <i class="fas fa-user-check text-gold"></i>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-navy"><span id="statCheckedIn">0</span></div>
+                    <div class="text-gray-400 text-xs font-medium mt-1">Guests In-House</div>
+                </div>
+                <div class="stat-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-11 h-11 rounded-xl bg-navy/5 flex items-center justify-center">
+                            <i class="fas fa-bed text-navy"></i>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-navy"><span id="statAvailable">0</span><span class="text-sm font-semibold text-gray-400"> / <span id="statTotalRooms">0</span></span></div>
+                    <div class="text-gray-400 text-xs font-medium mt-1">Rooms Available</div>
+                </div>
+            </div>
+
+            <!-- Arrivals & Departures (booking staff only) -->
+            <div id="staySection" class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8" style="display:none;">
+                <div id="arrivals" class="table-card">
+                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                        <h2 class="text-base font-bold text-navy">Today's Arrivals</h2>
+                        <span id="arrivalsCount" class="text-xs font-semibold text-gray-400"></span>
+                    </div>
+                    <div id="arrivalsBody" class="overflow-x-auto">
+                        <div class="px-6 py-10 text-center text-gray-400 text-sm">Loading arrivals...</div>
+                    </div>
+                </div>
+
+                <div id="departures" class="table-card">
+                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                        <h2 class="text-base font-bold text-navy">Today's Departures</h2>
+                        <span id="departuresCount" class="text-xs font-semibold text-gray-400"></span>
+                    </div>
+                    <div id="departuresBody" class="overflow-x-auto">
+                        <div class="px-6 py-10 text-center text-gray-400 text-sm">Loading departures...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room Status -->
+            <div id="rooms" class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-navy">Room Status</h2>
+                        <p class="text-gray-400 text-xs mt-1">Live availability across the hotel</p>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs text-gray-500">
+                        <span class="flex items-center gap-1.5"><span class="room-status-dot bg-green-500"></span>Available</span>
+                        <span class="flex items-center gap-1.5"><span class="room-status-dot bg-gold"></span>Occupied</span>
+                        <span class="flex items-center gap-1.5"><span class="room-status-dot bg-red-500"></span>Maintenance</span>
+                        <span class="flex items-center gap-1.5"><span class="room-status-dot bg-amber-400"></span>Reserved</span>
+                        <span class="flex items-center gap-1.5"><span class="room-status-dot bg-blue-500"></span>Cleaning</span>
+                    </div>
+                </div>
+                <div id="roomsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+                    <div class="col-span-full py-10 text-center text-gray-400 text-sm">Loading rooms...</div>
+                </div>
+            </div>
+
+            <!-- Recent Bookings (booking staff only) -->
+            <div id="recentSection" class="table-card" style="display:none;">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <h2 class="text-base font-bold text-navy">Recent Bookings</h2>
+                    <span class="text-xs font-semibold text-gray-400">Latest reservations</span>
+                </div>
+                <div id="recentBody" class="overflow-x-auto">
+                    <div class="px-6 py-10 text-center text-gray-400 text-sm">Loading bookings...</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- New Booking Modal -->
+    <div id="bookingModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/60" onclick="closeBookingModal()"></div>
+        <div class="relative bg-white rounded-2xl w-full max-w-lg mx-4 max-h-[92vh] overflow-y-auto shadow-2xl">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gold to-yellow-600 rounded-t-2xl">
+                <h2 class="text-lg font-bold text-navy">New Booking</h2>
+                <button onclick="closeBookingModal()" class="w-8 h-8 rounded-lg bg-white/40 hover:bg-white/70 text-navy transition flex items-center justify-center">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Guest</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <input id="bkFirstName" type="text" placeholder="First name *" class="bg-beige/60 border border-gold/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/30">
+                        <input id="bkLastName" type="text" placeholder="Last name *" class="bg-beige/60 border border-gold/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/30">
+                        <input id="bkPhone" type="tel" placeholder="Phone (e.g. 07XX XXX XXX)" class="bg-beige/60 border border-gold/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/30">
+                        <input id="bkEmail" type="email" placeholder="Email (optional)" class="bg-beige/60 border border-gold/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/30">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Room</label>
+                    <select id="bkRoom" class="w-full bg-beige/60 border border-gold/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/30">
+                        <option value="">Select a room...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Stay Dates</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <span class="text-xs text-gray-400">Check-in *</span>
+                            <input id="bkCheckIn" type="date" class="w-full mt-1 bg-beige/60 border border-gold/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/30">
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-400">Check-out *</span>
+                            <input id="bkCheckOut" type="date" class="w-full mt-1 bg-beige/60 border border-gold/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/30">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Guests</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <span class="text-xs text-gray-400">Adults *</span>
+                            <input id="bkAdults" type="number" min="1" max="20" value="1" class="w-full mt-1 bg-beige/60 border border-gold/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/30">
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-400">Children</span>
+                            <input id="bkChildren" type="number" min="0" max="10" value="0" class="w-full mt-1 bg-beige/60 border border-gold/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/30">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Special Requests</label>
+                    <textarea id="bkSpecial" rows="2" placeholder="Any special requests (optional)" class="w-full bg-beige/60 border border-gold/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/30"></textarea>
+                </div>
+                <div id="bkError" class="hidden bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3"></div>
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button onclick="closeBookingModal()" class="px-5 py-2.5 rounded-xl border border-gold/30 text-navy text-sm font-semibold hover:bg-gold/10 transition">Cancel</button>
+                    <button onclick="submitBooking()" id="bkSubmitBtn" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold to-yellow-600 text-navy text-sm font-bold hover:shadow-lg hover:shadow-gold/25 transition">
+                        <i class="fas fa-check mr-2 text-xs"></i>Create Booking
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biometric Camera Modal -->
+    <div id="cameraModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/70" onclick="closeCameraModal()"></div>
+        <div class="relative bg-white rounded-2xl w-full max-w-md mx-4 shadow-2xl overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-navy to-[#3B2A1A]">
+                <h2 id="cameraTitle" class="text-base font-bold text-white">Face Verification</h2>
+                <button onclick="closeCameraModal()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white transition flex items-center justify-center">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <p id="cameraHint" class="text-gray-400 text-xs mb-4">Position your face within the frame and look directly at the camera.</p>
+                <div id="cameraPreviewWrap" class="relative w-full aspect-[4/3] bg-beige rounded-xl overflow-hidden border-2 border-gold/30 flex items-center justify-center">
+                    <video id="cameraPreview" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover"></video>
+                    <div id="cameraScanOverlay" class="absolute inset-0 pointer-events-none">
+                        <div class="absolute left-6 right-6 top-1/2 h-0.5 bg-gold/70 shadow-[0_0_12px_rgba(212,175,55,0.9)] animate-pulse"></div>
+                    </div>
+                    <div id="cameraPlaceholder" class="text-center text-gray-400 text-sm p-6">
+                        <i class="fas fa-video text-3xl text-gold/40 mb-3 block"></i>
+                        Starting camera...
+                    </div>
+                </div>
+                <div id="cameraCompare" class="hidden grid grid-cols-2 gap-3">
+                    <div class="rounded-xl overflow-hidden border-2 border-navy/15 bg-beige">
+                        <div class="text-[10px] uppercase tracking-wider text-center py-1.5 bg-navy text-gold font-bold">Registered</div>
+                        <div class="aspect-[4/3] bg-beige relative flex items-center justify-center">
+                            <img id="cameraRefImg" alt="Registered photo" class="absolute inset-0 w-full h-full object-cover hidden" />
+                            <i id="cameraRefEmpty" class="fas fa-user text-gray-300 text-3xl"></i>
+                        </div>
+                    </div>
+                    <div class="rounded-xl overflow-hidden border-2 border-gold/40 bg-beige">
+                        <div class="text-[10px] uppercase tracking-wider text-center py-1.5 bg-gold text-navy font-bold">New Capture</div>
+                        <div class="aspect-[4/3] bg-beige relative flex items-center justify-center">
+                            <img id="cameraSnapshot" alt="Captured" class="absolute inset-0 w-full h-full object-cover hidden" />
+                            <i id="cameraSnapEmpty" class="fas fa-image text-gray-300 text-3xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div id="cameraErr" class="hidden mt-4 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3"></div>
+                <div id="cameraOkWrap" class="hidden mt-4 bg-green-50 border border-green-200 text-green-700 text-sm rounded-xl px-4 py-3 flex items-center gap-2">
+                    <i class="fas fa-circle-check"></i><span id="cameraOkText">Face captured. You can submit now.</span>
+                </div>
+                <div class="flex items-center justify-between gap-3 mt-5">
+                    <button onclick="retakeCamera()" id="cameraRetakeBtn" class="hidden px-5 py-2.5 rounded-xl border border-gold/30 text-navy text-sm font-semibold hover:bg-gold/10 transition">
+                        <i class="fas fa-camera-rotate mr-2 text-xs"></i>Retake
+                    </button>
+                    <button onclick="captureCamera()" id="cameraCaptureBtn" class="flex-1 px-5 py-2.5 rounded-xl border border-gold/30 text-navy text-sm font-semibold hover:bg-gold/10 transition">
+                        <i class="fas fa-camera mr-2 text-xs"></i>Capture
+                    </button>
+                    <button onclick="submitAttendance()" id="cameraSubmitBtn" disabled class="hidden flex-1 px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold to-yellow-600 text-navy text-sm font-bold hover:shadow-lg hover:shadow-gold/25 transition disabled:opacity-50">
+                        <i class="fas fa-check mr-2 text-xs"></i>Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 -->
+    <script src="/vendor/sweetalert2/sweetalert2.min.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/animations.js"></script>
+    <script>
+      Auth.employeeGuard();
+
+      var currentUser = Auth.getCurrentUser();
+      var canManageBookings = currentUser && ['receptionist', 'manager'].indexOf(currentUser.role) > -1;
+
+      function toggleSidebar() {
+        document.getElementById('adminSidebar').classList.toggle('open');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
+      }
+
+      function getToken() { return Auth.getToken(); }
+
+      function apiFetch(url, options) {
+        options = options || {};
+        options.headers = options.headers || {};
+        options.headers['Authorization'] = 'Bearer ' + getToken();
+        return fetch(CONFIG.API_URL + url, options).then(function(res) {
+          return res.json().then(function(data) {
+            if (!res.ok) throw new Error((data && data.message) || 'Request failed');
+            return data;
+          });
+        });
+      }
+
+      function todayStr() {
+        var d = new Date();
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      }
+
+      function fmtDate(v) {
+        if (!v) return '-';
+        var s = String(v).slice(0, 10);
+        var p = s.split('-');
+        if (p.length !== 3) return s;
+        return p[2] + '/' + p[1] + '/' + p[0];
+      }
+
+      function statusBadge(status) {
+        var map = { pending: 'Pending', confirmed: 'Confirmed', checked_in: 'Checked In', checked_out: 'Checked Out', cancelled: 'Cancelled' };
+        return '<span class="badge badge-' + status + '">' + (map[status] || status) + '</span>';
+      }
+
+      function guestName(b) {
+        return (b.first_name || '') + ' ' + (b.last_name || '');
+      }
+
+      function setStatus(id, status, label) {
+        Swal.fire({
+          title: label + '?',
+          text: 'Update this booking to "' + label + '"?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#D4AF37',
+          confirmButtonText: 'Yes, ' + label,
+          cancelButtonColor: '#8B5E34'
+        }).then(function(result) {
+          if (!result.isConfirmed) return;
+          apiFetch('/bookings/admin/' + id + '/status', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: status })
+          }).then(function() {
+            Swal.fire({ icon: 'success', title: label + ' Complete', text: 'The guest has been marked as ' + label.toLowerCase() + '.', timer: 1800, showConfirmButton: false });
+            refreshAll();
+          }).catch(function(err) {
+            Swal.fire({ icon: 'error', title: 'Action Failed', text: err.message, confirmButtonColor: '#D4AF37' });
+          });
+        });
+      }
+
+      function checkIn(id) { setStatus(id, 'checked_in', 'Check In'); }
+
+      function checkOut(id, phone) {
+        var smsField = phone
+          ? '<div class="mt-3 text-sm" style="text-align:left;display:inline-block;">' +
+            '<label class="flex items-center gap-2 cursor-pointer">' +
+            '<input type="checkbox" id="swalSendSms" checked>' +
+            '<span>Send checkout SMS to <strong>' + phone + '</strong></span>' +
+            '</label></div>'
+          : '';
+        Swal.fire({
+          title: 'Check Out Guest?',
+          html: 'Mark this guest as checked out and release the room.' + smsField,
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#D4AF37',
+          confirmButtonText: 'Yes, Check Out',
+          cancelButtonColor: '#8B5E34'
+        }).then(function(result) {
+          if (!result.isConfirmed) return;
+          var sendSmsChk = document.getElementById('swalSendSms');
+          var wantSms = !!sendSmsChk && sendSmsChk.checked;
+          apiFetch('/bookings/admin/' + id + '/status', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'checked_out' })
+          }).then(function() {
+            refreshAll();
+            if (!wantSms) {
+              Swal.fire({ icon: 'success', title: 'Checked Out', text: 'The guest has been checked out.', timer: 1800, showConfirmButton: false });
+              return;
+            }
+            return apiFetch('/bookings/admin/' + id + '/send-sms', { method: 'POST' }).then(function() {
+              Swal.fire({ icon: 'success', title: 'Checked Out', text: 'Guest checked out. Checkout SMS sent to ' + phone + '.', timer: 2200, showConfirmButton: false });
+            }).catch(function() {
+              Swal.fire({ icon: 'warning', title: 'Checked Out', text: 'Guest checked out, but the checkout SMS could not be sent.', confirmButtonColor: '#D4AF37' });
+            });
+          }).catch(function(err) {
+            Swal.fire({ icon: 'error', title: 'Check Out Failed', text: err.message, confirmButtonColor: '#D4AF37' });
+          });
+        });
+      }
+
+      function sendSms(id, phone, name) {
+        if (!phone) {
+          Swal.fire({ icon: 'warning', title: 'No Phone Number', text: 'This guest has no phone number on file to send the SMS to.', confirmButtonColor: '#D4AF37' });
+          return;
+        }
+        Swal.fire({
+          title: 'Send Checkout SMS?',
+          html: 'Send the checkout thank-you message with rating link to <strong>' + (name || 'the guest') + '</strong> at <strong>' + phone + '</strong>?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#D4AF37',
+          confirmButtonText: 'Send SMS',
+          cancelButtonColor: '#8B5E34'
+        }).then(function(result) {
+          if (!result.isConfirmed) return;
+          apiFetch('/bookings/admin/' + id + '/send-sms', { method: 'POST' }).then(function() {
+            Swal.fire({ icon: 'success', title: 'SMS Sent', text: 'Checkout SMS sent to ' + phone + '.', timer: 2000, showConfirmButton: false });
+          }).catch(function(err) {
+            Swal.fire({ icon: 'error', title: 'SMS Failed', text: err.message, confirmButtonColor: '#D4AF37' });
+          });
+        });
+      }
+
+      function loadStats() {
+        var today = todayStr();
+
+        apiFetch('/dashboard/executive').then(function(results) {
+          var exec = results.data;
+          document.getElementById('statArrivals').textContent = '...';
+          document.getElementById('statDepartures').textContent = '...';
+          document.getElementById('statCheckedIn').textContent = exec.today.occupiedRooms;
+          document.getElementById('statAvailable').textContent = exec.today.availableRooms;
+          document.getElementById('statTotalRooms').textContent = exec.today.totalRooms;
+
+          if (canManageBookings) {
+            Promise.all([
+              apiFetch('/bookings/admin/all?status=confirmed&limit=100'),
+              apiFetch('/bookings/admin/all?status=checked_in&limit=100')
+            ]).then(function(results) {
+              var confirmed = (results[0].data && results[0].data.bookings) || [];
+              var checkedIn = (results[1].data && results[1].data.bookings) || [];
+
+              var arrivals = confirmed.filter(function(b) { return String(b.check_in).slice(0, 10) === today; })
+                .concat(checkedIn.filter(function(b) { return String(b.check_in).slice(0, 10) === today; }));
+              var departures = checkedIn.filter(function(b) { return String(b.check_out).slice(0, 10) <= today; });
+
+              document.getElementById('statArrivals').textContent = arrivals.length;
+              document.getElementById('statDepartures').textContent = departures.length;
+              renderArrivals(arrivals);
+              renderDepartures(departures);
+            }).catch(function() {
+              document.getElementById('arrivalsBody').innerHTML = '<div class="px-6 py-10 text-center text-gray-400 text-sm">Could not load arrivals.</div>';
+              document.getElementById('departuresBody').innerHTML = '<div class="px-6 py-10 text-center text-gray-400 text-sm">Could not load departures.</div>';
+            });
+          } else {
+            document.getElementById('statArrivals').textContent = '-';
+            document.getElementById('statDepartures').textContent = '-';
+          }
+        }).catch(function() {});
+      }
+
+      function renderArrivals(arrivals) {
+        var wrap = document.getElementById('arrivalsBody');
+        document.getElementById('arrivalsCount').textContent = arrivals.length + ' guest(s)';
+        if (!arrivals.length) {
+          wrap.innerHTML = '<div class="px-6 py-10 text-center text-gray-400 text-sm">No arrivals expected today.</div>';
+          return;
+        }
+        var rows = arrivals.map(function(b) {
+          return '<tr class="border-b border-gray-50 hover:bg-beige/60 transition">' +
+            '<td class="px-6 py-3.5"><div class="text-sm font-semibold text-gray-800">' + guestName(b) + '</div>' +
+            '<div class="text-xs text-gray-400">' + (b.booking_reference || '') + '</div></td>' +
+            '<td class="px-4 py-3.5 text-sm text-gray-600">' + (b.room_number || '-') + '</td>' +
+            '<td class="px-4 py-3.5 text-sm text-gray-600 whitespace-nowrap">' + fmtDate(b.check_in) + ' &rarr; ' + fmtDate(b.check_out) + '</td>' +
+            '<td class="px-4 py-3.5">' + statusBadge(b.status) + '</td>' +
+            '<td class="px-6 py-3.5 text-right"><button onclick="checkIn(' + b.id + ')" class="bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-green-700 transition">Check In</button></td>' +
+            '</tr>';
+        }).join('');
+        wrap.innerHTML = '<table class="w-full text-left"><thead><tr class="text-[11px] uppercase tracking-wider text-gray-400 border-b border-gray-100"><th class="px-6 py-3">Guest</th><th class="px-4 py-3">Room</th><th class="px-4 py-3">Dates</th><th class="px-4 py-3">Status</th><th class="px-6 py-3 text-right">Action</th></tr></thead><tbody>' + rows + '</tbody></table>';
+      }
+
+      function renderDepartures(departures) {
+        var wrap = document.getElementById('departuresBody');
+        document.getElementById('departuresCount').textContent = departures.length + ' guest(s)';
+        if (!departures.length) {
+          wrap.innerHTML = '<div class="px-6 py-10 text-center text-gray-400 text-sm">No departures expected today.</div>';
+          return;
+        }
+        var rows = departures.map(function(b) {
+          return '<tr class="border-b border-gray-50 hover:bg-beige/60 transition">' +
+            '<td class="px-6 py-3.5"><div class="text-sm font-semibold text-gray-800">' + guestName(b) + '</div>' +
+            '<div class="text-xs text-gray-400">' + (b.booking_reference || '') + '</div></td>' +
+            '<td class="px-4 py-3.5 text-sm text-gray-600">' + (b.room_number || '-') + '</td>' +
+            '<td class="px-4 py-3.5 text-sm text-gray-600 whitespace-nowrap">' + fmtDate(b.check_in) + ' &rarr; ' + fmtDate(b.check_out) + '</td>' +
+            '<td class="px-4 py-3.5">' + statusBadge(b.status) + '</td>' +
+            '<td class="px-6 py-3.5 text-right whitespace-nowrap">' +
+            '<button onclick="sendSms(' + b.id + ',\'' + (b.phone || '') + '\',\'' + guestName(b).replace(/'/g, '') + '\')" title="Send checkout SMS" class="border border-gold/40 text-gold text-xs font-bold px-3 py-1.5 rounded-lg mr-2 hover:bg-gold hover:text-navy transition"><i class="fa-solid fa-message"></i> SMS</button>' +
+            '<button onclick="checkOut(' + b.id + ',\'' + (b.phone || '') + '\')" class="bg-navy text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-navy-light transition">Check Out</button></td>' +
+            '</tr>';
+        }).join('');
+        wrap.innerHTML = '<table class="w-full text-left"><thead><tr class="text-[11px] uppercase tracking-wider text-gray-400 border-b border-gray-100"><th class="px-6 py-3">Guest</th><th class="px-4 py-3">Room</th><th class="px-4 py-3">Dates</th><th class="px-4 py-3">Status</th><th class="px-6 py-3 text-right">Action</th></tr></thead><tbody>' + rows + '</tbody></table>';
+      }
+
+      var allRooms = [];
+
+      function loadRooms() {
+        fetch(CONFIG.API_URL + '/rooms?limit=100', { headers: { 'Authorization': 'Bearer ' + getToken() } })
+          .then(function(res) { return res.json(); })
+          .then(function(data) {
+            var rooms = (data.data && data.data.rooms) || [];
+            allRooms = rooms;
+            var grid = document.getElementById('roomsGrid');
+            if (!rooms.length) {
+              grid.innerHTML = '<div class="col-span-full py-10 text-center text-gray-400 text-sm">No rooms found.</div>';
+              return;
+            }
+            var colors = { available: '#22c55e', occupied: '#D4AF37', maintenance: '#ef4444', reserved: '#f59e0b', cleaning: '#3b82f6' };
+            var labels = { available: 'Available', occupied: 'Occupied', maintenance: 'Maintenance', reserved: 'Reserved', cleaning: 'Cleaning' };
+            grid.innerHTML = rooms.map(function(r) {
+              var c = colors[r.status] || '#9ca3af';
+              return '<div class="bg-white rounded-xl border border-gold/15 p-4 transition hover:shadow-md hover:shadow-navy/5">' +
+                '<div class="flex items-center justify-between mb-2">' +
+                '<span class="text-sm font-bold text-navy">Room ' + r.room_number + '</span>' +
+                '<span class="room-status-dot" style="background:' + c + '"></span>' +
+                '</div>' +
+                '<div class="text-xs text-gray-400 font-medium">' + (r.category_name || '') + '</div>' +
+                '<div class="text-xs font-semibold mt-2" style="color:' + c + '">' + (labels[r.status] || r.status) + '</div>' +
+                '</div>';
+            }).join('');
+          })
+          .catch(function() {
+            document.getElementById('roomsGrid').innerHTML = '<div class="col-span-full py-10 text-center text-gray-400 text-sm">Could not load rooms.</div>';
+          });
+      }
+
+      function loadRecent() {
+        apiFetch('/bookings/admin/all?limit=8').then(function(data) {
+          var bookings = (data.data && data.data.bookings) || [];
+          var wrap = document.getElementById('recentBody');
+          if (!bookings.length) {
+            wrap.innerHTML = '<div class="px-6 py-10 text-center text-gray-400 text-sm">No bookings yet.</div>';
+            return;
+          }
+          var rows = bookings.map(function(b) {
+            return '<tr class="border-b border-gray-50 hover:bg-beige/60 transition">' +
+              '<td class="px-6 py-3.5 text-sm font-semibold text-gray-800">' + (b.booking_reference || '-') + '</td>' +
+              '<td class="px-4 py-3.5 text-sm text-gray-600">' + guestName(b) + '</td>' +
+              '<td class="px-4 py-3.5 text-sm text-gray-600">' + (b.room_number || '-') + '</td>' +
+              '<td class="px-4 py-3.5 text-sm text-gray-600 whitespace-nowrap">' + fmtDate(b.check_in) + ' &rarr; ' + fmtDate(b.check_out) + '</td>' +
+              '<td class="px-4 py-3.5 text-sm font-semibold text-navy">KES ' + Number(b.final_amount || 0).toLocaleString() + '</td>' +
+              '<td class="px-6 py-3.5">' + statusBadge(b.status) + '</td>' +
+              '</tr>';
+          }).join('');
+          wrap.innerHTML = '<table class="w-full text-left"><thead><tr class="text-[11px] uppercase tracking-wider text-gray-400 border-b border-gray-100"><th class="px-6 py-3">Reference</th><th class="px-4 py-3">Guest</th><th class="px-4 py-3">Room</th><th class="px-4 py-3">Dates</th><th class="px-4 py-3">Total</th><th class="px-6 py-3">Status</th></tr></thead><tbody>' + rows + '</tbody></table>';
+        }).catch(function() {
+          document.getElementById('recentBody').innerHTML = '<div class="px-6 py-10 text-center text-gray-400 text-sm">Could not load bookings.</div>';
+        });
+      }
+
+      function dateStr(offsetDays) {
+        var d = new Date();
+        d.setDate(d.getDate() + (offsetDays || 0));
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      }
+
+      function openBookingModal() {
+        var sel = document.getElementById('bkRoom');
+        var previous = sel.value;
+        sel.innerHTML = '<option value="">Select a room...</option>';
+        var available = allRooms.filter(function(r) { return r.status === 'available'; });
+        available.forEach(function(r) {
+          var opt = document.createElement('option');
+          opt.value = r.id;
+          opt.textContent = 'Room ' + r.room_number + ' - ' + (r.category_name || '') + ' (KES ' + Number(r.price_per_night || 0).toLocaleString() + '/night)';
+          sel.appendChild(opt);
+        });
+        if (available.some(function(r) { return String(r.id) === previous; })) sel.value = previous;
+
+        document.getElementById('bkCheckIn').value = dateStr(0);
+        document.getElementById('bkCheckOut').value = dateStr(1);
+        document.getElementById('bkError').classList.add('hidden');
+        document.getElementById('bookingModal').classList.remove('hidden');
+        document.getElementById('bkFirstName').focus();
+      }
+
+      function closeBookingModal() {
+        document.getElementById('bookingModal').classList.add('hidden');
+      }
+
+      function showBkError(msg) {
+        var el = document.getElementById('bkError');
+        el.textContent = msg;
+        el.classList.remove('hidden');
+      }
+
+      function submitBooking() {
+        var firstName = document.getElementById('bkFirstName').value.trim();
+        var lastName = document.getElementById('bkLastName').value.trim();
+        var phone = document.getElementById('bkPhone').value.trim();
+        var email = document.getElementById('bkEmail').value.trim();
+        var roomId = document.getElementById('bkRoom').value;
+        var checkIn = document.getElementById('bkCheckIn').value;
+        var checkOut = document.getElementById('bkCheckOut').value;
+        var adults = parseInt(document.getElementById('bkAdults').value, 10) || 1;
+        var children = parseInt(document.getElementById('bkChildren').value, 10) || 0;
+        var specialRequests = document.getElementById('bkSpecial').value.trim();
+
+        if (!firstName || !lastName) { showBkError('Guest first and last name are required.'); return; }
+        if (!roomId) { showBkError('Please select a room.'); return; }
+        if (!checkIn || !checkOut) { showBkError('Please select check-in and check-out dates.'); return; }
+        if (checkOut <= checkIn) { showBkError('Check-out must be after check-in.'); return; }
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showBkError('Please enter a valid email address or leave it blank.'); return; }
+
+        var btn = document.getElementById('bkSubmitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2 text-xs"></i>Creating...';
+        document.getElementById('bkError').classList.add('hidden');
+
+        apiFetch('/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            roomId: parseInt(roomId, 10),
+            checkIn: checkIn,
+            checkOut: checkOut,
+            adults: adults,
+            children: children,
+            specialRequests: specialRequests,
+            guest: { firstName: firstName, lastName: lastName, phone: phone, email: email }
+          })
+        }).then(function(data) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-check mr-2 text-xs"></i>Create Booking';
+          var ref = (data.data && data.data.booking && data.data.booking.booking_reference) || '';
+          closeBookingModal();
+          Swal.fire({
+            icon: 'success', title: 'Booking Created!',
+            text: ref ? 'Booking reference: ' + ref : 'The walk-in booking has been created.',
+            confirmButtonColor: '#D4AF37'
+          }).then(function() { refreshAll(); });
+        }).catch(function(err) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-check mr-2 text-xs"></i>Create Booking';
+          showBkError(err.message || 'Could not create the booking.');
+        });
+      }
+
+      function refreshAll() {
+        loadStats();
+        loadRooms();
+        loadAttendance();
+        if (canManageBookings) loadRecent();
+      }
+
+      // Notifications
+      function timeAgo(dt) {
+        if (!dt) return '';
+        var s = Math.floor((Date.now() - new Date(dt).getTime()) / 1000);
+        if (s < 60) return 'just now';
+        if (s < 3600) return Math.floor(s / 60) + 'm ago';
+        if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+        return Math.floor(s / 86400) + 'd ago';
+      }
+      function notifIcon(type) {
+        if (type === 'booking') return 'fa-calendar-check';
+        if (type === 'payment') return 'fa-credit-card';
+        if (type === 'review') return 'fa-star';
+        if (type === 'promotion') return 'fa-tag';
+        return 'fa-circle-info';
+      }
+      function loadNotifications() {
+        if (!getToken()) return;
+        apiFetch('/notifications?limit=20').then(function(data) {
+          var notifs = (data.data && data.data.notifications) || [];
+          var unread = (data.data && data.data.unreadCount) || 0;
+          var badge = document.getElementById('notifBadge');
+          if (unread > 0) { badge.textContent = unread > 9 ? '9+' : unread; badge.style.display = 'flex'; }
+          else { badge.style.display = 'none'; }
+          var list = document.getElementById('notifList');
+          var empty = document.getElementById('notifEmpty');
+          if (notifs.length === 0) {
+            empty.classList.remove('hidden');
+            list.innerHTML = '';
+          } else {
+            empty.classList.add('hidden');
+            list.innerHTML = notifs.map(function(n) {
+              return '<button onclick="markNotifRead(' + n.id + ')" class="w-full text-left px-4 py-3 border-b border-white/5 hover:bg-white/5 transition ' + (n.is_read ? 'opacity-60' : '') + '">' +
+                '<div class="flex items-start gap-2.5">' +
+                '<i class="fas ' + notifIcon(n.type) + ' text-xs mt-0.5 ' + (n.is_read ? 'text-white/30' : 'text-gold') + '"></i>' +
+                '<div class="flex-1">' +
+                '<div class="text-white text-sm font-semibold">' + n.title + '</div>' +
+                '<div class="text-white/50 text-xs mt-0.5">' + n.message + '</div>' +
+                '<div class="text-white/30 text-[10px] mt-1">' + timeAgo(n.created_at) + '</div>' +
+                '</div></div></button>';
+            }).join('');
+          }
+        }).catch(function() {});
+      }
+      function markNotifRead(id) {
+        apiFetch('/notifications/' + id + '/read', { method: 'PUT' }).then(function() { loadNotifications(); }).catch(function() {});
+      }
+
+      // Role-based UI setup
+      var roleNames = {
+        receptionist: 'Front Desk',
+        housekeeping: 'Housekeeping',
+        restaurant_staff: 'Restaurant Staff',
+        manager: 'Manager'
+      };
+      var roleTitles = {
+        receptionist: 'Receptionist',
+        housekeeping: 'Housekeeping Staff',
+        restaurant_staff: 'Restaurant Staff',
+        manager: 'Hotel Manager'
+      };
+      var roleWelcome = {
+        receptionist: 'Welcome! Here is today\'s front desk status at a glance.',
+        housekeeping: 'Welcome! Here is today\'s room status for your team.',
+        restaurant_staff: 'Welcome! Here is today\'s hotel overview.',
+        manager: 'Welcome! Here is the hotel overview.'
+      };
+
+      document.getElementById('todayLabel').textContent = new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+      if (currentUser) {
+        var role = currentUser.role || '';
+        document.getElementById('roleLabel').textContent = roleNames[role] || 'Employee';
+        document.getElementById('welcomeMsg').textContent = roleWelcome[role] || 'Welcome! Here is today\'s status at a glance.';
+        if (currentUser.firstName) {
+          var full = currentUser.firstName + ' ' + (currentUser.lastName || '');
+          document.getElementById('profileName').textContent = full;
+          document.getElementById('profileName2').textContent = full;
+          document.getElementById('profileInitials').textContent = (currentUser.firstName.charAt(0) + ((currentUser.lastName || '').charAt(0) || '')).toUpperCase();
+        }
+        if (currentUser.email) document.getElementById('profileEmail').textContent = currentUser.email;
+      }
+
+      if (canManageBookings) {
+        document.getElementById('staySection').style.display = '';
+        document.getElementById('recentSection').style.display = '';
+        document.getElementById('newBookingBtn').style.display = '';
+        document.getElementById('frontDeskLabel').style.display = '';
+        document.getElementById('navArrivals').style.display = '';
+        document.getElementById('navDepartures').style.display = '';
+        document.getElementById('navBookings').style.display = '';
+      }
+
+      // Profile dropdown
+      var profileToggle = document.getElementById('profileToggle');
+      var profileDropdown = document.getElementById('profileDropdown');
+      profileToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('show');
+      });
+      document.addEventListener('click', function(e) {
+        if (!profileDropdown.contains(e.target)) profileDropdown.classList.remove('show');
+      });
+      document.getElementById('logoutBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        Auth.logout();
+      });
+
+      // Notifications dropdown
+      var notifBtn = document.getElementById('notifBtn');
+      var notifDropdown = document.getElementById('notifDropdown');
+      notifBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        notifDropdown.classList.toggle('show');
+        if (notifDropdown.classList.contains('show')) loadNotifications();
+      });
+      document.addEventListener('click', function(e) {
+        if (!notifDropdown.contains(e.target)) notifDropdown.classList.remove('show');
+      });
+      document.getElementById('notifMarkAll').addEventListener('click', function() {
+        apiFetch('/notifications/read-all', { method: 'PUT' }).then(function() { loadNotifications(); }).catch(function() {});
+      });
+
+      // Smooth scroll for sidebar anchors
+      document.querySelectorAll('.nav-link[href^="#"]').forEach(function(a) {
+        a.addEventListener('click', function(e) {
+          var t = document.getElementById(a.getAttribute('href').slice(1));
+          if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+          document.getElementById('adminSidebar').classList.remove('open');
+          document.getElementById('sidebarOverlay').classList.remove('active');
+        });
+      });
+
+      // ─── Biometric Attendance ───────────────────────────
+      var attState = { today: null, action: 'in' };
+      var mediaStream = null;
+      var capturedBlob = null;
+      var enrolledPhotoUrl = null;
+
+      function fmtTime(dt) {
+        if (!dt) return '--:--';
+        var d = new Date(dt);
+        if (isNaN(d.getTime())) {
+          var m = String(dt).slice(11, 16);
+          if (m === '' && String(dt).length >= 8) m = String(dt).slice(0, 5);
+          return m || '--:--';
+        }
+        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+
+      function loadAttendance() {
+        if (!getToken()) return;
+        apiFetch('/attendance/my-status').then(function(data) {
+          var emp = data.data.employee;
+          var today = data.data.today;
+          attState.today = today;
+          enrolledPhotoUrl = emp && emp.profile_photo ? (emp.profile_photo.indexOf('http') === 0 ? emp.profile_photo : CONFIG.API_URL + emp.profile_photo) : null;
+
+          document.getElementById('attEmpCode').textContent = emp.employee_code || '--';
+          document.getElementById('attDept').textContent = emp.department || '--';
+          document.getElementById('attShiftBadge').textContent = 'Shift: ' +
+            (emp.shift_start ? fmtTime(emp.shift_start) + ' - ' + (emp.shift_end ? fmtTime(emp.shift_end) : '--') : '--');
+
+          var hello = document.getElementById('attHello');
+          if (currentUser && currentUser.firstName) hello.textContent = 'Good day, ' + currentUser.firstName + '!';
+
+          var inBtn = document.getElementById('attClockInBtn');
+          var outBtn = document.getElementById('attClockOutBtn');
+          var badge = document.getElementById('attStatusBadge');
+          var lateWrap = document.getElementById('attLateWrap');
+
+          document.getElementById('attClockIn').textContent = today && today.clock_in ? fmtTime(today.clock_in) : '--:--';
+          document.getElementById('attClockOut').textContent = today && today.clock_out ? fmtTime(today.clock_out) : '--:--';
+          document.getElementById('attHours').textContent = today && today.total_hours ? today.total_hours + 'h' : '--';
+
+          if (today && today.clock_in && !today.clock_out) {
+            badge.textContent = today.status === 'late' ? ('Late by ' + today.late_minutes + ' min') : 'Clocked in';
+            badge.className = 'badge ' + (today.status === 'late' ? 'bg-red-400/20 text-red-300' : 'bg-green-400/20 text-green-300');
+            inBtn.style.display = 'none';
+            outBtn.style.display = 'flex';
+            outBtn.disabled = false;
+          } else if (today && today.clock_out) {
+            badge.textContent = 'Completed';
+            badge.className = 'badge bg-green-400/20 text-green-300';
+            inBtn.style.display = 'none';
+            outBtn.style.display = 'none';
+          } else {
+            badge.textContent = 'Not clocked in';
+            badge.className = 'badge bg-gold/15 text-gold';
+            inBtn.style.display = 'flex';
+            outBtn.style.display = 'none';
+          }
+
+          if (today && today.late_minutes > 0) {
+            lateWrap.style.display = 'inline-flex';
+            document.getElementById('attLate').textContent = today.late_minutes + ' min late';
+          } else {
+            lateWrap.style.display = 'none';
+          }
+
+          var remoteWrap = document.getElementById('attRemoteWrap');
+          if (today && today.is_remote) {
+            remoteWrap.style.display = 'inline-flex';
+          } else {
+            remoteWrap.style.display = 'none';
+          }
+        }).catch(function(err) {
+          document.getElementById('attStatusBadge').textContent = err.message || 'Attendance unavailable';
+        });
+      }
+
+      function stopCamera() {
+        if (mediaStream) {
+          mediaStream.getTracks().forEach(function(t) { t.stop(); });
+          mediaStream = null;
+        }
+        capturedBlob = null;
+      }
+
+      function openCameraModal(action) {
+        attState.action = action;
+        capturedBlob = null;
+        document.getElementById('cameraTitle').textContent = action === 'in' ? 'Clock In - Face Verification' : 'Clock Out - Face Verification';
+        document.getElementById('cameraHint').textContent = action === 'in'
+          ? 'Welcome back! Position your face within the frame and look directly at the camera.'
+          : 'Thank you! Position your face within the frame to complete your shift.';
+        document.getElementById('cameraCompare').classList.add('hidden');
+        document.getElementById('cameraSnapshot').classList.add('hidden');
+        document.getElementById('cameraSnapEmpty').classList.remove('hidden');
+        document.getElementById('cameraScanOverlay').classList.remove('hidden');
+        document.getElementById('cameraCaptureBtn').classList.remove('hidden');
+        document.getElementById('cameraSubmitBtn').classList.add('hidden');
+        document.getElementById('cameraRetakeBtn').classList.add('hidden');
+        document.getElementById('cameraErr').classList.add('hidden');
+        document.getElementById('cameraErr').textContent = '';
+        document.getElementById('cameraOkWrap').classList.add('hidden');
+        document.getElementById('cameraPlaceholder').textContent = 'Starting camera...';
+        if (enrolledPhotoUrl) {
+          document.getElementById('cameraRefImg').src = enrolledPhotoUrl;
+          document.getElementById('cameraRefImg').classList.remove('hidden');
+          document.getElementById('cameraRefEmpty').classList.add('hidden');
+        } else {
+          document.getElementById('cameraRefImg').classList.add('hidden');
+          document.getElementById('cameraRefEmpty').classList.remove('hidden');
+        }
+        document.getElementById('cameraModal').classList.remove('hidden');
+
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' }, audio: false })
+            .then(function(stream) {
+              mediaStream = stream;
+              var v = document.getElementById('cameraPreview');
+              v.srcObject = stream;
+              v.play().catch(function() {});
+              document.getElementById('cameraPlaceholder').style.display = 'none';
+            })
+            .catch(function(err) {
+              document.getElementById('cameraErr').classList.remove('hidden');
+              document.getElementById('cameraErr').textContent = 'Could not access your camera: ' + (err.name === 'NotAllowedError' ? 'permission denied. Allow camera access and try again.' : err.message || 'unknown error');
+              document.getElementById('cameraPlaceholder').textContent = 'Camera unavailable';
+              document.getElementById('cameraCaptureBtn').disabled = true;
+            });
+        } else {
+          document.getElementById('cameraErr').classList.remove('hidden');
+          document.getElementById('cameraErr').textContent = 'Your browser does not support camera access. Please use a modern browser.';
+          document.getElementById('cameraPlaceholder').textContent = 'Camera unavailable';
+        }
+      }
+
+      function closeCameraModal() {
+        stopCamera();
+        document.getElementById('cameraModal').classList.add('hidden');
+      }
+
+      function captureCamera() {
+        var v = document.getElementById('cameraPreview');
+        if (!v.srcObject || v.readyState < 2) {
+          document.getElementById('cameraErr').classList.remove('hidden');
+          document.getElementById('cameraErr').textContent = 'Camera is not ready yet. Please wait a moment and try again.';
+          return;
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = v.videoWidth || 640;
+        canvas.height = v.videoHeight || 480;
+        canvas.getContext('2d').drawImage(v, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(function(blob) {
+          capturedBlob = blob;
+          var snap = document.getElementById('cameraSnapshot');
+          snap.src = canvas.toDataURL('image/jpeg', 0.85);
+          snap.classList.remove('hidden');
+          document.getElementById('cameraSnapEmpty').classList.add('hidden');
+          document.getElementById('cameraPreviewWrap').classList.add('hidden');
+          document.getElementById('cameraCompare').classList.remove('hidden');
+          document.getElementById('cameraScanOverlay').classList.add('hidden');
+          document.getElementById('cameraCaptureBtn').classList.add('hidden');
+          document.getElementById('cameraSubmitBtn').classList.remove('hidden');
+          document.getElementById('cameraRetakeBtn').classList.remove('hidden');
+          document.getElementById('cameraSubmitBtn').disabled = false;
+          document.getElementById('cameraOkWrap').classList.remove('hidden');
+          document.getElementById('cameraOkText').textContent = attState.action === 'in' ? 'Identity captured. Compare your face to the registered photo, then submit.' : 'Identity captured. Compare your face to the registered photo, then submit.';
+        }, 'image/jpeg', 0.85);
+      }
+
+      function retakeCamera() {
+        capturedBlob = null;
+        document.getElementById('cameraCompare').classList.add('hidden');
+        document.getElementById('cameraSnapshot').classList.add('hidden');
+        document.getElementById('cameraSnapEmpty').classList.remove('hidden');
+        document.getElementById('cameraPreviewWrap').classList.remove('hidden');
+        document.getElementById('cameraPreview').style.opacity = '1';
+        document.getElementById('cameraScanOverlay').classList.remove('hidden');
+        document.getElementById('cameraSubmitBtn').classList.add('hidden');
+        document.getElementById('cameraSubmitBtn').disabled = true;
+        document.getElementById('cameraRetakeBtn').classList.add('hidden');
+        document.getElementById('cameraCaptureBtn').classList.remove('hidden');
+        document.getElementById('cameraOkWrap').classList.add('hidden');
+      }
+
+      function getLocation() {
+        return new Promise(function(resolve) {
+          if (!navigator.geolocation) { resolve(null); return; }
+          navigator.geolocation.getCurrentPosition(function(pos) {
+            resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+          }, function() {
+            resolve(null);
+          }, { timeout: 10000, maximumAge: 60000, enableHighAccuracy: true });
+        });
+      }
+
+      function submitAttendance() {
+        if (!capturedBlob) {
+          Swal.fire({ icon: 'warning', title: 'No photo captured', text: 'Please capture your face first.', confirmButtonColor: '#D4AF37' });
+          return;
+        }
+        var btn = document.getElementById('cameraSubmitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2 text-xs"></i>Getting location...';
+        getLocation().then(function(pos) {
+          var fd = new FormData();
+          fd.append('photo', capturedBlob, 'attendance_' + Date.now() + '.jpg');
+          if (pos) {
+            fd.append('latitude', pos.latitude);
+            fd.append('longitude', pos.longitude);
+          }
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2 text-xs"></i>Submitting...';
+          return apiFetch('/attendance/' + (attState.action === 'in' ? 'clock-in' : 'clock-out'), { method: 'POST', body: fd })
+            .then(function(res) {
+              btn.disabled = false;
+              closeCameraModal();
+              if (!pos) {
+                Swal.fire({ icon: 'warning', title: attState.action === 'in' ? 'Clocked In (Remote)' : 'Clocked Out (Remote)', text: (res.message || '') + ' Your location could not be verified - this has been flagged for admin review.', confirmButtonColor: '#D4AF37', timer: 5000, timerProgressBar: true });
+                loadAttendance();
+                return;
+              }
+              Swal.fire({ icon: 'success', title: attState.action === 'in' ? 'Clocked In!' : 'Clocked Out!', text: res.message, confirmButtonColor: '#D4AF37', timer: 3000, timerProgressBar: true });
+              loadAttendance();
+            })
+            .catch(function(err) {
+              btn.disabled = false;
+              btn.innerHTML = '<i class="fas fa-check mr-2 text-xs"></i>Submit';
+              Swal.fire({ icon: 'error', title: 'Failed', text: err.message || 'Could not submit attendance.', confirmButtonColor: '#D4AF37' });
+            });
+        }).catch(function() {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-check mr-2 text-xs"></i>Submit';
+        });
+      }
+
+      refreshAll();
+    </script>
+</body>
+</html>

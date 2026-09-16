@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create your Everett Hotel account to start booking luxury accommodations and exclusive experiences.">
+  <title>Register | Everett Hotel</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="preload" href="/vendor/fontawesome/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css"></noscript>
+  <link rel="stylesheet" href="css/main.css">
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: { navy: '#8B5E34', 'navy-light': '#A67C52', gold: '#D4AF37', 'gold-light': '#D4BC8A', beige: '#FAF7F2', charcoal: '#211A14', emerald: '#0F766E' },
+        fontFamily: { inter: ['Inter', 'sans-serif'] },
+      },
+    },
+  }
+  </script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #FAF7F2; color: #211A14; overflow-x: hidden; }
+    .gold-gradient-text { background: linear-gradient(135deg, #D4AF37 0%, #D4BC8A 50%, #D4AF37 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .btn-gold { background: #D4AF37; color: #8B5E34; font-weight: 700; letter-spacing: 0.5px; transition: all 0.3s ease; }
+    .btn-gold:hover { background: #D4BC8A; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,169,106,0.35); }
+    .booking-input:focus { border-color: #D4AF37; box-shadow: 0 0 0 3px rgba(200,169,106,0.15); outline: none; }
+    .booking-input.error { border-color: #dc3545; }
+    .page-loader { position: fixed; inset: 0; background: #24180F; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; transition: opacity 0.6s ease, visibility 0.6s ease; }
+    .page-loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-text { font-family: 'Playfair Display', serif; font-size: 3.2rem; letter-spacing: 14px; color: #D4AF37; font-weight: 400; animation: loaderPulse 1.6s ease-in-out infinite; }
+    .loader-sub { color: rgba(255,255,255,0.35); font-size: 0.65rem; letter-spacing: 8px; text-transform: uppercase; margin-top: 10px; }
+    .loader-line { width: 160px; height: 1px; background: rgba(212,175,55,0.2); margin-top: 24px; overflow: hidden; }
+    .loader-line::after { content: ''; display: block; width: 50%; height: 100%; background: #D4AF37; animation: loaderLine 1.4s ease-in-out infinite; }
+    @keyframes loaderPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+    @keyframes loaderLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+    .auth-error { display: none; background: rgba(220,53,69,0.1); border: 1px solid rgba(220,53,69,0.2); border-radius: 12px; padding: 12px 16px; font-size: 14px; color: #dc3545; }
+    .auth-error.show { display: flex; align-items: center; gap: 8px; }
+    .form-error { display: none; font-size: 12px; color: #dc3545; margin-top: 4px; }
+    .form-error.show { display: block; }
+    .btn-auth { width: 100%; padding: 14px; font-size: 15px; font-weight: 700; border-radius: 12px; border: none; cursor: pointer; background: linear-gradient(135deg, #D4AF37, #D4BC8A); color: #8B5E34; font-family: 'Inter', sans-serif; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-auth:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(200,169,106,0.4); }
+    .btn-auth:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-auth .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(139,94,52,0.2); border-top-color: #8B5E34; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    .btn-auth.loading .spinner { display: inline-block; }
+    .btn-auth.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .password-strength-bar { height: 4px; border-radius: 2px; background: #e5e7eb; overflow: hidden; margin-bottom: 4px; }
+    .password-strength-fill { height: 100%; border-radius: 2px; transition: all 0.3s ease; width: 0%; }
+    .password-strength-text { font-size: 12px; color: #888; }
+    .password-strength[data-strength="weak"] .password-strength-fill { width: 25%; background: #dc3545; }
+    .password-strength[data-strength="fair"] .password-strength-fill { width: 50%; background: #fd7e14; }
+    .password-strength[data-strength="good"] .password-strength-fill { width: 75%; background: #20c997; }
+    .password-strength[data-strength="strong"] .password-strength-fill { width: 100%; background: #198754; }
+  </style>
+</head>
+<body class="font-inter">
+
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-text">EVERETT</div>
+    <div class="loader-sub">Luxury Hotel</div>
+    <div class="loader-line"></div>
+  </div>
+
+  <div class="min-h-screen flex">
+    <!-- Brand Side -->
+    <div class="hidden lg:flex flex-1 items-center justify-center relative overflow-hidden" style="background:linear-gradient(135deg, #8B5E34 0%, #A67C52 50%, #8B5E34 100%);">
+      <div class="absolute inset-0 opacity-10" style="background: url('images/about.jpg') center/cover no-repeat;"></div>
+      <div class="absolute inset-0" style="background:linear-gradient(135deg, rgba(139,94,52,0.92), rgba(139,94,52,0.85));"></div>
+      <div class="relative z-10 text-center max-w-md px-8">
+        <div class="mb-8">
+          <span class="text-white text-3xl tracking-[10px] font-light">EVERETT</span><br>
+          <span class="text-gold text-xs tracking-[5px] font-medium">HOTEL</span>
+        </div>
+        <div class="w-16 h-0.5 mx-auto mb-8" style="background:#D4AF37;"></div>
+        <p class="text-white/90 text-xl italic leading-relaxed mb-8" style="font-family:Georgia,serif;">"Begin your journey of elegance. Join a world of unparalleled luxury and exclusive privileges."</p>
+        <span class="text-white/50 text-xs tracking-[3px] uppercase">Create Your Account</span>
+      </div>
+    </div>
+
+    <!-- Form Side -->
+    <div class="flex-1 flex flex-col justify-center items-center px-6 py-12 overflow-y-auto" style="background:#FAF7F2;">
+      <div class="w-full max-w-lg">
+        <div class="lg:hidden text-center mb-8">
+          <a href="index.html" class="inline-block">
+            <span class="text-navy text-2xl tracking-[8px] font-light">EVERETT</span><br>
+            <span class="text-gold text-[10px] tracking-[4px] font-medium">HOTEL</span>
+          </a>
+        </div>
+
+        <h2 class="text-3xl font-extrabold mb-2" style="color:#8B5E34;">Create Account</h2>
+        <p class="text-sm mb-6" style="color:#888;">Fill in your details to get started</p>
+
+        <div class="auth-error" id="registerError">
+          <i class="fas fa-circle-exclamation"></i>
+          <span id="registerErrorText"></span>
+        </div>
+
+        <form id="registerForm" novalidate class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-1.5" style="color:#8B5E34;">First Name</label>
+              <div class="relative">
+                <i class="fas fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                <input type="text" class="booking-input w-full p-3 pl-10 rounded-xl border border-gray-200 text-sm bg-white" id="firstName" name="firstName" placeholder="John" required>
+              </div>
+              <div class="form-error" id="firstNameError">First name is required</div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1.5" style="color:#8B5E34;">Last Name</label>
+              <div class="relative">
+                <i class="fas fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                <input type="text" class="booking-input w-full p-3 pl-10 rounded-xl border border-gray-200 text-sm bg-white" id="lastName" name="lastName" placeholder="Doe" required>
+              </div>
+              <div class="form-error" id="lastNameError">Last name is required</div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1.5" style="color:#8B5E34;">Email Address</label>
+            <div class="relative">
+              <i class="fas fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+              <input type="email" class="booking-input w-full p-3 pl-10 rounded-xl border border-gray-200 text-sm bg-white" id="email" name="email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-error" id="emailError">Please enter a valid email address</div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1.5" style="color:#8B5E34;">Phone Number</label>
+            <div class="relative">
+              <i class="fas fa-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+              <input type="tel" class="booking-input w-full p-3 pl-10 rounded-xl border border-gray-200 text-sm bg-white" id="phone" name="phone" placeholder="+254 7XX XXX XXX">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1.5" style="color:#8B5E34;">Password</label>
+            <div class="relative">
+              <i class="fas fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+              <input type="password" class="booking-input w-full p-3 pl-10 rounded-xl border border-gray-200 text-sm bg-white" id="password" name="password" placeholder="Create a strong password" required minlength="8">
+            </div>
+            <div class="password-strength mt-2" id="passwordStrength">
+              <div class="password-strength-bar"><div class="password-strength-fill"></div></div>
+              <span class="password-strength-text"></span>
+            </div>
+            <div class="mt-2 space-y-1" id="passwordHints">
+              <div class="flex items-center gap-2 text-xs" id="hintLength"><i class="fas fa-circle text-[8px]" style="color:#ccc;"></i> At least 8 characters</div>
+              <div class="flex items-center gap-2 text-xs" id="hintUpper"><i class="fas fa-circle text-[8px]" style="color:#ccc;"></i> One uppercase letter</div>
+              <div class="flex items-center gap-2 text-xs" id="hintLower"><i class="fas fa-circle text-[8px]" style="color:#ccc;"></i> One lowercase letter</div>
+              <div class="flex items-center gap-2 text-xs" id="hintNumber"><i class="fas fa-circle text-[8px]" style="color:#ccc;"></i> One number</div>
+            </div>
+            <div class="form-error" id="passwordError">Password does not meet requirements</div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1.5" style="color:#8B5E34;">Confirm Password</label>
+            <div class="relative">
+              <i class="fas fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+              <input type="password" class="booking-input w-full p-3 pl-10 rounded-xl border border-gray-200 text-sm bg-white" id="confirmPassword" name="confirmPassword" placeholder="Re-enter your password" required>
+            </div>
+            <div class="form-error" id="confirmPasswordError">Passwords do not match</div>
+          </div>
+
+          <div>
+            <label class="flex items-start gap-2 cursor-pointer">
+              <input type="checkbox" id="terms" name="terms" required class="w-4 h-4 accent-[#D4AF37] mt-0.5">
+              <span class="text-sm" style="color:#888;line-height:1.5;">I agree to the <a href="terms.html" style="color:#D4AF37;font-weight:600;">Terms of Service</a> and <a href="privacy-policy.html" style="color:#D4AF37;font-weight:600;">Privacy Policy</a></span>
+            </label>
+            <div class="form-error" id="termsError" style="padding-left:24px;">You must accept the terms</div>
+          </div>
+
+          <button type="submit" class="btn-auth mt-2" id="registerBtn">
+            <span class="btn-text"><i class="fas fa-user-plus"></i> Create Account</span>
+            <span class="spinner"></span>
+          </button>
+        </form>
+
+        <p class="text-center text-sm mt-6" style="color:#888;">
+          Already have an account? <a href="login.html" class="font-bold" style="color:#D4AF37;">Sign in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/vendor/sweetalert2/sweetalert2.min.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/theme.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/animations.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() { document.getElementById('pageLoader').classList.add('hidden'); }, 1200);
+
+      var savedTheme = localStorage.getItem('everett_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+
+      var registerForm = document.getElementById('registerForm');
+      var registerBtn = document.getElementById('registerBtn');
+      var registerError = document.getElementById('registerError');
+      var registerErrorText = document.getElementById('registerErrorText');
+
+      function showError(msg) { registerErrorText.textContent = msg; registerError.classList.add('show'); }
+      function hideError() { registerError.classList.remove('show'); }
+      function setLoading(loading) { registerBtn.disabled = loading; registerBtn.classList.toggle('loading', loading); }
+      function showFieldError(id, show) {
+        var el = document.getElementById(id);
+        if (el) el.classList.toggle('show', show);
+        if (el && el.parentElement) { var inp = el.parentElement.querySelector('.booking-input'); if (inp) inp.classList.toggle('error', show); }
+      }
+      function clearFieldErrors() {
+        document.querySelectorAll('.form-error').forEach(function(e) { e.classList.remove('show'); });
+        document.querySelectorAll('.booking-input.error').forEach(function(e) { e.classList.remove('error'); });
+      }
+      function validateEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+      function getPasswordStrength(password) {
+        var score = 0;
+        if (password.length >= 8) score++;
+        if (password.length >= 12) score++;
+        if (/[A-Z]/.test(password)) score++;
+        if (/[0-9]/.test(password)) score++;
+        if (/[^A-Za-z0-9]/.test(password)) score++;
+        if (score <= 1) return { level: 'weak', text: 'Weak password' };
+        if (score <= 2) return { level: 'fair', text: 'Fair password' };
+        if (score <= 3) return { level: 'good', text: 'Good password' };
+        return { level: 'strong', text: 'Strong password' };
+      }
+
+      var passwordInput = document.getElementById('password');
+      var strengthEl = document.getElementById('passwordStrength');
+      passwordInput.addEventListener('input', function() {
+        var val = this.value;
+        if (!val) { strengthEl.removeAttribute('data-strength'); strengthEl.querySelector('.password-strength-text').textContent = ''; updateHints(val); return; }
+        var result = getPasswordStrength(val);
+        strengthEl.setAttribute('data-strength', result.level);
+        strengthEl.querySelector('.password-strength-text').textContent = result.text;
+        updateHints(val);
+      });
+
+      function updateHints(val) {
+        var checks = { length: val.length >= 8, upper: /[A-Z]/.test(val), lower: /[a-z]/.test(val), number: /[0-9]/.test(val) };
+        Object.keys(checks).forEach(function(k) {
+          var el = document.getElementById('hint' + k.charAt(0).toUpperCase() + k.slice(1));
+          if (el) { var icon = el.querySelector('i'); icon.style.color = checks[k] ? '#198754' : '#ccc'; }
+        });
+      }
+
+      function validateForm() {
+        clearFieldErrors();
+        var valid = true;
+        var firstName = document.getElementById('firstName').value.trim();
+        var lastName = document.getElementById('lastName').value.trim();
+        var email = document.getElementById('email').value.trim();
+        var password = document.getElementById('password').value;
+        var confirmPassword = document.getElementById('confirmPassword').value;
+        var terms = document.getElementById('terms').checked;
+        if (!firstName) { showFieldError('firstNameError', true); valid = false; }
+        if (!lastName) { showFieldError('lastNameError', true); valid = false; }
+        if (!email || !validateEmail(email)) { showFieldError('emailError', true); valid = false; }
+        if (!password || password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) { showFieldError('passwordError', true); valid = false; }
+        if (password !== confirmPassword) { showFieldError('confirmPasswordError', true); valid = false; }
+        if (!terms) { showFieldError('termsError', true); valid = false; }
+        return valid;
+      }
+
+      registerForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        hideError();
+        if (!validateForm()) return;
+        setLoading(true);
+        var data = {
+          firstName: document.getElementById('firstName').value.trim(),
+          lastName: document.getElementById('lastName').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          phone: document.getElementById('phone').value.trim(),
+          password: document.getElementById('password').value,
+          confirmPassword: document.getElementById('confirmPassword').value
+        };
+        try {
+          await Auth.register(data);
+          if (typeof Swal !== 'undefined') {
+            await Swal.fire({ icon: 'success', title: 'Account Created!', text: 'A verification link has been sent to your email. Please verify your email before signing in.', confirmButtonColor: '#D4AF37', background: '#8B5E34', color: '#fff' });
+          }
+          window.location.href = 'login.html';
+        } catch (err) {
+          showError(err.message || 'Registration failed. Please try again.');
+          setLoading(false);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

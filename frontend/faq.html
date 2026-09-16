@@ -1,0 +1,528 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Frequently asked questions about Everett Hotel policies, reservations, amenities, and guest services.">
+  <meta name="keywords" content="hotel FAQ, hotel policies, guest questions, hotel help, frequently asked questions">
+  <meta name="author" content="Everett Hotel">
+  <meta name="theme-color" content="#8B5E34">
+  <title>FAQ | Everett Hotel</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="preload" href="/vendor/fontawesome/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css"></noscript>
+  <link rel="stylesheet" href="/vendor/swiper/swiper-bundle.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/luxury.css">
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          navy: '#8B5E34',
+          'navy-light': '#A67C52',
+          'navy-deep': '#24180F',
+          gold: '#D4AF37',
+          'gold-light': '#D4BC8A',
+          'gold-soft': '#C9A227',
+          beige: '#FAF7F2',
+          'beige-dark': '#EDE7DB',
+          ivory: '#F3E9DC',
+          charcoal: '#211A14',
+          emerald: '#0F766E',
+        },
+        fontFamily: {
+          inter: ['Inter', 'sans-serif'],
+          serif: ['Playfair Display', 'Georgia', 'serif'],
+        },
+      },
+    },
+  }
+  </script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #FAF7F2; color: #211A14; overflow-x: hidden; }
+    .font-serif { font-family: 'Playfair Display', Georgia, serif; }
+    .nav-scrolled { background: rgba(36,24,15,0.92) !important; backdrop-filter: blur(24px) !important; box-shadow: 0 8px 40px rgba(0,0,0,0.35) !important; }
+    .page-loader { position: fixed; inset: 0; background: #24180F; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; transition: opacity 0.6s ease, visibility 0.6s ease; }
+    .page-loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-text { font-family: 'Playfair Display', serif; font-size: 3.2rem; letter-spacing: 14px; color: #D4AF37; font-weight: 400; animation: loaderPulse 1.6s ease-in-out infinite; }
+    .loader-sub { color: rgba(255,255,255,0.35); font-size: 0.65rem; letter-spacing: 8px; text-transform: uppercase; margin-top: 10px; }
+    .loader-line { width: 160px; height: 1px; background: rgba(212,175,55,0.2); margin-top: 24px; overflow: hidden; }
+    .loader-line::after { content: ''; display: block; width: 50%; height: 100%; background: #D4AF37; animation: loaderLine 1.4s ease-in-out infinite; }
+    @keyframes loaderPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+    @keyframes loaderLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+    .lux-hero-center { align-items: center; text-align: center; }
+    .lux-breadcrumb.lux-breadcrumb-center { justify-content: center; }
+    .faq-search-input { border: 1px solid rgba(33,26,20,0.12); border-radius: 18px; background: #fff; color: #211A14; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(139,94,52,0.03); }
+    .faq-search-input::placeholder { color: rgba(33,26,20,0.35); }
+    .faq-search-input:focus { outline: none; border-color: #D4AF37; box-shadow: 0 0 0 3px rgba(212,175,55,0.18); }
+    .category-btn { transition: all 0.3s ease; }
+    .category-btn.active { background: linear-gradient(120deg, #D4AF37, #C9A227) !important; color: #8B5E34 !important; border-color: #D4AF37 !important; box-shadow: 0 8px 24px rgba(200,169,106,0.35) !important; }
+    .accordion-item { background: #fff; border-radius: 20px; border: 1px solid rgba(139,94,52,0.06); overflow: hidden; transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); box-shadow: 0 1px 2px rgba(139,94,52,0.03); }
+    .accordion-item:hover { border-color: rgba(212,175,55,0.35); transform: translateY(-2px); }
+    .accordion-item.open { border-color: rgba(212,175,55,0.45); box-shadow: 0 16px 40px rgba(139,94,52,0.09); }
+    .accordion-btn { width: 100%; padding: 26px 28px; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; cursor: pointer; text-align: left; gap: 18px; transition: background 0.3s ease; }
+    .accordion-btn:hover { background: rgba(212,175,55,0.04); }
+    .accordion-icon { color: #D4AF37; font-size: 16px; flex-shrink: 0; width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(212,175,55,0.14), rgba(212,175,55,0.04)); border: 1px solid rgba(212,175,55,0.25); transition: all 0.3s ease; }
+    .accordion-item.open .accordion-icon { background: linear-gradient(135deg, #D4AF37, #C9A227); color: #8B5E34; border-color: #D4AF37; }
+    .accordion-chevron { color: #D4AF37; font-size: 12px; transition: transform 0.3s ease, background 0.3s ease; flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(212,175,55,0.3); display: flex; align-items: center; justify-content: center; }
+    .accordion-item.open .accordion-chevron { transform: rotate(180deg); background: rgba(212,175,55,0.12); }
+    .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .accordion-item.open .accordion-body { max-height: 500px; }
+    .accordion-body-inner { padding: 0 28px 26px 88px; color: rgba(33,26,20,0.62); font-size: 15px; line-height: 1.9; }
+    .no-results { text-align: center; padding: 60px 20px; display: none; }
+    .no-results.visible { display: block; }
+    @media (max-width: 640px) { .accordion-body-inner { padding-left: 28px; } .loader-text { font-size: 2.2rem; letter-spacing: 8px; } }
+  </style>
+</head>
+<body class="font-inter lux-body">
+
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-text">EVERETT</div>
+    <div class="loader-sub">Luxury Hotel</div>
+    <div class="loader-line"></div>
+  </div>
+
+  <nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" style="padding: 22px 0;">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <a href="index.html" class="flex flex-col items-center group">
+        <span class="text-white text-xl tracking-[10px] font-light group-hover:text-gold transition-colors">EVERETT</span>
+        <span class="text-gold text-[9px] tracking-[6px] font-medium uppercase">Hotel Nairobi</span>
+      </a>
+      <div class="hidden lg:flex items-center gap-9">
+        <a href="index.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Home</a>
+        <a href="about.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">About</a>
+        <a href="rooms.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Rooms</a>
+        <a href="services.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Services</a>
+        <a href="menu.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Menu</a>
+        <a href="gallery.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Gallery</a>
+        <a href="testimonials.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Reviews</a>
+        <a href="faq.html" class="text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">FAQ</a>
+        <a href="contact.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Contact</a>
+      </div>
+      <div class="hidden lg:flex items-center gap-5">
+        <button onclick="Theme.toggle()" class="text-white/60 hover:text-gold transition-colors" aria-label="Toggle theme">
+          <i class="fas fa-sun" id="themeIcon"></i>
+        </button>
+        <a href="login.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors" id="navLoginLink">Sign In</a>
+        <a href="booking.html" class="btn-gold px-7 py-3 rounded-full text-xs tracking-[2px] uppercase">Book Now</a>
+      </div>
+      <button class="lg:hidden text-white" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" aria-label="Menu">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
+    <div id="mobileMenu" class="hidden fixed inset-0 bg-navy/98 backdrop-blur-xl z-50 flex flex-col items-center justify-center gap-8">
+      <button onclick="this.parentElement.classList.add('hidden')" class="absolute top-6 right-6 text-white/60 hover:text-white"><i class="fas fa-times text-2xl"></i></button>
+      <span class="text-gold text-xs tracking-[8px] uppercase mb-4">Menu</span>
+      <a href="index.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Home</a>
+      <a href="about.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">About</a>
+      <a href="rooms.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Rooms</a>
+      <a href="services.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Services</a>
+      <a href="menu.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Menu</a>
+      <a href="gallery.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Gallery</a>
+      <a href="testimonials.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Reviews</a>
+      <a href="faq.html" class="text-gold text-3xl font-serif font-light tracking-widest transition-colors">FAQ</a>
+      <a href="contact.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Contact</a>
+      <div class="mt-4 flex gap-4">
+        <a href="login.html" class="btn-outline-gold px-8 py-3 rounded-full text-xs tracking-[2px]" id="mobileLoginLink">Sign In</a>
+        <a href="booking.html" class="btn-gold px-8 py-3 rounded-full text-xs tracking-[2px]">Book Now</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="lux-hero lux-hero-center">
+    <img src="images/gallery-main.jpg" alt="Everett Hotel" class="lux-hero-img" style="opacity:0.35;" loading="eager">
+    <div class="lux-hero-content max-w-4xl mx-auto px-6">
+      <nav class="lux-breadcrumb lux-breadcrumb-center mb-8">
+        <a href="index.html">Home</a>
+        <i class="fas fa-chevron-right sep"></i>
+        <span class="current">FAQ</span>
+      </nav>
+      <span class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-semibold tracking-[3px] uppercase" style="background:rgba(212,175,55,0.12);color:#D4AF37;border:1px solid rgba(212,175,55,0.35);">Help Center</span>
+      <h1 class="lux-hero-title text-5xl md:text-7xl">Frequently Asked <span class="gold-gradient-text italic">Questions</span></h1>
+      <p class="lux-hero-sub text-lg mx-auto">Find answers to common questions about our hotel policies, services, and amenities.</p>
+    </div>
+  </section>
+
+  <section class="py-24 md:py-32 bg-beige">
+    <div class="max-w-3xl mx-auto px-6">
+
+      <div class="text-center mb-16 reveal-up">
+        <p class="flex items-center justify-center gap-3 text-gold text-xs tracking-[5px] uppercase font-semibold mb-5"><span class="eyebrow-line"></span> Guest Assistance <span class="eyebrow-line"></span></p>
+        <h2 class="font-serif text-navy text-4xl md:text-5xl lg:text-6xl font-light">Find Your <span class="italic">Answers</span></h2>
+      </div>
+
+      <div class="mb-12 reveal-up">
+        <div class="relative">
+          <i class="fas fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-gold"></i>
+          <input type="text" id="faqSearch" placeholder="Search questions..." class="faq-search-input w-full pl-14 pr-5 py-4 text-sm" style="font-size:15px;">
+        </div>
+      </div>
+
+      <div class="flex justify-center flex-wrap gap-3 mb-12 reveal-up">
+        <button class="category-btn active px-6 py-2.5 rounded-full text-sm font-semibold border border-navy/15 bg-white" data-category="all">All</button>
+        <button class="category-btn px-6 py-2.5 rounded-full text-sm font-semibold border border-navy/15 bg-white" data-category="booking">Booking</button>
+        <button class="category-btn px-6 py-2.5 rounded-full text-sm font-semibold border border-navy/15 bg-white" data-category="cancellation">Cancellation</button>
+        <button class="category-btn px-6 py-2.5 rounded-full text-sm font-semibold border border-navy/15 bg-white" data-category="amenities">Amenities</button>
+        <button class="category-btn px-6 py-2.5 rounded-full text-sm font-semibold border border-navy/15 bg-white" data-category="policies">Policies</button>
+      </div>
+
+      <div id="faqAccordion" class="space-y-4">
+
+        <div class="accordion-item reveal-up" data-category="booking">
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <div class="flex items-center gap-4">
+              <span class="accordion-icon"><i class="fa-solid fa-calendar-check"></i></span>
+              <span class="font-serif text-navy text-xl md:text-2xl font-medium">How do I make a reservation?</span>
+            </div>
+            <i class="fa-solid fa-chevron-down accordion-chevron"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              You can make a reservation by visiting our <a href="booking.html" style="color:#D4AF37;font-weight:600;">Booking Page</a>, calling our front desk at +254 700 123 456, or emailing us at reservations@everetthotel.com. Online bookings allow you to select your preferred room type, dates, and any special requests. A valid credit card is required to secure your reservation.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item reveal-up" data-category="cancellation">
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <div class="flex items-center gap-4">
+              <span class="accordion-icon"><i class="fa-solid fa-xmark-circle"></i></span>
+              <span class="font-serif text-navy text-xl md:text-2xl font-medium">What is the cancellation policy?</span>
+            </div>
+            <i class="fa-solid fa-chevron-down accordion-chevron"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              Free cancellation is available up to 24 hours before your scheduled check-in time. Cancellations made within 24 hours of check-in will incur a charge of one night's stay. No-shows will be charged the full reservation amount. To cancel or modify your booking, please contact our front desk or manage your reservation through your account.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item reveal-up" data-category="policies">
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <div class="flex items-center gap-4">
+              <span class="accordion-icon"><i class="fa-solid fa-clock"></i></span>
+              <span class="font-serif text-navy text-xl md:text-2xl font-medium">What are the check-in and check-out times?</span>
+            </div>
+            <i class="fa-solid fa-chevron-down accordion-chevron"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              Standard check-in time is 3:00 PM and check-out time is 11:00 AM. Early check-in (from 12:00 PM) and late check-out (until 2:00 PM) are available upon request, subject to availability, and may incur an additional fee. For guaranteed early check-in or late check-out, please contact us at least 48 hours in advance.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item reveal-up" data-category="amenities">
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <div class="flex items-center gap-4">
+              <span class="accordion-icon"><i class="fa-solid fa-hot-tub-person"></i></span>
+              <span class="font-serif text-navy text-xl md:text-2xl font-medium">What amenities are included with my stay?</span>
+            </div>
+            <i class="fa-solid fa-chevron-down accordion-chevron"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              All rooms include complimentary high-speed WiFi, flat-screen smart TV, air conditioning, in-room safe, ironing facilities, and premium bath amenities. Deluxe rooms and suites additionally feature spa access, mini bar, and city or ocean views. Presidential Suite guests enjoy exclusive butler service, private jacuzzi, and rooftop terrace access.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item reveal-up" data-category="policies">
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <div class="flex items-center gap-4">
+              <span class="accordion-icon"><i class="fa-solid fa-paw"></i></span>
+              <span class="font-serif text-navy text-xl md:text-2xl font-medium">Are pets allowed in the hotel?</span>
+            </div>
+            <i class="fa-solid fa-chevron-down accordion-chevron"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              Yes, Everett Hotel welcomes pets up to 15 kg in designated pet-friendly rooms. A non-refundable pet fee of KSh 7,500 per stay applies. Please notify us at the time of booking if you plan to bring a pet. Service animals are always welcome at no additional charge. Pet amenities including beds, bowls, and treats are available upon request.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item reveal-up" data-category="amenities">
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <div class="flex items-center gap-4">
+              <span class="accordion-icon"><i class="fa-solid fa-utensils"></i></span>
+              <span class="font-serif text-navy text-xl md:text-2xl font-medium">Do you offer breakfast or dining options?</span>
+            </div>
+            <i class="fa-solid fa-chevron-down accordion-chevron"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              Our on-site restaurant "The Everett Kitchen" serves breakfast, lunch, and dinner with a curated menu of local and international cuisine. Breakfast is served daily from 6:30 AM to 10:30 AM. Room service is available 24/7 for all guests. Suite guests enjoy complimentary breakfast. We also have a rooftop bar and lounge open until midnight.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item reveal-up" data-category="booking">
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <div class="flex items-center gap-4">
+              <span class="accordion-icon"><i class="fa-solid fa-credit-card"></i></span>
+              <span class="font-serif text-navy text-xl md:text-2xl font-medium">What payment methods do you accept?</span>
+            </div>
+            <i class="fa-solid fa-chevron-down accordion-chevron"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              We accept M-Pesa, all major credit cards (Visa, Mastercard), debit cards, and bank transfers. Payment is collected at check-in for the full stay amount. A valid payment method is required at the time of booking to guarantee your reservation. We also accept cash payments at check-out.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item reveal-up" data-category="policies">
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <div class="flex items-center gap-4">
+              <span class="accordion-icon"><i class="fa-solid fa-child"></i></span>
+              <span class="font-serif text-navy text-xl md:text-2xl font-medium">Is there a children's policy?</span>
+            </div>
+            <i class="fa-solid fa-chevron-down accordion-chevron"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              Children under 12 stay free when sharing a room with parents. Cribs and rollaway beds are available upon request at no extra charge. Children's menus are available at our restaurant and through room service. Our concierge can recommend family-friendly activities and attractions in the area.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item reveal-up" data-category="amenities">
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <div class="flex items-center gap-4">
+              <span class="accordion-icon"><i class="fa-solid fa-square-parking"></i></span>
+              <span class="font-serif text-navy text-xl md:text-2xl font-medium">Is parking available at the hotel?</span>
+            </div>
+            <i class="fa-solid fa-chevron-down accordion-chevron"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              Yes, we offer both self-parking and valet parking. Self-parking is available in our secure parking bay at KSh 2,500 per night. Valet parking is available at KSh 4,500 per night and includes in-and-out privileges. Suite and Presidential guests receive complimentary valet parking. Electric vehicle charging stations are available on the ground floor.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item reveal-up" data-category="booking">
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <div class="flex items-center gap-4">
+              <span class="accordion-icon"><i class="fa-solid fa-shuttle-van"></i></span>
+              <span class="font-serif text-navy text-xl md:text-2xl font-medium">Do you offer airport transfers?</span>
+            </div>
+            <i class="fa-solid fa-chevron-down accordion-chevron"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              Yes, we provide private airport transfer services from Jomo Kenyatta International Airport (JKIA) and Wilson Airport. Sedan transfers start at KSh 8,500 and SUV transfers at KSh 12,000. Presidential Suite guests enjoy complimentary round-trip airport transfers. Please request transfers at least 24 hours before your arrival or departure through our concierge team.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="noResults" class="no-results reveal-up">
+        <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center" style="background:linear-gradient(135deg, rgba(200,169,106,0.15), rgba(200,169,106,0.04));">
+          <i class="fas fa-search text-3xl" style="color:#D4AF37;"></i>
+        </div>
+        <h3 class="font-serif text-3xl font-medium mb-3" style="color:#8B5E34;">No Results Found</h3>
+        <p class="text-sm" style="color:#555;">Try adjusting your search or filter to find what you're looking for.</p>
+      </div>
+
+      <div class="mt-16 rounded-3xl p-10 md:p-14 text-center reveal-up" style="background: linear-gradient(160deg, #8B5E34 0%, #A67C52 60%, #8B5E34 100%);">
+        <div class="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center" style="background:rgba(200,169,106,0.15);">
+          <i class="fas fa-headset text-2xl" style="color:#D4AF37;"></i>
+        </div>
+        <h3 class="font-serif text-3xl md:text-4xl font-light text-white mb-4">Still Have <span class="gold-gradient-text italic">Questions?</span></h3>
+        <p class="text-white/50 mb-8 max-w-lg mx-auto text-sm leading-relaxed">Our team is available 24/7 to help with anything you need. Don't hesitate to reach out for personalized assistance.</p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a href="contact.html" class="btn-gold px-8 py-3.5 rounded-full text-xs tracking-[2px] uppercase inline-flex items-center justify-center gap-2">
+            <i class="fas fa-envelope"></i> Contact Us
+          </a>
+          <a href="tel:+254700123456" class="btn-outline-gold px-8 py-3.5 rounded-full text-xs tracking-[2px] uppercase inline-flex items-center justify-center gap-2 font-semibold">
+            <i class="fas fa-phone"></i> +254 700 123 456
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="bg-navy-deep pt-20 pb-8">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-12 mb-16">
+        <div>
+          <div class="flex flex-col items-start mb-6">
+            <span class="text-white text-2xl tracking-[10px] font-light">EVERETT</span>
+            <span class="text-gold text-[9px] tracking-[6px] font-medium uppercase mt-1">Hotel Nairobi</span>
+          </div>
+          <p class="text-white/35 text-sm leading-relaxed mb-6">Where timeless elegance meets contemporary comfort. A sanctuary of refined luxury in the heart of Nairobi.</p>
+          <div class="flex gap-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all"><i class="fab fa-facebook-f text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all"><i class="fab fa-instagram text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all"><i class="fab fa-twitter text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all"><i class="fab fa-linkedin-in text-sm"></i></a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-xs tracking-[3px] uppercase mb-6">Quick Links</h4>
+          <ul class="space-y-3.5">
+            <li><a href="about.html" class="text-white/35 text-sm hover:text-gold transition-colors">About Us</a></li>
+            <li><a href="rooms.html" class="text-white/35 text-sm hover:text-gold transition-colors">Rooms & Suites</a></li>
+            <li><a href="services.html" class="text-white/35 text-sm hover:text-gold transition-colors">Services</a></li>
+            <li><a href="menu.html" class="text-white/35 text-sm hover:text-gold transition-colors">Restaurant Menu</a></li>
+            <li><a href="gallery.html" class="text-white/35 text-sm hover:text-gold transition-colors">Gallery</a></li>
+            <li><a href="testimonials.html" class="text-white/35 text-sm hover:text-gold transition-colors">Guest Reviews</a></li>
+            <li><a href="contact.html" class="text-white/35 text-sm hover:text-gold transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-xs tracking-[3px] uppercase mb-6">Contact</h4>
+          <ul class="space-y-3.5">
+            <li class="flex items-center gap-3 text-white/35 text-sm"><i class="fas fa-map-marker-alt text-gold text-xs"></i> Westlands, Nairobi, Kenya</li>
+            <li class="flex items-center gap-3 text-white/35 text-sm"><i class="fas fa-phone text-gold text-xs"></i> +254 700 123 456</li>
+            <li class="flex items-center gap-3 text-white/35 text-sm"><i class="fas fa-envelope text-gold text-xs"></i> info@everetthotel.com</li>
+            <li class="flex items-center gap-3 text-white/35 text-sm"><i class="fas fa-clock text-gold text-xs"></i> 24/7 Front Desk</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-xs tracking-[3px] uppercase mb-6">Newsletter</h4>
+          <p class="text-white/35 text-sm mb-4">Get exclusive deals and travel inspiration.</p>
+          <form class="flex gap-2" onsubmit="return false;">
+            <input type="email" placeholder="Your email" class="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-white placeholder-white/25 text-sm focus:outline-none focus:border-gold transition-colors">
+            <button class="btn-gold px-5 py-2.5 rounded-full text-xs font-semibold"><i class="fas fa-paper-plane"></i></button>
+          </form>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-white/25 text-xs">&copy; 2026 Everett Hotel. All rights reserved.</p>
+        <div class="flex gap-6">
+          <a href="privacy-policy.html" class="text-white/25 text-xs hover:text-gold transition-colors">Privacy Policy</a>
+          <a href="terms.html" class="text-white/25 text-xs hover:text-gold transition-colors">Terms & Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script defer src="/vendor/gsap/gsap.min.js"></script>
+  <script defer src="/vendor/gsap/ScrollTrigger.min.js"></script>
+  <script defer src="/vendor/lenis/lenis.min.js"></script>
+  <script defer src="/vendor/swiper/swiper-bundle.min.js"></script>
+  <script defer src="/vendor/sweetalert2/sweetalert2.min.js"></script>
+  <script defer src="js/config.js"></script>
+  <script defer src="js/api.js"></script>
+  <script defer src="js/auth.js"></script>
+  <script defer src="js/utils.js"></script>
+  <script defer src="js/theme.js"></script>
+  <script defer src="js/components.js"></script>
+  <script defer src="js/animations.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() { document.getElementById('pageLoader').classList.add('hidden'); }, 1200);
+
+    window.addEventListener('scroll', function() {
+      var nav = document.getElementById('mainNav');
+      if (window.scrollY > 80) { nav.classList.add('nav-scrolled'); } else { nav.classList.remove('nav-scrolled'); }
+    });
+
+    if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+      var link = document.getElementById('navLoginLink');
+      if (link) { link.href = 'profile.html'; link.textContent = 'Dashboard'; }
+      var mLink = document.getElementById('mobileLoginLink');
+      if (mLink) { mLink.href = 'profile.html'; mLink.textContent = 'Dashboard'; }
+    }
+
+    var lenis = new Lenis({ duration: 1.2, smoothWheel: true });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.utils.toArray('.reveal-up').forEach(function(el) {
+      gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }, y: 60, opacity: 0, duration: 1, ease: 'power3.out' });
+    });
+
+    gsap.utils.toArray('.reveal-left').forEach(function(el) {
+      gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }, x: -80, opacity: 0, duration: 1.2, ease: 'power3.out' });
+    });
+
+    gsap.utils.toArray('.reveal-right').forEach(function(el) {
+      gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }, x: 80, opacity: 0, duration: 1.2, ease: 'power3.out' });
+    });
+
+    var searchInput = document.getElementById('faqSearch');
+    var noResults = document.getElementById('noResults');
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        filterFAQ();
+      });
+    }
+
+    var categoryBtns = document.querySelectorAll('.category-btn');
+    categoryBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        categoryBtns.forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        filterFAQ();
+      });
+    });
+
+    function filterFAQ() {
+      var query = document.getElementById('faqSearch').value.toLowerCase();
+      var activeCategory = document.querySelector('.category-btn.active').getAttribute('data-category');
+      var items = document.querySelectorAll('.accordion-item');
+      var visibleCount = 0;
+
+      items.forEach(function(item) {
+        var text = item.textContent.toLowerCase();
+        var category = item.getAttribute('data-category');
+        var matchesSearch = text.includes(query);
+        var matchesCategory = activeCategory === 'all' || category === activeCategory;
+
+        if (matchesSearch && matchesCategory) {
+          item.style.display = '';
+          visibleCount++;
+        } else {
+          item.style.display = 'none';
+          item.classList.remove('open');
+          var body = item.querySelector('.accordion-body');
+          if (body) body.style.maxHeight = '0';
+        }
+      });
+
+      if (noResults) {
+        noResults.classList.toggle('visible', visibleCount === 0);
+      }
+    }
+  });
+
+  function toggleAccordion(btn) {
+    var item = btn.closest('.accordion-item');
+    var body = item.querySelector('.accordion-body');
+    var isOpen = item.classList.contains('open');
+
+    document.querySelectorAll('.accordion-item.open').forEach(function(openItem) {
+      if (openItem !== item) {
+        openItem.classList.remove('open');
+        openItem.querySelector('.accordion-body').style.maxHeight = '0';
+      }
+    });
+
+    if (isOpen) {
+      item.classList.remove('open');
+      body.style.maxHeight = '0';
+    } else {
+      item.classList.add('open');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    }
+  }
+  </script>
+</body>
+</html>

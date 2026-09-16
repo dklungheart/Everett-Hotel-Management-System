@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Verify your Everett Hotel email address to activate your account.">
+  <title>Verify Email | Everett Hotel</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="preload" href="/vendor/fontawesome/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css"></noscript>
+  <link rel="stylesheet" href="css/main.css">
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: { navy: '#8B5E34', 'navy-light': '#A67C52', gold: '#D4AF37', 'gold-light': '#D4BC8A', beige: '#FAF7F2', charcoal: '#211A14' },
+        fontFamily: { inter: ['Inter', 'sans-serif'] },
+      },
+    },
+  }
+  </script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #FAF7F2; color: #211A14; overflow-x: hidden; }
+    .page-loader { position: fixed; inset: 0; background: #24180F; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; transition: opacity 0.6s ease, visibility 0.6s ease; }
+    .page-loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-text { font-family: 'Playfair Display', serif; font-size: 3.2rem; letter-spacing: 14px; color: #D4AF37; font-weight: 400; animation: loaderPulse 1.6s ease-in-out infinite; }
+    .loader-sub { color: rgba(255,255,255,0.35); font-size: 0.65rem; letter-spacing: 8px; text-transform: uppercase; margin-top: 10px; }
+    .loader-line { width: 160px; height: 1px; background: rgba(212,175,55,0.2); margin-top: 24px; overflow: hidden; }
+    .loader-line::after { content: ''; display: block; width: 50%; height: 100%; background: #D4AF37; animation: loaderLine 1.4s ease-in-out infinite; }
+    @keyframes loaderPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+    @keyframes loaderLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+    .auth-box { display: none; background: #ffffff; border: 1px solid #eee6d8; border-radius: 16px; padding: 32px; text-align: center; box-shadow: 0 8px 30px rgba(139,94,52,0.06); }
+    .auth-box.show { display: block; }
+    .status-icon { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 28px; }
+    .btn-auth { width: 100%; padding: 14px; font-size: 15px; font-weight: 700; border-radius: 12px; border: none; cursor: pointer; background: linear-gradient(135deg, #D4AF37, #D4BC8A); color: #8B5E34; font-family: 'Inter', sans-serif; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-auth:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(200,169,106,0.4); }
+    .btn-auth.ghost { background: transparent; border: 1.5px solid #D4AF37; color: #8B5E34; }
+    .btn-auth.ghost:hover { background: rgba(212,175,55,0.08); box-shadow: none; }
+    .spinner-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 0; }
+    .spinner-ring { width: 42px; height: 42px; border: 3px solid rgba(212,175,55,0.25); border-top-color: #D4AF37; border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="font-inter">
+
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-text">EVERETT</div>
+    <div class="loader-sub">Luxury Hotel</div>
+    <div class="loader-line"></div>
+  </div>
+
+  <div class="min-h-screen flex">
+    <div class="hidden lg:flex flex-1 items-center justify-center relative overflow-hidden" style="background:linear-gradient(135deg, #8B5E34, #A67C52, #8B5E34);">
+      <div class="absolute inset-0 opacity-10" style="background: url('images/about.jpg') center/cover no-repeat;"></div>
+      <div class="absolute inset-0" style="background:linear-gradient(135deg, rgba(139,94,52,0.92), rgba(139,94,52,0.85));"></div>
+      <div class="relative z-10 text-center max-w-md px-8">
+        <div class="mb-8">
+          <span class="text-white text-3xl tracking-[10px] font-light">EVERETT</span><br>
+          <span class="text-gold text-xs tracking-[5px] font-medium">HOTEL</span>
+        </div>
+        <div class="w-16 h-0.5 mx-auto mb-8" style="background:#D4AF37;"></div>
+        <p class="text-white/90 text-xl italic leading-relaxed mb-8" style="font-family:Georgia,serif;">"Confirm your email and step into a world of luxury, comfort, and exclusive privileges."</p>
+        <span class="text-white/50 text-xs tracking-[3px] uppercase">Email Verification</span>
+      </div>
+    </div>
+
+    <div class="flex-1 flex flex-col justify-center items-center px-6 py-12" style="background:#FAF7F2;">
+      <div class="w-full max-w-md">
+        <div class="lg:hidden text-center mb-8">
+          <a href="index.html" class="inline-block">
+            <span class="text-navy text-2xl tracking-[8px] font-light">EVERETT</span><br>
+            <span class="text-gold text-[10px] tracking-[4px] font-medium">HOTEL</span>
+          </a>
+        </div>
+
+        <div id="loadingBox" class="spinner-box">
+          <div class="spinner-ring"></div>
+          <p class="text-sm" style="color:#888;">Verifying your email address...</p>
+        </div>
+
+        <div id="successBox" class="auth-box">
+          <div class="status-icon" style="background:rgba(25,135,84,0.12); color:#198754;"><i class="fas fa-check"></i></div>
+          <h2 class="text-2xl font-extrabold mb-2" style="color:#8B5E34;">Email Verified!</h2>
+          <p class="text-sm mb-8" style="color:#888;line-height:1.7;">Your email address has been successfully verified. You can now sign in and start exploring Everett Hotel.</p>
+          <a href="login.html" class="btn-auth"><i class="fas fa-sign-in-alt"></i> Continue to Sign In</a>
+        </div>
+
+        <div id="errorBox" class="auth-box">
+          <div class="status-icon" style="background:rgba(220,53,69,0.1); color:#dc3545;"><i class="fas fa-circle-exclamation"></i></div>
+          <h2 class="text-2xl font-extrabold mb-2" style="color:#8B5E34;">Verification Failed</h2>
+          <p class="text-sm mb-2" style="color:#888;line-height:1.7;" id="errorText">This link is invalid or has expired.</p>
+          <p class="text-sm mb-8" style="color:#888;line-height:1.7;">Verification links are valid for 24 hours. If your link expired, please register again or contact our support team.</p>
+          <a href="login.html" class="btn-auth mb-3"><i class="fas fa-sign-in-alt"></i> Go to Sign In</a>
+          <a href="register.html" class="btn-auth ghost"><i class="fas fa-user-plus"></i> Create a New Account</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/vendor/sweetalert2/sweetalert2.min.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/theme.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/animations.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() { document.getElementById('pageLoader').classList.add('hidden'); }, 1200);
+
+      var urlParams = new URLSearchParams(window.location.search);
+      var token = urlParams.get('token');
+
+      function show(el) { el.classList.add('show'); }
+
+      async function verify() {
+        if (!token) {
+          document.getElementById('loadingBox').style.display = 'none';
+          document.getElementById('errorText').textContent = 'Missing verification token. Please use the link from your email.';
+          show(document.getElementById('errorBox'));
+          return;
+        }
+
+        try {
+          await api.verifyEmail(token);
+          document.getElementById('loadingBox').style.display = 'none';
+          show(document.getElementById('successBox'));
+        } catch (err) {
+          document.getElementById('loadingBox').style.display = 'none';
+          document.getElementById('errorText').textContent = err.message || 'This link is invalid or has expired.';
+          show(document.getElementById('errorBox'));
+        }
+      }
+
+      verify();
+    });
+  </script>
+</body>
+</html>

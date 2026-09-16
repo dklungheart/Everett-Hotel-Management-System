@@ -1,0 +1,1052 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Everett Hotel Nairobi - Experience luxury, comfort, and excellence. Premium accommodations with world-class amenities in Westlands, Nairobi.">
+  <title>Everett Hotel | Luxury, Comfort, Excellence</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="preload" href="/vendor/fontawesome/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css"></noscript>
+  <link rel="stylesheet" href="/vendor/swiper/swiper-bundle.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          navy: '#8B5E34',
+          'navy-light': '#A67C52',
+          'navy-deep': '#24180F',
+          gold: '#D4AF37',
+          'gold-light': '#D4BC8A',
+          'gold-soft': '#C9A227',
+          beige: '#FAF7F2',
+          'beige-dark': '#EDE7DB',
+          ivory: '#F3E9DC',
+          charcoal: '#211A14',
+          emerald: '#0F766E',
+        },
+        fontFamily: {
+          inter: ['Inter', 'sans-serif'],
+          serif: ['Playfair Display', 'Georgia', 'serif'],
+        },
+      },
+    },
+  }
+  </script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #FAF7F2; color: #211A14; overflow-x: hidden; }
+    .font-serif { font-family: 'Playfair Display', Georgia, serif; }
+    .gold-gradient-text { background: linear-gradient(120deg, #E8C96A 0%, #D4AF37 40%, #F0DFA8 60%, #C9A227 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-bg { position: relative; overflow: hidden; }
+    .hero-bg::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(36,24,15,0.72) 0%, rgba(139,94,52,0.35) 45%, rgba(36,24,15,0.9) 100%); }
+    .hero-bg::after { content: ''; position: absolute; inset: 0; z-index: 2; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><rect fill="none" width="60" height="60"/><path d="M30 0L60 30L30 60L0 30Z" fill="none" stroke="rgba(200,169,106,0.07)" stroke-width="0.5"/></svg>') repeat; }
+    .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; animation: heroKenburns 22s ease-in-out infinite alternate; }
+    .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+    @keyframes heroKenburns { 0% { transform: scale(1.08) translate(1.5%, 1%); } 100% { transform: scale(1.16) translate(-1.5%, -1%); } }
+    .hero-vignette { position: absolute; inset: 0; z-index: 3; background: radial-gradient(ellipse at center, transparent 55%, rgba(36,24,15,0.5) 100%); pointer-events: none; }
+    .scroll-indicator { animation: scrollBounce 2.2s ease-in-out infinite; }
+    @keyframes scrollBounce { 0%,100% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(10px); opacity: 0.4; } }
+    .gold-rule { height: 1px; background: linear-gradient(90deg, #D4AF37, rgba(212,175,55,0.1)); }
+    .eyebrow-line { display: inline-block; width: 48px; height: 1px; background: #D4AF37; vertical-align: middle; }
+    .room-card { transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+    .room-card:hover { transform: translateY(-10px); box-shadow: 0 30px 70px rgba(139,94,52,0.16); }
+    .room-card:hover .room-card-image { transform: scale(1.07); }
+    .room-card-imgwrap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(139,94,52,0.55), transparent 40%); }
+    .amenity-card { transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+    .amenity-card:hover { transform: translateY(-8px); background: rgba(212,175,55,0.08); border-color: rgba(212,175,55,0.35); box-shadow: 0 20px 50px rgba(0,0,0,0.35); }
+    .amenity-card:hover .amenity-icon { background: #D4AF37; color: #8B5E34; transform: translateY(-4px) rotate(-6deg); }
+    .amenity-icon { transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+    .gallery-item { overflow: hidden; }
+    .gallery-item:hover .gallery-img { transform: scale(1.1); }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    .gallery-img { transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+    .gallery-overlay { transition: opacity 0.5s ease; }
+    .offer-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(36,24,15,0.92) 0%, rgba(36,24,15,0.25) 55%, transparent 100%); z-index: 1; }
+    .btn-gold { background: linear-gradient(120deg, #D4AF37, #C9A227); color: #8B5E34; font-weight: 700; letter-spacing: 1.5px; transition: all 0.35s ease; }
+    .btn-gold:hover { background: linear-gradient(120deg, #E2C563, #D4AF37); transform: translateY(-3px); box-shadow: 0 14px 34px rgba(200,169,106,0.4); }
+    .btn-outline-gold { border: 1.5px solid rgba(212,175,55,0.7); color: #E8C96A; font-weight: 600; letter-spacing: 1.5px; backdrop-filter: blur(8px); transition: all 0.35s ease; }
+    .btn-outline-gold:hover { background: #D4AF37; color: #8B5E34; border-color: #D4AF37; transform: translateY(-3px); box-shadow: 0 14px 34px rgba(200,169,106,0.3); }
+    .btn-navy-ghost { background: transparent; border: 1.5px solid rgba(139,94,52,0.25); color: #8B5E34; font-weight: 600; letter-spacing: 1px; transition: all 0.35s ease; }
+    .btn-navy-ghost:hover { border-color: #8B5E34; background: #8B5E34; color: #fff; transform: translateY(-3px); box-shadow: 0 14px 34px rgba(139,94,52,0.25); }
+    .booking-input:focus { border-color: #D4AF37; box-shadow: 0 0 0 3px rgba(212,175,55,0.15); outline: none; }
+    .stats-section { background: linear-gradient(160deg, #8B5E34 0%, #A67C52 60%, #8B5E34 100%); }
+    .newsletter-section { background: linear-gradient(160deg, #24180F, #8B5E34); }
+    .nav-scrolled { background: rgba(36,24,15,0.92) !important; backdrop-filter: blur(24px) !important; box-shadow: 0 8px 40px rgba(0,0,0,0.35) !important; }
+    .page-loader { position: fixed; inset: 0; background: #24180F; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; transition: opacity 0.6s ease, visibility 0.6s ease; }
+    .page-loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-text { font-family: 'Playfair Display', serif; font-size: 3.2rem; letter-spacing: 14px; color: #D4AF37; font-weight: 400; animation: loaderPulse 1.6s ease-in-out infinite; }
+    .loader-sub { color: rgba(255,255,255,0.35); font-size: 0.65rem; letter-spacing: 8px; text-transform: uppercase; margin-top: 10px; }
+    .loader-line { width: 160px; height: 1px; background: rgba(212,175,55,0.2); margin-top: 24px; overflow: hidden; }
+    .loader-line::after { content: ''; display: block; width: 50%; height: 100%; background: #D4AF37; animation: loaderLine 1.4s ease-in-out infinite; }
+    @keyframes loaderPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+    @keyframes loaderLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+    .stat-number { font-family: 'Playfair Display', serif; }
+    .swiper-pagination-bullet { background: #D4AF37; opacity: 0.35; }
+    .swiper-pagination-bullet-active { opacity: 1; width: 28px; border-radius: 4px; transition: width 0.4s ease; }
+    .swiper-button-next, .swiper-button-prev { color: #D4AF37; }
+    @media (max-width: 768px) { .hero-title { font-size: 3.2rem !important; } .loader-text { font-size: 2.2rem; letter-spacing: 8px; } }
+  </style>
+</head>
+<body class="font-inter">
+
+  <!-- Page Loader -->
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-text">EVERETT</div>
+    <div class="loader-sub">Luxury Hotel</div>
+    <div class="loader-line"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" style="padding: 22px 0;">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <a href="index.html" class="flex flex-col items-center group">
+        <span class="text-white text-xl tracking-[10px] font-light group-hover:text-gold transition-colors">EVERETT</span>
+        <span class="text-gold text-[9px] tracking-[6px] font-medium uppercase">Hotel Nairobi</span>
+      </a>
+      <div class="hidden lg:flex items-center gap-9">
+        <a href="index.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Home</a>
+        <a href="about.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">About</a>
+        <a href="rooms.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Rooms</a>
+        <a href="services.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Services</a>
+        <a href="menu.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Menu</a>
+        <a href="gallery.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Gallery</a>
+        <a href="testimonials.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Reviews</a>
+        <a href="contact.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Contact</a>
+      </div>
+      <div class="hidden lg:flex items-center gap-5">
+        <button onclick="Theme.toggle()" class="text-white/60 hover:text-gold transition-colors" aria-label="Toggle theme">
+          <i class="fas fa-sun" id="themeIcon"></i>
+        </button>
+        <a href="login.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors" id="navLoginLink">Sign In</a>
+        <div class="relative" id="navUserMenu" style="display:none;">
+          <button id="navUserBtn" class="flex items-center gap-2 text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors" aria-label="Account menu">
+            <i class="fas fa-user-circle text-base"></i>
+            <span id="navUserName">Account</span>
+            <i class="fas fa-chevron-down text-[10px]"></i>
+          </button>
+          <div id="navUserDropdown" class="hidden absolute right-0 top-full mt-3 bg-[#24180F]/95 backdrop-blur-xl border border-white/15 rounded-2xl py-2 min-w-[210px] shadow-2xl">
+            <a id="navDashboardLink" href="profile.html" class="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:text-gold transition-colors"><i class="fas fa-gauge-high w-4 text-gold/70"></i> My Dashboard</a>
+            <div class="h-px bg-white/10 my-1"></div>
+            <a href="#" id="navLogoutBtn" class="flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:text-red-300 transition-colors"><i class="fas fa-right-from-bracket w-4"></i> Logout</a>
+          </div>
+        </div>
+        <a href="booking.html" class="btn-gold px-7 py-3 rounded-full text-xs tracking-[2px] uppercase">Book Now</a>
+      </div>
+      <button class="lg:hidden text-white" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" aria-label="Menu">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden fixed inset-0 bg-navy/98 backdrop-blur-xl z-50 flex flex-col items-center justify-center gap-8">
+      <button onclick="this.parentElement.classList.add('hidden')" class="absolute top-6 right-6 text-white/60 hover:text-white"><i class="fas fa-times text-2xl"></i></button>
+      <span class="text-gold text-xs tracking-[8px] uppercase mb-4">Menu</span>
+      <a href="index.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Home</a>
+      <a href="about.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">About</a>
+      <a href="rooms.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Rooms</a>
+      <a href="services.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Services</a>
+      <a href="menu.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Menu</a>
+      <a href="gallery.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Gallery</a>
+      <a href="testimonials.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Reviews</a>
+      <a href="contact.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Contact</a>
+      <div class="mt-4 flex gap-4">
+        <a href="login.html" id="mobileLoginBtn" class="btn-outline-gold px-8 py-3 rounded-full text-xs tracking-[2px]">Sign In</a>
+        <a href="booking.html" class="btn-gold px-8 py-3 rounded-full text-xs tracking-[2px]">Book Now</a>
+      </div>
+      <button id="mobileLogoutBtn" class="hidden mt-8 text-red-400 text-sm tracking-[3px] uppercase hover:text-red-300 transition-colors" onclick="Auth.logout()"><i class="fas fa-right-from-bracket mr-2"></i> Logout</button>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- HERO SECTION                               -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="hero-bg min-h-screen flex items-center relative" id="hero">
+    <img src="images/gallery-main.jpg" alt="Everett Hotel Luxury" class="hero-img" loading="eager">
+    <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="images/gallery-main.jpg" aria-label="Everett Hotel Lobby">
+      <source src="images/hotel display video.mp4" type="video/mp4">
+      Your browser does not support HTML5 video.
+    </video>
+    <div class="hero-vignette"></div>
+    <div class="max-w-7xl mx-auto px-6 py-32 relative z-10 w-full">
+      <div class="max-w-4xl">
+        <div class="flex items-center gap-4 mb-8 opacity-0 hero-reveal">
+          <span class="eyebrow-line"></span>
+          <p class="text-gold text-xs md:text-sm tracking-[7px] uppercase font-medium">Westlands · Nairobi · Kenya</p>
+        </div>
+        <h1 class="hero-title font-serif text-white text-5xl md:text-7xl lg:text-[6.5rem] font-light leading-[1.05] mb-8 opacity-0 hero-reveal" style="letter-spacing:-1px;">
+          Experience Luxury<br><span class="gold-gradient-text italic">Beyond Expectation</span>
+        </h1>
+        <p class="text-white/70 text-lg md:text-xl font-light leading-relaxed max-w-2xl mb-12 opacity-0 hero-reveal">
+          Where timeless elegance meets contemporary comfort. Every moment at Everett is crafted for the discerning traveler.
+        </p>
+        <div class="flex flex-wrap gap-4 opacity-0 hero-reveal">
+          <a href="booking.html" class="btn-gold px-10 py-4 rounded-full text-xs tracking-[3px] uppercase inline-flex items-center gap-3">
+            Book Your Stay <i class="fas fa-arrow-right text-sm"></i>
+          </a>
+          <a href="rooms.html" class="btn-outline-gold px-10 py-4 rounded-full text-xs tracking-[3px] uppercase inline-flex items-center gap-3">
+            Explore Rooms
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Quick booking bar -->
+    <div class="absolute bottom-0 left-0 right-0 z-10 hidden md:block pb-24">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="bg-white/8 backdrop-blur-2xl border border-white/15 rounded-2xl p-5 grid grid-cols-4 gap-4 opacity-0 hero-reveal" style="background: rgba(139,94,52,0.35);">
+          <div>
+            <label class="block text-white/50 text-[10px] tracking-[3px] uppercase mb-2">Check In</label>
+            <input type="date" id="quickCheckIn" class="w-full bg-transparent text-white text-sm border-b border-white/20 pb-2 focus:outline-none focus:border-gold transition-colors [color-scheme:dark]">
+          </div>
+          <div>
+            <label class="block text-white/50 text-[10px] tracking-[3px] uppercase mb-2">Check Out</label>
+            <input type="date" id="quickCheckOut" class="w-full bg-transparent text-white text-sm border-b border-white/20 pb-2 focus:outline-none focus:border-gold transition-colors [color-scheme:dark]">
+          </div>
+          <div>
+            <label class="block text-white/50 text-[10px] tracking-[3px] uppercase mb-2">Guests</label>
+            <select id="quickGuests" class="w-full bg-transparent text-white text-sm border-b border-white/20 pb-2 focus:outline-none focus:border-gold transition-colors appearance-none">
+              <option class="bg-navy">1 Adult</option>
+              <option class="bg-navy">2 Adults</option>
+              <option class="bg-navy">2 Adults, 1 Child</option>
+              <option class="bg-navy">Family (4)</option>
+            </select>
+          </div>
+          <div class="flex items-end">
+            <a href="booking.html" class="btn-gold w-full py-3.5 rounded-xl text-xs tracking-[2px] uppercase font-semibold text-center block">Check Availability</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-3 scroll-indicator hidden md:flex">
+      <span class="text-white/40 text-[10px] tracking-[4px] uppercase">Scroll</span>
+      <i class="fas fa-chevron-down text-gold/70 text-sm"></i>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- INTRO STRIP                                -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="relative bg-ivory py-20">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-3 gap-12 reveal-up">
+        <div class="text-center">
+          <div class="w-14 h-14 mx-auto mb-5 rounded-full border border-gold/40 flex items-center justify-center">
+            <i class="fas fa-key text-gold text-lg"></i>
+          </div>
+          <h4 class="font-serif text-2xl text-navy font-medium mb-2">Refined Stays</h4>
+          <p class="text-charcoal/55 text-sm leading-relaxed">Curated rooms & suites designed for absolute tranquility.</p>
+        </div>
+        <div class="text-center md:border-x md:border-navy/10">
+          <div class="w-14 h-14 mx-auto mb-5 rounded-full border border-gold/40 flex items-center justify-center">
+            <i class="fas fa-utensils text-gold text-lg"></i>
+          </div>
+          <h4 class="font-serif text-2xl text-navy font-medium mb-2">Gourmet Dining</h4>
+          <p class="text-charcoal/55 text-sm leading-relaxed">Award-winning cuisine celebrating Kenyan & global flavors.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-14 h-14 mx-auto mb-5 rounded-full border border-gold/40 flex items-center justify-center">
+            <i class="fas fa-spa text-gold text-lg"></i>
+          </div>
+          <h4 class="font-serif text-2xl text-navy font-medium mb-2">Wellness & Spa</h4>
+          <p class="text-charcoal/55 text-sm leading-relaxed">Rejuvenating rituals to restore body, mind and spirit.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- ABOUT PREVIEW                              -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="py-24 md:py-32 bg-beige" id="about">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-2 gap-20 items-center">
+        <div class="reveal-left">
+          <div class="relative">
+            <div class="w-full aspect-[4/5] rounded-2xl overflow-hidden"><img src="images/about.jpg" alt="Everett Hotel Lobby" class="w-full h-full object-cover"></div>
+            <div class="absolute -bottom-8 -right-8 w-40 h-40 rounded-2xl bg-gold/15 -z-10"></div>
+            <div class="absolute -top-8 -left-8 w-28 h-28 rounded-full border border-gold/40 -z-10"></div>
+            <div class="absolute bottom-8 -left-6 bg-navy text-white rounded-2xl px-8 py-6 shadow-2xl">
+              <p class="font-serif text-5xl text-gold font-medium leading-none">16</p>
+              <p class="text-white/60 text-[11px] tracking-[2px] uppercase mt-2">Luxury Rooms<br>& Suites</p>
+            </div>
+          </div>
+        </div>
+        <div class="reveal-right">
+          <p class="flex items-center gap-3 text-gold text-xs tracking-[5px] uppercase font-semibold mb-5"><span class="eyebrow-line"></span> Welcome to Everett</p>
+          <h2 class="font-serif text-navy text-4xl md:text-5xl lg:text-6xl font-light leading-[1.1] mb-6">A Legacy of <span class="italic">Timeless Elegance</span></h2>
+          <div class="gold-rule mb-8 w-24"></div>
+          <p class="text-charcoal/65 leading-relaxed text-lg mb-6">
+            Everett Hotel is the embodiment of refined hospitality.
+            Nestled in the heart of Nairobi's Westlands, our boutique hotel offers an intimate
+            sanctuary where every detail speaks of understated luxury.
+          </p>
+          <p class="text-charcoal/55 leading-relaxed mb-10">
+            From our hand-selected furnishings to our award-winning dining, every experience is designed to surpass expectations and create lasting memories.
+          </p>
+          <a href="about.html" class="btn-navy-ghost px-9 py-4 rounded-full text-xs tracking-[2px] uppercase inline-flex items-center gap-3">
+            Discover Our Story <i class="fas fa-arrow-right text-xs"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- FEATURED ROOMS                             -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="py-24 md:py-32 bg-white" id="rooms">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 reveal-up">
+        <div>
+          <p class="flex items-center gap-3 text-gold text-xs tracking-[5px] uppercase font-semibold mb-4"><span class="eyebrow-line"></span> Accommodations</p>
+          <h2 class="font-serif text-navy text-4xl md:text-5xl lg:text-6xl font-light">Luxury <span class="italic">Rooms & Suites</span></h2>
+        </div>
+        <a href="rooms.html" class="mt-6 md:mt-0 inline-flex items-center gap-3 text-gold font-semibold text-xs tracking-[2px] uppercase hover:gap-5 transition-all">
+          View All Rooms <i class="fas fa-arrow-right text-xs"></i>
+        </a>
+      </div>
+      <div class="swiper roomsSwiper reveal-up">
+        <div class="swiper-wrapper pb-14" id="roomsContainer">
+          <!-- Standard Room -->
+          <div class="swiper-slide">
+            <div class="room-card bg-white rounded-2xl overflow-hidden border border-navy/5 cursor-pointer" onclick="window.location='rooms.html'">
+              <div class="relative h-72 overflow-hidden room-card-imgwrap">
+                <img src="images/room-1.1.jpg" alt="Standard Room" class="room-card-image w-full h-full object-cover transition-transform duration-700">
+                <div class="absolute top-5 left-5 z-10 bg-navy/80 backdrop-blur text-gold text-[10px] font-semibold px-3 py-1.5 rounded-full tracking-[2px]">STANDARD</div>
+              </div>
+              <div class="p-7">
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="font-serif text-navy text-2xl font-medium">Standard Room</h3>
+                  <p class="text-navy font-bold text-xl">KSh 12,000<span class="text-xs font-light text-charcoal/50">/night</span></p>
+                </div>
+                <p class="text-charcoal/55 text-sm mb-5">Comfortable rooms with essential amenities for a pleasant stay.</p>
+                <div class="flex items-center justify-between border-t border-navy/5 pt-4 mb-5">
+                  <div class="flex items-center gap-4 text-xs text-charcoal/50">
+                    <span><i class="fas fa-bed text-gold mr-1.5"></i> Queen</span>
+                    <span><i class="fas fa-expand text-gold mr-1.5"></i> 28 sqm</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-charcoal/45">
+                    <span class="bg-beige rounded-full px-2.5 py-1"><i class="fas fa-wifi text-gold mr-1"></i>Wi-Fi</span>
+                    <span class="bg-beige rounded-full px-2.5 py-1"><i class="fas fa-snowflake text-gold mr-1"></i>AC</span>
+                  </div>
+                </div>
+                <a href="booking.html" class="block text-center bg-navy text-white py-3.5 rounded-xl text-xs font-semibold tracking-[2px] uppercase hover:bg-navy-light transition-colors">Book Now</a>
+              </div>
+            </div>
+          </div>
+          <!-- Deluxe Room -->
+          <div class="swiper-slide">
+            <div class="room-card bg-white rounded-2xl overflow-hidden border border-navy/5 cursor-pointer" onclick="window.location='rooms.html'">
+              <div class="relative h-72 overflow-hidden room-card-imgwrap">
+                <img src="images/room-1.2.jpg" alt="Deluxe Room" class="room-card-image w-full h-full object-cover transition-transform duration-700">
+                <div class="absolute top-5 left-5 z-10 bg-navy/80 backdrop-blur text-gold text-[10px] font-semibold px-3 py-1.5 rounded-full tracking-[2px]">DELUXE</div>
+              </div>
+              <div class="p-7">
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="font-serif text-navy text-2xl font-medium">Deluxe Room</h3>
+                  <p class="text-navy font-bold text-xl">KSh 20,000<span class="text-xs font-light text-charcoal/50">/night</span></p>
+                </div>
+                <p class="text-charcoal/55 text-sm mb-5">Spacious rooms with premium furnishings and city views.</p>
+                <div class="flex items-center justify-between border-t border-navy/5 pt-4 mb-5">
+                  <div class="flex items-center gap-4 text-xs text-charcoal/50">
+                    <span><i class="fas fa-bed text-gold mr-1.5"></i> King</span>
+                    <span><i class="fas fa-expand text-gold mr-1.5"></i> 35 sqm</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-charcoal/45">
+                    <span class="bg-beige rounded-full px-2.5 py-1"><i class="fas fa-wifi text-gold mr-1"></i>Wi-Fi</span>
+                    <span class="bg-beige rounded-full px-2.5 py-1"><i class="fas fa-door-open text-gold mr-1"></i>Balcony</span>
+                  </div>
+                </div>
+                <a href="booking.html" class="block text-center bg-navy text-white py-3.5 rounded-xl text-xs font-semibold tracking-[2px] uppercase hover:bg-navy-light transition-colors">Book Now</a>
+              </div>
+            </div>
+          </div>
+          <!-- Executive Room -->
+          <div class="swiper-slide">
+            <div class="room-card bg-white rounded-2xl overflow-hidden border border-navy/5 cursor-pointer" onclick="window.location='rooms.html'">
+              <div class="relative h-72 overflow-hidden room-card-imgwrap">
+                <img src="images/room-1.3.jpg" alt="Executive Room" class="room-card-image w-full h-full object-cover transition-transform duration-700">
+                <div class="absolute top-5 left-5 z-10 bg-navy/80 backdrop-blur text-gold text-[10px] font-semibold px-3 py-1.5 rounded-full tracking-[2px]">EXECUTIVE</div>
+              </div>
+              <div class="p-7">
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="font-serif text-navy text-2xl font-medium">Executive Room</h3>
+                  <p class="text-navy font-bold text-xl">KSh 30,000<span class="text-xs font-light text-charcoal/50">/night</span></p>
+                </div>
+                <p class="text-charcoal/55 text-sm mb-5">Elegant rooms designed for business travelers with lounge access.</p>
+                <div class="flex items-center justify-between border-t border-navy/5 pt-4 mb-5">
+                  <div class="flex items-center gap-4 text-xs text-charcoal/50">
+                    <span><i class="fas fa-bed text-gold mr-1.5"></i> King</span>
+                    <span><i class="fas fa-expand text-gold mr-1.5"></i> 42 sqm</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-charcoal/45">
+                    <span class="bg-beige rounded-full px-2.5 py-1"><i class="fas fa-concierge-bell text-gold mr-1"></i>Service</span>
+                    <span class="bg-beige rounded-full px-2.5 py-1"><i class="fas fa-door-open text-gold mr-1"></i>Balcony</span>
+                  </div>
+                </div>
+                <a href="booking.html" class="block text-center bg-navy text-white py-3.5 rounded-xl text-xs font-semibold tracking-[2px] uppercase hover:bg-navy-light transition-colors">Book Now</a>
+              </div>
+            </div>
+          </div>
+          <!-- Suite -->
+          <div class="swiper-slide">
+            <div class="room-card bg-white rounded-2xl overflow-hidden border border-navy/5 cursor-pointer" onclick="window.location='rooms.html'">
+              <div class="relative h-72 overflow-hidden room-card-imgwrap">
+                <img src="images/room-1.4.jpg" alt="Suite" class="room-card-image w-full h-full object-cover transition-transform duration-700">
+                <div class="absolute top-5 left-5 z-10 bg-navy/80 backdrop-blur text-gold text-[10px] font-semibold px-3 py-1.5 rounded-full tracking-[2px]">SUITE</div>
+              </div>
+              <div class="p-7">
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="font-serif text-navy text-2xl font-medium">Suite</h3>
+                  <p class="text-navy font-bold text-xl">KSh 45,000<span class="text-xs font-light text-charcoal/50">/night</span></p>
+                </div>
+                <p class="text-charcoal/55 text-sm mb-5">Luxurious suite with separate living area and panoramic views.</p>
+                <div class="flex items-center justify-between border-t border-navy/5 pt-4 mb-5">
+                  <div class="flex items-center gap-4 text-xs text-charcoal/50">
+                    <span><i class="fas fa-bed text-gold mr-1.5"></i> King</span>
+                    <span><i class="fas fa-expand text-gold mr-1.5"></i> 65 sqm</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-charcoal/45">
+                    <span class="bg-beige rounded-full px-2.5 py-1"><i class="fas fa-bath text-gold mr-1"></i>Jacuzzi</span>
+                    <span class="bg-beige rounded-full px-2.5 py-1"><i class="fas fa-concierge-bell text-gold mr-1"></i>Butler</span>
+                  </div>
+                </div>
+                <a href="booking.html" class="block text-center bg-gold text-navy py-3.5 rounded-xl text-xs font-semibold tracking-[2px] uppercase hover:bg-gold-light transition-colors">Book Now</a>
+              </div>
+            </div>
+          </div>
+          <!-- Presidential Suite -->
+          <div class="swiper-slide">
+            <div class="room-card bg-white rounded-2xl overflow-hidden border border-navy/5 cursor-pointer" onclick="window.location='rooms.html'">
+              <div class="relative h-72 overflow-hidden room-card-imgwrap">
+                <img src="images/room-1.5.jpg" alt="Presidential Suite" class="room-card-image w-full h-full object-cover transition-transform duration-700">
+                <div class="absolute top-5 left-5 z-10 bg-navy/80 backdrop-blur text-gold text-[10px] font-semibold px-3 py-1.5 rounded-full tracking-[2px]">PRESIDENTIAL</div>
+              </div>
+              <div class="p-7">
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="font-serif text-navy text-2xl font-medium">Presidential Suite</h3>
+                  <p class="text-navy font-bold text-xl">KSh 120,000<span class="text-xs font-light text-charcoal/50">/night</span></p>
+                </div>
+                <p class="text-charcoal/55 text-sm mb-5">The ultimate luxury with private butler and exclusive amenities.</p>
+                <div class="flex items-center justify-between border-t border-navy/5 pt-4 mb-5">
+                  <div class="flex items-center gap-4 text-xs text-charcoal/50">
+                    <span><i class="fas fa-bed text-gold mr-1.5"></i> Cal King</span>
+                    <span><i class="fas fa-expand text-gold mr-1.5"></i> 120 sqm</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-charcoal/45">
+                    <span class="bg-beige rounded-full px-2.5 py-1"><i class="fas fa-water text-gold mr-1"></i>View</span>
+                    <span class="bg-beige rounded-full px-2.5 py-1"><i class="fas fa-bath text-gold mr-1"></i>Jacuzzi</span>
+                  </div>
+                </div>
+                <a href="booking.html" class="block text-center bg-gold text-navy py-3.5 rounded-xl text-xs font-semibold tracking-[2px] uppercase hover:bg-gold-light transition-colors">Book Now</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-pagination !bottom-0"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- AMENITIES                                  -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="py-24 md:py-32 stats-section relative overflow-hidden" id="amenities">
+    <div class="absolute inset-0 opacity-[0.04]" style="background-image: radial-gradient(circle at 2px 2px, #D4AF37 1px, transparent 0); background-size: 40px 40px;"></div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+      <div class="text-center mb-16 reveal-up">
+        <p class="flex items-center justify-center gap-3 text-gold text-xs tracking-[5px] uppercase font-semibold mb-5"><span class="eyebrow-line"></span> World-Class <span class="eyebrow-line"></span></p>
+        <h2 class="font-serif text-white text-4xl md:text-5xl lg:text-6xl font-light">Hotel <span class="italic gold-gradient-text">Amenities</span></h2>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-5" id="amenitiesGrid">
+        <div class="amenity-card bg-white/[0.04] backdrop-blur-sm border border-white/10 rounded-2xl p-8 text-center">
+          <div class="amenity-icon w-16 h-16 mx-auto mb-5 rounded-full bg-gold/10 flex items-center justify-center">
+            <i class="fas fa-swimming-pool text-gold text-2xl"></i>
+          </div>
+          <h3 class="text-white font-serif text-xl font-medium mb-2">Swimming Pool</h3>
+          <p class="text-white/40 text-xs leading-relaxed">Rooftop infinity pool with skyline views</p>
+        </div>
+        <div class="amenity-card bg-white/[0.04] backdrop-blur-sm border border-white/10 rounded-2xl p-8 text-center">
+          <div class="amenity-icon w-16 h-16 mx-auto mb-5 rounded-full bg-gold/10 flex items-center justify-center">
+            <i class="fas fa-spa text-gold text-2xl"></i>
+          </div>
+          <h3 class="text-white font-serif text-xl font-medium mb-2">Spa & Wellness</h3>
+          <p class="text-white/40 text-xs leading-relaxed">Rejuvenating treatments and therapies</p>
+        </div>
+        <div class="amenity-card bg-white/[0.04] backdrop-blur-sm border border-white/10 rounded-2xl p-8 text-center">
+          <div class="amenity-icon w-16 h-16 mx-auto mb-5 rounded-full bg-gold/10 flex items-center justify-center">
+            <i class="fas fa-utensils text-gold text-2xl"></i>
+          </div>
+          <h3 class="text-white font-serif text-xl font-medium mb-2">Fine Dining</h3>
+          <p class="text-white/40 text-xs leading-relaxed">Award-winning culinary experiences</p>
+        </div>
+        <div class="amenity-card bg-white/[0.04] backdrop-blur-sm border border-white/10 rounded-2xl p-8 text-center">
+          <div class="amenity-icon w-16 h-16 mx-auto mb-5 rounded-full bg-gold/10 flex items-center justify-center">
+            <i class="fas fa-dumbbell text-gold text-2xl"></i>
+          </div>
+          <h3 class="text-white font-serif text-xl font-medium mb-2">Fitness Center</h3>
+          <p class="text-white/40 text-xs leading-relaxed">State-of-the-art gym equipment</p>
+        </div>
+        <div class="amenity-card bg-white/[0.04] backdrop-blur-sm border border-white/10 rounded-2xl p-8 text-center">
+          <div class="amenity-icon w-16 h-16 mx-auto mb-5 rounded-full bg-gold/10 flex items-center justify-center">
+            <i class="fas fa-users text-gold text-2xl"></i>
+          </div>
+          <h3 class="text-white font-serif text-xl font-medium mb-2">Conference Rooms</h3>
+          <p class="text-white/40 text-xs leading-relaxed">Elegant event and meeting spaces</p>
+        </div>
+        <div class="amenity-card bg-white/[0.04] backdrop-blur-sm border border-white/10 rounded-2xl p-8 text-center">
+          <div class="amenity-icon w-16 h-16 mx-auto mb-5 rounded-full bg-gold/10 flex items-center justify-center">
+            <i class="fas fa-plane text-gold text-2xl"></i>
+          </div>
+          <h3 class="text-white font-serif text-xl font-medium mb-2">Airport Transfer</h3>
+          <p class="text-white/40 text-xs leading-relaxed">Complimentary luxury sedan service</p>
+        </div>
+        <div class="amenity-card bg-white/[0.04] backdrop-blur-sm border border-white/10 rounded-2xl p-8 text-center">
+          <div class="amenity-icon w-16 h-16 mx-auto mb-5 rounded-full bg-gold/10 flex items-center justify-center">
+            <i class="fas fa-concierge-bell text-gold text-2xl"></i>
+          </div>
+          <h3 class="text-white font-serif text-xl font-medium mb-2">24/7 Concierge</h3>
+          <p class="text-white/40 text-xs leading-relaxed">Personalized guest services</p>
+        </div>
+        <div class="amenity-card bg-white/[0.04] backdrop-blur-sm border border-white/10 rounded-2xl p-8 text-center">
+          <div class="amenity-icon w-16 h-16 mx-auto mb-5 rounded-full bg-gold/10 flex items-center justify-center">
+            <i class="fas fa-car text-gold text-2xl"></i>
+          </div>
+          <h3 class="text-white font-serif text-xl font-medium mb-2">Valet Parking</h3>
+          <p class="text-white/40 text-xs leading-relaxed">Complimentary valet for all guests</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- RESTAURANT                                 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="relative py-24 md:py-32 overflow-hidden" id="restaurant">
+    <div class="absolute inset-0" style="background: linear-gradient(160deg, #A67C52, #24180F);"></div>
+    <div class="absolute inset-0 opacity-[0.05]" style="background-image: radial-gradient(circle at 1px 1px, #D4AF37 1px, transparent 0); background-size: 30px 30px;"></div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+      <div class="grid md:grid-cols-2 gap-20 items-center">
+        <div class="reveal-left">
+          <div class="relative">
+            <div class="w-full aspect-[4/3] rounded-2xl overflow-hidden"><img src="images/restaurant.jpg" alt="Fine Dining Restaurant" class="w-full h-full object-cover"></div>
+            <div class="absolute -top-6 -right-6 w-32 h-32 rounded-2xl bg-gold/15 -z-10"></div>
+            <div class="absolute -bottom-6 -left-6 w-24 h-24 rounded-full border border-gold/30 -z-10"></div>
+          </div>
+        </div>
+        <div class="reveal-right">
+          <p class="flex items-center gap-3 text-gold text-xs tracking-[5px] uppercase font-semibold mb-5"><span class="eyebrow-line"></span> Culinary Excellence</p>
+          <h2 class="font-serif text-white text-4xl md:text-5xl lg:text-6xl font-light leading-[1.1] mb-6">Savor <span class="italic gold-gradient-text">Exquisite Flavors</span></h2>
+          <div class="gold-rule mb-8 w-24"></div>
+          <p class="text-white/55 leading-relaxed text-lg mb-6">
+            Our award-winning restaurant offers an unparalleled dining experience. Our culinary team crafts each dish with locally sourced ingredients and international flair.
+          </p>
+          <p class="text-white/45 leading-relaxed mb-10">
+            From fresh Atlantic salmon to prime filet mignon, every plate is a masterpiece. Complemented by an exquisite wine collection from around the world.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <a href="services.html" class="btn-gold px-8 py-3.5 rounded-full text-xs tracking-[2px] uppercase">Reserve a Table</a>
+            <a href="menu.html" class="btn-outline-gold px-8 py-3.5 rounded-full text-xs tracking-[2px] uppercase">View Menu</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- GALLERY PREVIEW                            -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="py-24 md:py-32 bg-beige" id="gallery">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 reveal-up">
+        <div>
+          <p class="flex items-center gap-3 text-gold text-xs tracking-[5px] uppercase font-semibold mb-4"><span class="eyebrow-line"></span> Captured Moments</p>
+          <h2 class="font-serif text-navy text-4xl md:text-5xl lg:text-6xl font-light">Our <span class="italic">Gallery</span></h2>
+        </div>
+        <a href="gallery.html" class="mt-6 md:mt-0 inline-flex items-center gap-3 text-gold font-semibold text-xs tracking-[2px] uppercase hover:gap-5 transition-all">
+          View Full Gallery <i class="fas fa-arrow-right text-xs"></i>
+        </a>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 reveal-up" id="galleryGrid">
+        <div class="gallery-item relative rounded-xl cursor-pointer group col-span-2 row-span-2">
+          <img src="images/gallery-main.jpg" alt="Grand Lobby" class="gallery-img w-full h-full min-h-[320px] object-cover">
+          <div class="gallery-overlay absolute inset-0 bg-navy/55 flex items-center justify-center opacity-0">
+            <div class="text-center"><i class="fas fa-expand text-gold text-2xl mb-2"></i><p class="text-white text-sm font-semibold">Grand Lobby</p></div>
+          </div>
+        </div>
+        <div class="gallery-item relative rounded-xl cursor-pointer group">
+          <img src="images/restaurant.jpg" alt="Restaurant" class="gallery-img w-full h-full min-h-[150px] object-cover">
+          <div class="gallery-overlay absolute inset-0 bg-navy/55 flex items-center justify-center opacity-0">
+            <div class="text-center"><i class="fas fa-expand text-gold text-lg mb-1"></i><p class="text-white text-xs font-semibold">Restaurant</p></div>
+          </div>
+        </div>
+        <div class="gallery-item relative rounded-xl cursor-pointer group">
+          <img src="images/swimming-pool.jpg" alt="Swimming Pool" class="gallery-img w-full h-full min-h-[150px] object-cover">
+          <div class="gallery-overlay absolute inset-0 bg-navy/55 flex items-center justify-center opacity-0">
+            <div class="text-center"><i class="fas fa-expand text-gold text-lg mb-1"></i><p class="text-white text-xs font-semibold">Pool</p></div>
+          </div>
+        </div>
+        <div class="gallery-item relative rounded-xl cursor-pointer group">
+          <img src="images/reception.jpg" alt="Suite" class="gallery-img w-full h-full min-h-[150px] object-cover">
+          <div class="gallery-overlay absolute inset-0 bg-navy/55 flex items-center justify-center opacity-0">
+            <div class="text-center"><i class="fas fa-expand text-gold text-lg mb-1"></i><p class="text-white text-xs font-semibold">Suite</p></div>
+          </div>
+        </div>
+        <div class="gallery-item relative rounded-xl cursor-pointer group">
+          <img src="images/gallery-1.1.jpg" alt="Spa" class="gallery-img w-full h-full min-h-[150px] object-cover">
+          <div class="gallery-overlay absolute inset-0 bg-navy/55 flex items-center justify-center opacity-0">
+            <div class="text-center"><i class="fas fa-expand text-gold text-lg mb-1"></i><p class="text-white text-xs font-semibold">Spa</p></div>
+          </div>
+        </div>
+        <div class="gallery-item relative rounded-xl cursor-pointer group col-span-2">
+          <img src="images/gallery-1.2.jpg" alt="Hotel Exterior" class="gallery-img w-full h-full min-h-[150px] object-cover">
+          <div class="gallery-overlay absolute inset-0 bg-navy/55 flex items-center justify-center opacity-0">
+            <div class="text-center"><i class="fas fa-expand text-gold text-lg mb-1"></i><p class="text-white text-xs font-semibold">Hotel Exterior</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TESTIMONIALS                                -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="py-24 md:py-32 bg-ivory" id="testimonials">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 reveal-up">
+        <div>
+          <p class="flex items-center gap-3 text-gold text-xs tracking-[5px] uppercase font-semibold mb-4"><span class="eyebrow-line"></span> Guest Stories</p>
+          <h2 class="font-serif text-navy text-4xl md:text-5xl lg:text-6xl font-light">Guest <span class="italic">Testimonials</span></h2>
+        </div>
+        <a href="testimonials.html" class="mt-6 md:mt-0 inline-flex items-center gap-3 text-gold font-semibold text-xs tracking-[2px] uppercase hover:gap-5 transition-all">
+          Share Your Review <i class="fas fa-arrow-right text-xs"></i>
+        </a>
+      </div>
+      <div id="homeTestimonials" class="grid md:grid-cols-3 gap-8">
+        <div class="md:col-span-3 py-16 text-center text-charcoal/40">
+          <i class="fas fa-spinner fa-spin text-2xl text-gold mb-4"></i>
+          <p>Loading guest reviews...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STATISTICS                                 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="py-20 stats-section relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.04]" style="background-image: radial-gradient(circle at 2px 2px, #D4AF37 1px, transparent 0); background-size: 40px 40px;"></div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-10">
+        <div class="text-center reveal-up">
+          <div class="w-16 h-16 mx-auto mb-5 rounded-full bg-gold/10 flex items-center justify-center"><i class="fas fa-users text-gold text-xl"></i></div>
+          <p class="stat-number text-gold text-5xl md:text-6xl font-medium mb-2" data-target="12000">0</p>
+          <p class="text-white/45 text-xs tracking-[3px] uppercase">Guests Served</p>
+        </div>
+        <div class="text-center reveal-up">
+          <div class="w-16 h-16 mx-auto mb-5 rounded-full bg-gold/10 flex items-center justify-center"><i class="fas fa-bed text-gold text-xl"></i></div>
+          <p class="stat-number text-gold text-5xl md:text-6xl font-medium mb-2" data-target="16">0</p>
+          <p class="text-white/45 text-xs tracking-[3px] uppercase">Luxury Rooms</p>
+        </div>
+        <div class="text-center reveal-up">
+          <div class="w-16 h-16 mx-auto mb-5 rounded-full bg-gold/10 flex items-center justify-center"><i class="fas fa-globe text-gold text-xl"></i></div>
+          <p class="stat-number text-gold text-5xl md:text-6xl font-medium mb-2" data-target="32">0</p>
+          <p class="text-white/45 text-xs tracking-[3px] uppercase">Countries Visited</p>
+        </div>
+        <div class="text-center reveal-up">
+          <div class="w-16 h-16 mx-auto mb-5 rounded-full bg-gold/10 flex items-center justify-center"><i class="fas fa-star text-gold text-xl"></i></div>
+          <p class="stat-number text-gold text-5xl md:text-6xl font-medium mb-2" data-target="5" data-decimal="1">0.0</p>
+          <p class="text-white/45 text-xs tracking-[3px] uppercase">Guest Rating</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SPECIAL OFFERS                             -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="py-24 md:py-32 bg-ivory" id="offers">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 reveal-up">
+        <div>
+          <p class="flex items-center gap-3 text-gold text-xs tracking-[5px] uppercase font-semibold mb-4"><span class="eyebrow-line"></span> Exclusive</p>
+          <h2 class="font-serif text-navy text-4xl md:text-5xl lg:text-6xl font-light">Special <span class="italic">Offers</span></h2>
+        </div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8 reveal-up">
+        <div class="offer-card relative h-[420px] rounded-2xl overflow-hidden group cursor-pointer">
+          <img src="images/gallery-1.1.jpg" alt="Summer Escape" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+          <div class="absolute top-6 right-6 z-20 bg-gold text-navy font-bold px-4 py-2 rounded-full text-xs tracking-[1px]">25% OFF</div>
+          <div class="absolute bottom-0 left-0 right-0 p-9 z-20">
+            <h3 class="font-serif text-white text-3xl font-light mb-3">Summer Escape</h3>
+            <p class="text-white/60 mb-6 max-w-sm">Enjoy 25% off stays of 3+ nights. Includes complimentary breakfast and spa credit.</p>
+            <a href="booking.html" class="inline-flex items-center gap-2 text-gold font-semibold text-xs tracking-[2px] uppercase hover:gap-3 transition-all">
+              Book Now <i class="fas fa-arrow-right text-xs"></i>
+            </a>
+          </div>
+        </div>
+        <div class="offer-card relative h-[420px] rounded-2xl overflow-hidden group cursor-pointer">
+          <img src="images/gallery-1.2.jpg" alt="Romantic Getaway" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+          <div class="absolute top-6 right-6 z-20 bg-white text-navy font-bold px-4 py-2 rounded-full text-xs tracking-[1px]">ROMANTIC</div>
+          <div class="absolute bottom-0 left-0 right-0 p-9 z-20">
+            <h3 class="font-serif text-white text-3xl font-light mb-3">Romantic Getaway</h3>
+            <p class="text-white/60 mb-6 max-w-sm">Complimentary spa treatment, champagne, and room upgrade for couples.</p>
+            <a href="booking.html" class="inline-flex items-center gap-2 text-gold font-semibold text-xs tracking-[2px] uppercase hover:gap-3 transition-all">
+              Book Now <i class="fas fa-arrow-right text-xs"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- BOOKING CTA                                -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="py-24 md:py-32 bg-white" id="booking">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="text-center mb-12 reveal-up">
+        <p class="flex items-center justify-center gap-3 text-gold text-xs tracking-[5px] uppercase font-semibold mb-5"><span class="eyebrow-line"></span> Reservations <span class="eyebrow-line"></span></p>
+        <h2 class="font-serif text-navy text-4xl md:text-5xl lg:text-6xl font-light">Begin Your <span class="italic">Journey</span></h2>
+      </div>
+      <form id="bookingForm" class="bg-beige rounded-3xl p-8 md:p-12 reveal-up border border-navy/5 shadow-xl shadow-navy/5" onsubmit="return false;">
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label class="block text-xs font-semibold text-navy tracking-[2px] uppercase mb-2">Check In</label>
+            <input type="date" id="bookCheckIn" class="booking-input w-full bg-white border border-charcoal/10 rounded-xl px-4 py-4 text-sm transition-all" required>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-navy tracking-[2px] uppercase mb-2">Check Out</label>
+            <input type="date" id="bookCheckOut" class="booking-input w-full bg-white border border-charcoal/10 rounded-xl px-4 py-4 text-sm transition-all" required>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+          <div>
+            <label class="block text-xs font-semibold text-navy tracking-[2px] uppercase mb-2">Guests</label>
+            <select id="bookGuests" class="booking-input w-full bg-white border border-charcoal/10 rounded-xl px-4 py-4 text-sm transition-all appearance-none">
+              <option>1 Adult</option><option>2 Adults</option><option>2 Adults, 1 Child</option><option>2 Adults, 2 Children</option><option>Family (4)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-navy tracking-[2px] uppercase mb-2">Room Type</label>
+            <select id="bookRoomType" class="booking-input w-full bg-white border border-charcoal/10 rounded-xl px-4 py-4 text-sm transition-all appearance-none">
+              <option value="standard">Standard — KSh 12,000/night</option>
+              <option value="deluxe">Deluxe — KSh 20,000/night</option>
+              <option value="executive">Executive — KSh 30,000/night</option>
+              <option value="family">Family — KSh 28,000/night</option>
+              <option value="suite">Suite — KSh 45,000/night</option>
+              <option value="presidential-suite">Presidential — KSh 120,000/night</option>
+            </select>
+          </div>
+          <div class="flex items-end">
+            <a href="booking.html" class="btn-gold w-full py-4 rounded-xl text-xs tracking-[2px] uppercase font-semibold text-center block">Check Availability</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- NEWSLETTER                                 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="py-20 newsletter-section relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.05]" style="background-image: radial-gradient(circle at 2px 2px, #D4AF37 1px, transparent 0); background-size: 40px 40px;"></div>
+    <div class="max-w-3xl mx-auto px-6 text-center relative z-10 reveal-up">
+      <p class="flex items-center justify-center gap-3 text-gold text-xs tracking-[5px] uppercase font-semibold mb-4"><span class="eyebrow-line"></span> Newsletter <span class="eyebrow-line"></span></p>
+      <h2 class="font-serif text-white text-3xl md:text-5xl font-light mb-4">Stay <span class="italic gold-gradient-text">Informed</span></h2>
+      <p class="text-white/45 mb-8">Subscribe to receive exclusive offers, travel inspiration, and hotel news.</p>
+      <form id="newsletterForm" class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto" onsubmit="return false;">
+        <input type="email" placeholder="Enter your email" class="flex-1 bg-white/10 border border-white/15 rounded-full px-6 py-4 text-white placeholder-white/35 text-sm focus:outline-none focus:border-gold transition-colors" required>
+        <button type="submit" class="btn-gold px-8 py-4 rounded-full text-xs tracking-[2px] uppercase font-semibold whitespace-nowrap">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- CONTACT PREVIEW                            -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="py-24 md:py-32 bg-beige" id="contact">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-2 gap-20 items-center">
+        <div class="reveal-left">
+          <p class="flex items-center gap-3 text-gold text-xs tracking-[5px] uppercase font-semibold mb-5"><span class="eyebrow-line"></span> Get in Touch</p>
+          <h2 class="font-serif text-navy text-4xl md:text-5xl lg:text-6xl font-light mb-6">We'd Love to <span class="italic">Hear From You</span></h2>
+          <div class="gold-rule mb-10 w-24"></div>
+          <div class="space-y-7">
+            <div class="flex items-start gap-5">
+              <div class="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0"><i class="fas fa-map-marker-alt text-gold"></i></div>
+              <div><p class="font-semibold text-navy mb-1">Address</p><p class="text-charcoal/55 text-sm">Westlands, Nairobi, Kenya</p></div>
+            </div>
+            <div class="flex items-start gap-5">
+              <div class="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0"><i class="fas fa-phone text-gold"></i></div>
+              <div><p class="font-semibold text-navy mb-1">Phone</p><p class="text-charcoal/55 text-sm">+254 700 123 456</p></div>
+            </div>
+            <div class="flex items-start gap-5">
+              <div class="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0"><i class="fas fa-envelope text-gold"></i></div>
+              <div><p class="font-semibold text-navy mb-1">Email</p><p class="text-charcoal/55 text-sm">info@everetthotel.com</p></div>
+            </div>
+            <div class="flex items-start gap-5">
+              <div class="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0"><i class="fas fa-clock text-gold"></i></div>
+              <div><p class="font-semibold text-navy mb-1">Hours</p><p class="text-charcoal/55 text-sm">24/7 Front Desk</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="reveal-right">
+          <img src="images/Medium shot smiley woman teaching _ Free Photo.jpg" alt="Friendly hotel staff member" class="w-full h-80 md:h-[480px] object-cover rounded-3xl" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- FOOTER                                     -->
+  <!-- ═══════════════════════════════════════════ -->
+  <footer class="bg-navy-deep pt-20 pb-8">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-12 mb-16">
+        <div>
+          <div class="flex flex-col items-start mb-6">
+            <span class="text-white text-2xl tracking-[10px] font-light">EVERETT</span>
+            <span class="text-gold text-[9px] tracking-[6px] font-medium uppercase mt-1">Hotel Nairobi</span>
+          </div>
+          <p class="text-white/35 text-sm leading-relaxed mb-6">Where timeless elegance meets contemporary comfort. A sanctuary of refined luxury in the heart of Nairobi.</p>
+          <div class="flex gap-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all"><i class="fab fa-facebook-f text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all"><i class="fab fa-instagram text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all"><i class="fab fa-twitter text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all"><i class="fab fa-linkedin-in text-sm"></i></a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-xs tracking-[3px] uppercase mb-6">Quick Links</h4>
+          <ul class="space-y-3.5">
+            <li><a href="about.html" class="text-white/35 text-sm hover:text-gold transition-colors">About Us</a></li>
+            <li><a href="rooms.html" class="text-white/35 text-sm hover:text-gold transition-colors">Rooms & Suites</a></li>
+            <li><a href="services.html" class="text-white/35 text-sm hover:text-gold transition-colors">Services</a></li>
+            <li><a href="menu.html" class="text-white/35 text-sm hover:text-gold transition-colors">Restaurant Menu</a></li>
+            <li><a href="gallery.html" class="text-white/35 text-sm hover:text-gold transition-colors">Gallery</a></li>
+            <li><a href="testimonials.html" class="text-white/35 text-sm hover:text-gold transition-colors">Guest Reviews</a></li>
+            <li><a href="contact.html" class="text-white/35 text-sm hover:text-gold transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-xs tracking-[3px] uppercase mb-6">Contact</h4>
+          <ul class="space-y-3.5">
+            <li class="flex items-center gap-3 text-white/35 text-sm"><i class="fas fa-map-marker-alt text-gold text-xs"></i> Westlands, Nairobi, Kenya</li>
+            <li class="flex items-center gap-3 text-white/35 text-sm"><i class="fas fa-phone text-gold text-xs"></i> +254 700 123 456</li>
+            <li class="flex items-center gap-3 text-white/35 text-sm"><i class="fas fa-envelope text-gold text-xs"></i> info@everetthotel.com</li>
+            <li class="flex items-center gap-3 text-white/35 text-sm"><i class="fas fa-clock text-gold text-xs"></i> 24/7 Front Desk</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-xs tracking-[3px] uppercase mb-6">Newsletter</h4>
+          <p class="text-white/35 text-sm mb-4">Get exclusive deals and travel inspiration.</p>
+          <form class="flex gap-2" onsubmit="return false;">
+            <input type="email" placeholder="Your email" class="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-white placeholder-white/25 text-sm focus:outline-none focus:border-gold transition-colors">
+            <button class="btn-gold px-5 py-2.5 rounded-full text-xs font-semibold"><i class="fas fa-paper-plane"></i></button>
+          </form>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-white/25 text-xs">&copy; 2026 Everett Hotel. All rights reserved.</p>
+        <div class="flex gap-6">
+          <a href="privacy-policy.html" class="text-white/25 text-xs hover:text-gold transition-colors">Privacy Policy</a>
+          <a href="terms.html" class="text-white/25 text-xs hover:text-gold transition-colors">Terms & Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SCRIPTS                                    -->
+  <!-- ═══════════════════════════════════════════ -->
+  <script src="/vendor/gsap/gsap.min.js" defer></script>
+  <script src="/vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="/vendor/lenis/lenis.min.js" defer></script>
+  <script src="/vendor/swiper/swiper-bundle.min.js" defer></script>
+  <script src="/vendor/sweetalert2/sweetalert2.min.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/theme.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/animations.js" defer></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Page Loader
+    setTimeout(function() {
+      document.getElementById('pageLoader').classList.add('hidden');
+    }, 1200);
+
+    // Nav scroll effect
+    window.addEventListener('scroll', function() {
+      const nav = document.getElementById('mainNav');
+      if (window.scrollY > 80) { nav.classList.add('nav-scrolled'); }
+      else { nav.classList.remove('nav-scrolled'); }
+    });
+
+    // Auth menu + logout
+    if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+      const user = Auth.getCurrentUser();
+      const loginLink = document.getElementById('navLoginLink');
+      const userMenu = document.getElementById('navUserMenu');
+      const mobileLogin = document.getElementById('mobileLoginBtn');
+      const mobileLogout = document.getElementById('mobileLogoutBtn');
+
+      if (userMenu) {
+        if (loginLink) loginLink.style.display = 'none';
+        userMenu.style.display = '';
+        const nameEl = document.getElementById('navUserName');
+        const dashEl = document.getElementById('navDashboardLink');
+        const btnEl = document.getElementById('navUserBtn');
+        const dropEl = document.getElementById('navUserDropdown');
+        const logoutEl = document.getElementById('navLogoutBtn');
+
+        if (user) {
+          const first = user.firstName || 'Account';
+          const last = user.lastName || '';
+          if (nameEl) nameEl.textContent = last ? first + ' ' + last : first;
+          if (dashEl) {
+            if (user.role === 'admin' || user.role === 'super_admin') dashEl.href = 'admin/dashboard.html';
+            else if (typeof Auth.isStaff === 'function' && Auth.isStaff()) dashEl.href = 'employee/dashboard.html';
+          }
+        }
+
+        if (btnEl) {
+          btnEl.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (dropEl) dropEl.classList.toggle('hidden');
+          });
+        }
+        document.addEventListener('click', function() { if (dropEl) dropEl.classList.add('hidden'); });
+        if (logoutEl) {
+          logoutEl.addEventListener('click', function(e) {
+            e.preventDefault();
+            Auth.logout();
+          });
+        }
+      }
+
+      if (mobileLogin) mobileLogin.style.display = 'none';
+      if (mobileLogout) mobileLogout.classList.remove('hidden');
+    }
+
+    // Hero GSAP animation
+    if (typeof gsap !== 'undefined') {
+      document.querySelectorAll('.hero-reveal').forEach(function(el) { el.style.transform = 'translateY(30px)'; });
+      gsap.to('.hero-reveal', { opacity: 1, y: 0, duration: 1, stagger: 0.18, delay: 1.3, ease: 'power3.out' });
+    } else {
+      document.querySelectorAll('.hero-reveal').forEach(function(el) { el.style.opacity = '1'; });
+    }
+
+    // Scroll reveal
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+      gsap.utils.toArray('.reveal-up').forEach(function(el) {
+        gsap.fromTo(el, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 85%' } });
+      });
+      gsap.utils.toArray('.reveal-left').forEach(function(el) {
+        gsap.fromTo(el, { opacity: 0, x: -60 }, { opacity: 1, x: 0, duration: 0.8, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 85%' } });
+      });
+      gsap.utils.toArray('.reveal-right').forEach(function(el) {
+        gsap.fromTo(el, { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 0.8, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 85%' } });
+      });
+    }
+
+    // Counter animation is handled centrally by Animations.initCounterAnimations in js/animations.js
+
+    // Swiper: Rooms
+    new Swiper('.roomsSwiper', {
+      slidesPerView: 1, spaceBetween: 24,
+      pagination: { el: '.roomsSwiper .swiper-pagination', clickable: true },
+      navigation: { nextEl: '.roomsSwiper .swiper-button-next', prevEl: '.roomsSwiper .swiper-button-prev' },
+      breakpoints: { 640: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } },
+      autoplay: { delay: 5000, disableOnInteraction: false },
+    });
+
+    // Quick booking min dates
+    var today = new Date().toISOString().split('T')[0];
+    var qci = document.getElementById('quickCheckIn');
+    var qco = document.getElementById('quickCheckOut');
+    if (qci) qci.min = today;
+    if (qco) qco.min = today;
+    if (qci && qco) {
+      qci.addEventListener('change', function() { qco.min = qci.value; });
+    }
+
+    // Newsletter
+    var nlForm = document.getElementById('newsletterForm');
+    if (nlForm) {
+      nlForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var email = nlForm.querySelector('input[type="email"]').value;
+        if (typeof api !== 'undefined') {
+          api.subscribeNewsletter(email).then(function() {
+            Swal.fire({ icon: 'success', title: 'Subscribed!', text: 'Thank you for subscribing to our newsletter.', confirmButtonColor: '#D4AF37' });
+            nlForm.reset();
+          }).catch(function() {
+            Swal.fire({ icon: 'info', title: 'Thank You!', text: 'You have been subscribed to our newsletter.', confirmButtonColor: '#D4AF37' });
+            nlForm.reset();
+          });
+        }
+      });
+    }
+
+    // Set min dates for booking
+    var ci = document.getElementById('bookCheckIn');
+    var co = document.getElementById('bookCheckOut');
+    if (ci) ci.min = today;
+    if (co) co.min = today;
+    if (ci && co) {
+      ci.addEventListener('change', function() { co.min = ci.value; });
+    }
+
+    // Homepage testimonials
+    var homeTests = document.getElementById('homeTestimonials');
+    if (homeTests && typeof api !== 'undefined') {
+      api.getAllReviews({ page: 1, limit: 3 }).then(function(res) {
+        var reviews = (res.data && res.data.reviews) || [];
+        if (reviews.length === 0) {
+          homeTests.innerHTML = '<div class="md:col-span-3 py-10 text-center text-charcoal/40"><p>No reviews yet. Be the first to share your experience!</p></div>';
+          return;
+        }
+        homeTests.innerHTML = reviews.map(function(r) {
+          var name = [r.first_name, r.last_name].filter(Boolean).join(' ') || 'Guest';
+          var initials = name.split(' ').map(function(w) { return w.charAt(0); }).join('').toUpperCase().slice(0, 2);
+          var stars = '';
+          for (var i = 1; i <= 5; i++) {
+            stars += '<i class="' + (i <= r.rating ? 'fa-solid' : 'fa-regular') + ' fa-star"></i>';
+          }
+          var comment = r.comment || 'No comment provided.';
+          var roomTag = r.room_number ? '<p class="text-[10px] tracking-[2px] uppercase text-gold font-semibold mt-5"><i class="fa-solid fa-bed mr-1"></i>Room ' + r.room_number + '</p>' : '';
+          return '' +
+            '<div class="bg-white rounded-2xl p-8 border border-navy/5 shadow-sm hover:shadow-xl transition-shadow relative">' +
+              (r.is_featured ? '<span class="absolute top-6 right-6 text-gold"><i class="fa-solid fa-star"></i></span>' : '') +
+              '<div class="flex items-center gap-4 mb-5">' +
+                '<div class="w-12 h-12 rounded-full bg-gradient-to-br from-navy to-navy-light text-gold flex items-center justify-center font-bold text-sm">' + initials + '</div>' +
+                '<div><p class="font-semibold text-navy text-sm">' + name + '</p><p class="text-charcoal/40 text-xs mt-0.5">' + (r.title || 'Guest Review') + '</p></div>' +
+              '</div>' +
+              '<div class="text-gold text-sm mb-4">' + stars + '</div>' +
+              '<p class="text-charcoal/60 text-sm leading-relaxed">"' + comment + '"</p>' +
+              roomTag +
+            '</div>';
+        }).join('');
+      }).catch(function() {
+        homeTests.innerHTML = '';
+      });
+    }
+  });
+  </script>
+</body>
+</html>

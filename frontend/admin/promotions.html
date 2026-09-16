@@ -1,0 +1,951 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promotions | Everett Hotel Admin</title>
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { DEFAULT: '#8B5E34', light: '#A67C52', lighter: '#3B2A1A', dark: '#24180F' },
+            gold: { DEFAULT: '#D4AF37', light: '#D4BC86', dark: '#B89A55', muted: '#D4AF3733' },
+            beige: { DEFAULT: '#FAF7F2', dark: '#EDE9E0', lighter: '#FAF9F7' },
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="/vendor/sweetalert2/sweetalert2.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; margin: 0; background: #FAF7F2; color: #8B5E34; }
+    :root {
+      --navy: #8B5E34;
+      --navy-light: #A67C52;
+      --navy-lighter: #3B2A1A;
+      --gold: #D4AF37;
+      --gold-light: #D4BC86;
+      --gold-dark: #B89A55;
+      --beige: #FAF7F2;
+      --beige-dark: #EDE9E0;
+      --beige-lighter: #FAF9F7;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #FAF7F2; }
+    ::-webkit-scrollbar-thumb { background: #D4AF3755; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(139,94,52,0.6);
+      z-index: 40;
+      backdrop-filter: blur(4px);
+    }
+    .sidebar-overlay.show { display: block; }
+
+    .admin-sidebar {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      width: 272px;
+      background: linear-gradient(180deg, #8B5E34 0%, #A67C52 100%);
+      z-index: 50;
+      transform: translateX(-100%);
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+      overflow-y: auto;
+      overflow-x: hidden;
+      border-right: 1px solid #D4AF3722;
+    }
+    .admin-sidebar.open { transform: translateX(0); }
+
+    .sidebar-brand {
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid #D4AF3722;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .sidebar-brand-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #D4AF37, #D4BC86);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      color: #8B5E34;
+      font-weight: 800;
+      font-size: 18px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(212,175,55,0.3);
+    }
+    .sidebar-brand-text {
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .sidebar-brand-sub {
+      color: #D4AF37;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 2px;
+    }
+
+    .sidebar-section-label {
+      padding: 20px 24px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #D4AF3788;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 24px;
+      color: #ffffffaa;
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      margin: 1px 12px;
+      border-radius: 10px;
+      position: relative;
+    }
+    .sidebar-nav-item i { width: 20px; text-align: center; font-size: 15px; }
+    .sidebar-nav-item:hover {
+      background: #D4AF3715;
+      color: #fff;
+    }
+    .sidebar-nav-item.active {
+      background: linear-gradient(135deg, #D4AF3722, #D4AF3711);
+      color: #D4AF37;
+      font-weight: 600;
+    }
+    .sidebar-nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 50%;
+      transform: translateY(-50%);
+      width: 3px; height: 20px;
+      background: #D4AF37;
+      border-radius: 0 3px 3px 0;
+    }
+
+    .admin-main {
+      margin-left: 0;
+      transition: margin-left 0.35s cubic-bezier(0.4,0,0.2,1);
+      min-height: 100vh;
+    }
+
+    .admin-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(246,244,239,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid #D4AF3718;
+      padding: 0 32px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .topbar-search {
+      position: relative;
+      max-width: 360px;
+      flex: 1;
+    }
+    .topbar-search i {
+      position: absolute;
+      left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: #8B5E3455;
+      font-size: 14px;
+    }
+    .topbar-search input {
+      width: 100%;
+      padding: 10px 16px 10px 40px;
+      border: 1.5px solid #D4AF3725;
+      border-radius: 12px;
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      color: #8B5E34;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .topbar-search input::placeholder { color: #8B5E3455; }
+    .topbar-search input:focus {
+      border-color: #D4AF37;
+      box-shadow: 0 0 0 3px #D4AF3718;
+    }
+
+    .topbar-btn {
+      width: 40px; height: 40px;
+      border-radius: 11px;
+      border: 1.5px solid #D4AF3720;
+      background: #fff;
+      color: #8B5E34;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 16px;
+      position: relative;
+    }
+    .topbar-btn:hover {
+      border-color: #D4AF37;
+      background: #D4AF3710;
+      color: #D4AF37;
+    }
+    .topbar-btn .badge {
+      position: absolute;
+      top: 6px; right: 6px;
+      width: 8px; height: 8px;
+      background: #D4AF37;
+      border-radius: 50%;
+      border: 2px solid #FAF7F2;
+    }
+
+    .admin-profile {
+      position: relative;
+      cursor: pointer;
+    }
+    .admin-profile-trigger {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 12px 6px 6px;
+      border-radius: 12px;
+      transition: background 0.2s;
+    }
+    .admin-profile-trigger:hover { background: #D4AF3710; }
+    .admin-avatar {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #D4AF37, #D4BC86);
+      color: #8B5E34;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .admin-profile-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #8B5E34;
+    }
+
+    .profile-dropdown {
+      display: none;
+      position: absolute;
+      right: 0; top: calc(100% + 8px);
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 16px 48px rgba(139,94,52,0.15), 0 2px 8px rgba(139,94,52,0.08);
+      border: 1px solid #D4AF3718;
+      min-width: 200px;
+      overflow: hidden;
+      z-index: 60;
+    }
+    .profile-dropdown.show { display: block; }
+    .profile-dropdown a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      color: #8B5E34;
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: background 0.15s;
+    }
+    .profile-dropdown a:hover { background: #FAF7F2; color: #D4AF37; }
+    .profile-dropdown a i { width: 18px; text-align: center; color: #D4AF37; font-size: 14px; }
+    .profile-dropdown hr {
+      border: none;
+      border-top: 1px solid #D4AF3715;
+      margin: 0;
+    }
+
+    .main-content {
+      padding: 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #8B5E34;
+      letter-spacing: -0.03em;
+      margin: 0;
+    }
+    .page-header p {
+      font-size: 14px;
+      color: #8B5E3488;
+      margin: 4px 0 0;
+    }
+
+    .btn-gold {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      background: linear-gradient(135deg, #D4AF37, #B89A55);
+      color: #8B5E34;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      border: none;
+      border-radius: 11px;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 4px 16px rgba(212,175,55,0.3);
+      text-decoration: none;
+    }
+    .btn-gold:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(212,175,55,0.45);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid #D4AF3715;
+      border-radius: 14px;
+      padding: 20px 22px;
+      transition: all 0.25s;
+    }
+    .stat-card:hover {
+      border-color: #D4AF3740;
+      box-shadow: 0 4px 20px rgba(212,175,55,0.12);
+    }
+    .stat-card .stat-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      margin-bottom: 14px;
+    }
+    .stat-card .stat-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: #8B5E34;
+      letter-spacing: -0.03em;
+    }
+    .stat-card .stat-label {
+      font-size: 12.5px;
+      color: #8B5E3477;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .table-wrapper {
+      background: #fff;
+      border: 1px solid #D4AF3715;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .table-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid #D4AF3712;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .table-header-bar h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #8B5E34;
+      margin: 0;
+    }
+
+    .promos-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .promos-table thead th {
+      padding: 14px 20px;
+      text-align: left;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #8B5E3477;
+      background: #FAF9F7;
+      border-bottom: 1px solid #D4AF3712;
+      white-space: nowrap;
+    }
+    .promos-table tbody td {
+      padding: 16px 20px;
+      font-size: 13.5px;
+      color: #8B5E34;
+      border-bottom: 1px solid #D4AF370A;
+      vertical-align: middle;
+    }
+    .promos-table tbody tr {
+      transition: background 0.15s;
+    }
+    .promos-table tbody tr:hover { background: #D4AF3706; }
+    .promos-table tbody tr:last-child td { border-bottom: none; }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .status-badge.active {
+      background: #16a34a15;
+      color: #16a34a;
+    }
+    .status-badge.active::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #16a34a;
+    }
+    .status-badge.expired {
+      background: #dc262615;
+      color: #dc2626;
+    }
+    .status-badge.expired::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #dc2626;
+    }
+    .status-badge.inactive {
+      background: #6b728015;
+      color: #6b7280;
+    }
+
+    .action-btn {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      border: 1.5px solid #D4AF3720;
+      background: #fff;
+      color: #8B5E34;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 13px;
+    }
+    .action-btn.edit:hover {
+      border-color: #D4AF37;
+      background: #D4AF3712;
+      color: #D4AF37;
+    }
+    .action-btn.delete:hover {
+      border-color: #dc2626;
+      background: #dc262612;
+      color: #dc2626;
+    }
+    .actions-cell { display: flex; gap: 6px; }
+
+    /* Custom Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(139,94,52,0.6);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal-panel {
+      background: #fff;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 540px;
+      box-shadow: 0 24px 64px rgba(139,94,52,0.2);
+      border: 1px solid #D4AF3718;
+      overflow: hidden;
+      animation: modalSlideIn 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    @keyframes modalSlideIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid #D4AF3712;
+    }
+    .modal-header h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #8B5E34;
+      margin: 0;
+    }
+    .modal-close {
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      border: 1.5px solid #D4AF3720;
+      background: #fff;
+      color: #8B5E34;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+    }
+    .modal-close:hover {
+      border-color: #dc2626;
+      color: #dc2626;
+      background: #dc262608;
+    }
+    .modal-body {
+      padding: 24px 28px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 16px 28px 24px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #8B5E34;
+      margin-bottom: 7px;
+    }
+    .form-input, .form-select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid #D4AF3725;
+      border-radius: 10px;
+      background: #FAF9F7;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      color: #8B5E34;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input::placeholder { color: #8B5E3444; }
+    .form-input:focus, .form-select:focus {
+      border-color: #D4AF37;
+      box-shadow: 0 0 0 3px #D4AF3718;
+      background: #fff;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .btn-modal {
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1.5px solid transparent;
+    }
+    .btn-modal-cancel {
+      background: #fff;
+      border-color: #D4AF3725;
+      color: #8B5E34;
+    }
+    .btn-modal-cancel:hover {
+      border-color: #D4AF3750;
+      background: #FAF7F2;
+    }
+    .btn-modal-save {
+      background: linear-gradient(135deg, #D4AF37, #B89A55);
+      color: #8B5E34;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(212,175,55,0.3);
+    }
+    .btn-modal-save:hover {
+      box-shadow: 0 6px 20px rgba(212,175,55,0.45);
+      transform: translateY(-1px);
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    @media (max-width: 768px) {
+      .main-content { padding: 20px 16px; }
+      .admin-topbar { padding: 0 16px; }
+      .page-header h1 { font-size: 22px; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .promos-table thead th,
+      .promos-table tbody td { padding: 12px 14px; }
+    }
+
+    @media (min-width: 1024px) {
+      .admin-sidebar {
+        transform: translateX(0);
+      }
+      .admin-main {
+        margin-left: 272px;
+      }
+      .sidebar-overlay { display: none !important; }
+      .mobile-toggle { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Overlay -->
+  <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside id="adminSidebar" class="admin-sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">E</div>
+      <div>
+        <div class="sidebar-brand-text">Everett Hotel</div>
+        <div class="sidebar-brand-sub">Admin Panel</div>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div class="sidebar-section-label">Main</div>
+    <a href="dashboard.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-grid-2"></i>
+      <span>Dashboard</span>
+    </a>
+
+    <!-- Management -->
+    <div class="sidebar-section-label">Management</div>
+    <a href="rooms.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-bed"></i>
+      <span>Rooms</span>
+    </a>
+    <a href="bookings.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-calendar-check"></i>
+      <span>Bookings</span>
+    </a>
+    <a href="customers.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-users"></i>
+      <span>Customers</span>
+    </a>
+    <a href="employees.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-user-tie"></i>
+      <span>Employees</span>
+    </a>
+    <a href="attendance.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-fingerprint"></i>
+      <span>Attendance</span>
+    </a>
+
+    <!-- Operations -->
+    <div class="sidebar-section-label">Operations</div>
+    <a href="housekeeping.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-broom"></i>
+      <span>Housekeeping</span>
+    </a>
+    <a href="restaurant.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-utensils"></i>
+      <span>Restaurant</span>
+    </a>
+    <a href="payments.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-credit-card"></i>
+      <span>Payments</span>
+    </a>
+    <a href="promotions.html" class="sidebar-nav-item active">
+      <i class="fa-solid fa-tags"></i>
+      <span>Promotions</span>
+    </a>
+
+    <!-- Content -->
+    <div class="sidebar-section-label">Content</div>
+    <a href="cms.html" class="nav-link">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    CMS
+</a>
+    <a href="gallery.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-images"></i>
+      <span>Gallery</span>
+    </a>
+    <a href="reviews.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-star"></i>
+      <span>Reviews</span>
+    </a>
+    <a href="messages.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-envelope"></i>
+      <span>Messages</span>
+    </a>
+    <a href="newsletter.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-newspaper"></i>
+      <span>Newsletter</span>
+    </a>
+
+    <!-- System -->
+    <div class="sidebar-section-label">System</div>
+    <a href="reports.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-chart-line"></i>
+      <span>Reports</span>
+    </a>
+    <a href="settings.html" class="sidebar-nav-item">
+      <i class="fa-solid fa-gear"></i>
+      <span>Settings</span>
+    </a>
+
+    <div style="height: 32px;"></div>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="admin-main">
+
+    <!-- Topbar -->
+    <header class="admin-topbar">
+      <div class="flex items-center gap-3">
+        <button onclick="toggleSidebar()" class="topbar-btn mobile-toggle">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="topbar-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search promotions, codes...">
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button class="topbar-btn" title="Notifications">
+          <i class="fa-solid fa-bell"></i>
+          <span class="badge"></span>
+        </button>
+
+        <div class="admin-profile" onclick="toggleProfileDropdown()">
+          <div class="admin-profile-trigger">
+            <div id="adminAvatar" class="admin-avatar"></div>
+            <span id="adminName" class="admin-profile-name hidden md:inline"></span>
+            <i class="fa-solid fa-chevron-down text-xs" style="color:#D4AF37;"></i>
+          </div>
+          <div id="profileDropdown" class="profile-dropdown">
+            <a href="settings.html"><i class="fa-solid fa-user"></i> My Profile</a>
+            <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+            <hr>
+            <a href="#" style="color:#dc2626;" onclick="Auth.logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="main-content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1>Promotions</h1>
+          <p>Manage discount codes, offers, and promotional campaigns</p>
+        </div>
+        <button class="btn-gold" onclick="openPromoModal(null)">
+          <i class="fa-solid fa-plus"></i>
+          Add Promotion
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#D4AF3715;color:#D4AF37;">
+            <i class="fa-solid fa-tags"></i>
+          </div>
+          <div class="stat-value">4</div>
+          <div class="stat-label">Total Promotions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#16a34a15;color:#16a34a;">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div class="stat-value">3</div>
+          <div class="stat-label">Active</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#dc262615;color:#dc2626;">
+            <i class="fa-solid fa-clock"></i>
+          </div>
+          <div class="stat-value">1</div>
+          <div class="stat-label">Expired</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#8B5E3410;color:#8B5E34;">
+            <i class="fa-solid fa-percent"></i>
+          </div>
+          <div class="stat-value">437</div>
+          <div class="stat-label">Total Redemptions</div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <div class="table-header-bar">
+          <h2>All Promotions</h2>
+        </div>
+        <div class="table-responsive">
+          <table class="promos-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Description</th>
+                <th>Discount</th>
+                <th>Min. Stay</th>
+                <th>Valid Until</th>
+                <th>Used</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="promosTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Promo Modal -->
+  <div id="promoModal" class="modal-overlay">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h3 id="promoModalTitle">Add Promotion</h3>
+        <button class="modal-close" onclick="closePromoModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="promoId">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Promo Code</label>
+            <input type="text" id="promoCode" class="form-input" placeholder="e.g. SUMMER30">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Discount (%)</label>
+            <input type="number" id="promoDiscount" class="form-input" placeholder="e.g. 30" min="1" max="100">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <input type="text" id="promoDesc" class="form-input" placeholder="e.g. Summer getaway 30% off">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Min. Stay (nights)</label>
+            <input type="number" id="promoMinStay" class="form-input" placeholder="e.g. 2" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Expiry Date</label>
+            <input type="date" id="promoExpiry" class="form-input">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Max Uses</label>
+            <input type="number" id="promoMaxUses" class="form-input" placeholder="e.g. 100" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select id="promoStatus" class="form-select">
+              <option value="active">Active</option>
+              <option value="expired">Expired</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal btn-modal-cancel" onclick="closePromoModal()">Cancel</button>
+        <button class="btn-modal btn-modal-save" onclick="savePromo()">Save Promotion</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/vendor/sweetalert2/sweetalert2.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/animations.js"></script>
+
+  <script>
+    function closePromoModal() {
+      document.getElementById('promoModal').classList.remove('show');
+    }
+
+    (function(){
+      if(!Auth.adminGuard())return;
+      var user=Auth.getCurrentUser();
+      if(user){
+        var n=user.name||(user.firstName+' '+(user.lastName||''));
+        document.getElementById('adminName').textContent=n;
+        document.getElementById('adminAvatar').textContent=Utils.getInitials(n);
+      }
+
+      window.toggleSidebar=function(){document.getElementById('adminSidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('show');};
+      window.toggleProfileDropdown=function(){document.getElementById('profileDropdown').classList.toggle('show');};
+      document.addEventListener('click',function(e){if(!e.target.closest('.admin-profile'))document.getElementById('profileDropdown').classList.remove('show');});
+
+      var promos=[];
+
+      function renderPromos(){document.getElementById('promosTableBody').innerHTML=promos.map(function(p){return '<tr><td><strong style="color:var(--gold);font-family:monospace;">'+p.code+'</strong></td><td>'+p.description+'</td><td><strong>'+p.discount+'% OFF</strong></td><td>'+p.minStay+' nights</td><td>'+Utils.formatDate(p.expiry)+'</td><td>'+p.used+'/'+p.maxUses+'</td><td><span class="status-badge '+p.status+'">'+p.status.charAt(0).toUpperCase()+p.status.slice(1)+'</span></td><td><div class="actions-cell"><button class="action-btn edit" onclick="editPromo(\''+p._id+'\')"><i class="fa-solid fa-pen"></i></button><button class="action-btn delete" onclick="deletePromo(\''+p._id+'\')"><i class="fa-solid fa-trash"></i></button></div></td>';}).join('')||'<tr><td colspan="8" style="text-align:center;padding:40px 20px;color:#8B5E3455;">No promotions found</td></tr>';}
+
+      window.openPromoModal=function(p){document.getElementById('promoModalTitle').textContent=p?'Edit Promotion':'Add Promotion';document.getElementById('promoId').value=p?p._id:'';document.getElementById('promoCode').value=p?p.code:'';document.getElementById('promoDiscount').value=p?p.discount:'';document.getElementById('promoDesc').value=p?p.description:'';document.getElementById('promoMinStay').value=p?p.minStay:1;document.getElementById('promoExpiry').value=p?p.expiry:'';document.getElementById('promoMaxUses').value=p?p.maxUses:'';document.getElementById('promoStatus').value=p?p.status:'active';document.getElementById('promoModal').classList.add('show');};
+      window.editPromo=function(id){var p=promos.find(function(x){return x._id===id;});if(p)openPromoModal(p);};
+      window.savePromo=function(){var data={code:document.getElementById('promoCode').value.toUpperCase(),discount:parseInt(document.getElementById('promoDiscount').value),description:document.getElementById('promoDesc').value,minStay:parseInt(document.getElementById('promoMinStay').value),expiry:document.getElementById('promoExpiry').value,maxUses:parseInt(document.getElementById('promoMaxUses').value),status:document.getElementById('promoStatus').value};var id=document.getElementById('promoId').value;if(id){var idx=promos.findIndex(function(p){return p._id===id;});if(idx>-1)promos[idx]=Object.assign(promos[idx],data);}else{data._id='P'+String(promos.length+1).padStart(3,'0');data.used=0;promos.push(data);}document.getElementById('promoModal').classList.remove('show');renderPromos();Swal.fire({icon:'success',title:id?'Promotion Updated':'Promotion Added',confirmButtonColor:'#D4AF37'});};
+      window.deletePromo=function(id){Swal.fire({title:'Delete Promotion?',icon:'warning',showCancelButton:true,confirmButtonColor:'#D4AF37',confirmButtonText:'Delete'}).then(function(r){if(r.isConfirmed){promos=promos.filter(function(p){return p._id!==id;});renderPromos();Swal.fire({icon:'success',title:'Deleted',confirmButtonColor:'#D4AF37'});}});};
+      renderPromos();
+    })();
+  </script>
+</body>
+</html>

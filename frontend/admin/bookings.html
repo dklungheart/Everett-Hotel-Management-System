@@ -1,0 +1,297 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Management | Everett Hotel Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+  <link href="/vendor/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#8B5E34',
+            'navy-light': '#A67C52',
+            gold: '#D4AF37',
+            'gold-dark': '#B8960C',
+            'gold-light': '#D4BE8A',
+            beige: '#FAF7F2',
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:#FAF7F2;color:#333;overflow-x:hidden;}
+
+    .admin-sidebar{position:fixed;top:0;left:0;width:260px;height:100vh;background:#8B5E34;z-index:1040;display:flex;flex-direction:column;transition:transform .3s ease;overflow-y:auto;}
+    .sidebar-logo{padding:20px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);}
+    .sidebar-logo .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,#D4AF37,#B8960C);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#8B5E34;}
+    .sidebar-logo .logo-text{color:#fff;font-size:18px;font-weight:700;letter-spacing:.02em;}.sidebar-logo .logo-text span{color:#D4AF37;}
+
+    .sidebar-nav{flex:1;padding:12px 0;}.sidebar-nav .nav-section{padding:8px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3);font-weight:600;}
+    .sidebar-nav a{display:flex;align-items:center;gap:12px;padding:10px 24px;color:rgba(255,255,255,.6);text-decoration:none;font-size:14px;font-weight:500;transition:all .2s;border-left:3px solid transparent;margin:1px 0;}
+    .sidebar-nav a:hover{color:#fff;background:rgba(255,255,255,.05);}.sidebar-nav a.active{color:#D4AF37;background:rgba(212,175,55,.08);border-left-color:#D4AF37;}
+    .sidebar-nav a i{width:20px;text-align:center;font-size:15px;}
+
+    .admin-topbar{position:fixed;top:0;left:260px;right:0;height:60px;background:#fff;z-index:1030;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid #e9ecef;transition:left .3s ease;}
+
+    .admin-profile{display:flex;align-items:center;gap:10px;cursor:pointer;padding:4px 12px 4px 4px;border-radius:8px;position:relative;}
+    .admin-profile:hover{background:#FAF7F2;}
+    .profile-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:#fff;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.12);min-width:180px;display:none;z-index:1050;overflow:hidden;}
+    .profile-dropdown.show{display:block;}.profile-dropdown a{display:flex;align-items:center;gap:10px;padding:10px 16px;color:#475569;text-decoration:none;font-size:14px;transition:background .2s;}.profile-dropdown a:hover{background:#FAF7F2;}.profile-dropdown a.text-red-500{color:#ef4444;}.profile-dropdown hr{margin:0;border-color:#e2e8f0;}
+
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1035;}.sidebar-overlay.show{display:block;}
+
+    .status-dropdown-wrap{position:relative;}
+    .status-dropdown-menu{position:absolute;top:100%;right:0;background:#fff;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.12);min-width:140px;z-index:50;display:none;overflow:hidden;margin-top:4px;}
+    .status-dropdown-menu.show{display:block;}.status-dropdown-menu a{display:block;padding:8px 14px;color:#475569;text-decoration:none;font-size:13px;transition:background .15s;}.status-dropdown-menu a:hover{background:#FAF7F2;}.status-dropdown-menu a.danger{color:#ef4444;}.status-dropdown-menu hr{margin:0;border:none;border-top:1px solid #e2e8f0;}
+
+    .status-badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;}
+    .status-badge.pending{background:#fef3c7;color:#d97706;}.status-badge.confirmed{background:#dbeafe;color:#2563eb;}.status-badge.checked_in{background:#d1fae5;color:#059669;}.status-badge.checked_out{background:#e2e8f0;color:#64748b;}.status-badge.cancelled{background:#fee2e2;color:#dc2626;}
+
+    .custom-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}.custom-modal-overlay.show{display:flex;}
+    .custom-modal{background:#fff;border-radius:16px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.25);}
+
+    .admin-content{margin-left:260px;margin-top:60px;padding:24px;min-height:calc(100vh - 60px);transition:margin-left .3s ease;}
+
+    .sidebar-toggle{display:none;background:none;border:none;font-size:20px;color:#8B5E34;cursor:pointer;padding:4px 8px;}
+
+    .admin-sidebar::-webkit-scrollbar{width:4px;}.admin-sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:4px;}
+
+    @media(max-width:991px){.admin-sidebar{transform:translateX(-100%);}.admin-sidebar.open{transform:translateX(0);}.admin-topbar{left:0;}.admin-content{margin-left:0;}.sidebar-toggle{display:block!important;}.topbar-search-input{width:180px!important;}}
+    @media(max-width:576px){.admin-content{padding:16px;}.topbar-search-wrap{display:none;}}
+  </style>
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">EH</div>
+      <div class="logo-text">EVERETT <span>HOTEL</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      <div class="nav-section">Management</div>
+      <a href="rooms.html"><i class="fa-solid fa-bed"></i> Rooms</a>
+      <a href="bookings.html" class="active"><i class="fa-solid fa-calendar-check"></i> Bookings</a>
+      <a href="customers.html"><i class="fa-solid fa-users"></i> Customers</a>
+      <a href="employees.html"><i class="fa-solid fa-user-tie"></i> Employees</a>
+            <a href="attendance.html"><i class="fa-solid fa-fingerprint"></i> Attendance</a>
+      <div class="nav-section">Operations</div>
+      <a href="housekeeping.html"><i class="fa-solid fa-broom"></i> Housekeeping</a>
+      <a href="restaurant.html"><i class="fa-solid fa-utensils"></i> Restaurant</a>
+      <a href="payments.html"><i class="fa-solid fa-credit-card"></i> Payments</a>
+      <a href="promotions.html"><i class="fa-solid fa-tags"></i> Promotions</a>
+      <div class="nav-section">Content</div>
+      <a href="cms.html" class="nav-link">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    CMS
+</a>
+      <a href="gallery.html"><i class="fa-solid fa-images"></i> Gallery</a>
+      <a href="reviews.html"><i class="fa-solid fa-star"></i> Reviews</a>
+      <a href="messages.html"><i class="fa-solid fa-envelope"></i> Messages</a>
+      <a href="newsletter.html"><i class="fa-solid fa-newspaper"></i> Newsletter</a>
+      <div class="nav-section">System</div>
+      <a href="reports.html"><i class="fa-solid fa-chart-line"></i> Reports</a>
+      <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+    </nav>
+  </aside>
+
+  <header class="admin-topbar">
+    <div class="flex items-center gap-4">
+      <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <div class="relative topbar-search-wrap">
+        <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+        <input type="text" placeholder="Search bookings..." class="topbar-search-input pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm w-[280px] bg-beige outline-none focus:border-gold font-inter transition">
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="p-2 text-gray-500 hover:text-navy hover:bg-beige rounded-lg transition theme-toggle" title="Toggle Theme">
+        <i class="fa-solid fa-moon text-lg"></i>
+      </button>
+      <button class="relative p-2 text-gray-500 hover:text-navy hover:bg-beige rounded-lg transition">
+        <i class="fa-solid fa-bell text-lg"></i>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+      </button>
+      <div class="admin-profile" onclick="toggleProfileDropdown()">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center font-bold text-sm text-navy" id="adminAvatar">A</div>
+        <div>
+          <div class="text-sm font-semibold text-navy" id="adminName">Admin</div>
+          <div class="text-[11px] text-gray-400">Administrator</div>
+        </div>
+        <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 ml-1"></i>
+        <div class="profile-dropdown" id="profileDropdown">
+          <a href="settings.html"><i class="fa-solid fa-user"></i> Profile</a>
+          <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+          <hr>
+          <a href="#" class="text-red-500" onclick="Auth.logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-content">
+    <div class="flex items-center justify-between flex-wrap gap-3 mb-6">
+      <div>
+        <h2 class="text-2xl font-bold text-navy font-inter">Booking Management</h2>
+        <p class="text-sm text-gray-500 mt-0.5">Manage all hotel bookings</p>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-3 mb-5">
+      <select id="filterStatus" onchange="loadBookings()" class="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white outline-none focus:border-gold font-inter transition">
+        <option value="">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="checked_in">Checked In</option>
+        <option value="checked_out">Checked Out</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+      <input type="date" id="filterDate" onchange="loadBookings()" class="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white outline-none focus:border-gold font-inter transition">
+      <input type="text" id="filterSearch" placeholder="Search guest name..." oninput="loadBookings()" class="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white outline-none focus:border-gold font-inter transition">
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th class="text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-4 py-3 border-b border-gray-100">Booking ID</th>
+              <th class="text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-4 py-3 border-b border-gray-100">Guest</th>
+              <th class="text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-4 py-3 border-b border-gray-100">Room</th>
+              <th class="text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-4 py-3 border-b border-gray-100">Check-in</th>
+              <th class="text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-4 py-3 border-b border-gray-100">Check-out</th>
+              <th class="text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-4 py-3 border-b border-gray-100">Amount</th>
+              <th class="text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-4 py-3 border-b border-gray-100">Status</th>
+              <th class="text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-4 py-3 border-b border-gray-100">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <div class="custom-modal-overlay" id="bookingDetailModal">
+    <div class="custom-modal">
+      <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+        <h5 class="text-lg font-bold text-navy font-inter">Booking Details</h5>
+        <button onclick="closeBookingModal()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      <div class="p-6" id="bookingDetailBody"></div>
+    </div>
+  </div>
+
+  <script src="/vendor/sweetalert2/sweetalert2.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/animations.js"></script>
+  <script>
+    (function(){
+      if(!Auth.adminGuard())return;
+      var user=Auth.getCurrentUser();if(user){var n=user.name||(user.firstName+' '+(user.lastName||''));document.getElementById('adminName').textContent=n;document.getElementById('adminAvatar').textContent=Utils.getInitials(n);}
+      window.toggleSidebar=function(){document.getElementById('adminSidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('show');};
+      window.toggleProfileDropdown=function(){document.getElementById('profileDropdown').classList.toggle('show');};
+      document.addEventListener('click',function(e){if(!e.target.closest('.admin-profile'))document.getElementById('profileDropdown').classList.remove('show');if(!e.target.closest('.status-dropdown-wrap'))document.querySelectorAll('.status-dropdown-menu.show').forEach(function(m){m.classList.remove('show');});});
+
+      var bookings=[];
+
+      window.toggleStatusDropdown=function(btn){
+        var menu=btn.nextElementSibling;
+        document.querySelectorAll('.status-dropdown-menu.show').forEach(function(m){if(m!==menu)m.classList.remove('show');});
+        menu.classList.toggle('show');
+      };
+
+      function loadBookings(){
+        var status=document.getElementById('filterStatus').value;
+        var search=document.getElementById('filterSearch').value.toLowerCase();
+        var filtered=bookings.filter(function(b){
+          if(status&&b.status!==status)return false;
+          if(search&&!b.guest.toLowerCase().includes(search))return false;
+          return true;
+        });
+        document.getElementById('bookingsTableBody').innerHTML=filtered.map(function(b){
+          return '<tr class="border-b border-gray-50 hover:bg-gray-50/50 transition">' +
+            '<td class="px-4 py-3"><strong style="color:#D4AF37;">'+b._id+'</strong></td>' +
+            '<td class="px-4 py-3">'+b.guest+'</td>' +
+            '<td class="px-4 py-3">'+b.room+'</td>' +
+            '<td class="px-4 py-3">'+Utils.formatDate(b.checkIn)+'</td>' +
+            '<td class="px-4 py-3">'+Utils.formatDate(b.checkOut)+'</td>' +
+            '<td class="px-4 py-3"><strong>KSh '+Number(b.amount||0).toLocaleString('en-KE')+'</strong></td>' +
+            '<td class="px-4 py-3"><span class="status-badge '+b.status+'">'+b.status.replace(/_/g,' ').replace(/\b\w/g,function(l){return l.toUpperCase();})+'</span></td>' +
+            '<td class="px-4 py-3">' +
+              '<div class="flex items-center gap-1">' +
+                '<button class="p-1.5 rounded-md border border-blue-200 text-blue-500 hover:bg-blue-50 transition" onclick="viewBooking(\''+b._id+'\')"><i class="fa-solid fa-eye text-sm"></i></button>' +
+                '<div class="status-dropdown-wrap">' +
+                  '<button class="px-2 py-1.5 rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50 transition text-xs font-medium flex items-center gap-1" onclick="event.stopPropagation();toggleStatusDropdown(this)">Status <i class="fa-solid fa-chevron-down text-[9px]"></i></button>' +
+                  '<div class="status-dropdown-menu">' +
+                    '<a href="#" onclick="event.preventDefault();updateStatus(\''+b._id+'\',\'confirmed\')">Confirm</a>' +
+                    '<a href="#" onclick="event.preventDefault();updateStatus(\''+b._id+'\',\'checked_in\')">Check In</a>' +
+                    '<a href="#" onclick="event.preventDefault();updateStatus(\''+b._id+'\',\'checked_out\')">Check Out</a>' +
+                    '<hr>' +
+                    '<a href="#" class="danger" onclick="event.preventDefault();updateStatus(\''+b._id+'\',\'cancelled\')">Cancel</a>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</td>' +
+          '</tr>';
+        }).join('')||'<tr><td colspan="8" class="text-center py-4 text-gray-400">No bookings found</td></tr>';
+      }
+
+      window.viewBooking=function(id){
+        var b=bookings.find(function(x){return x._id===id;});if(!b)return;
+        document.getElementById('bookingDetailBody').innerHTML=
+          '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' +
+            '<div>' +
+              '<p class="mb-3"><strong class="text-navy">Booking ID:</strong> <span style="color:#D4AF37;" class="font-semibold">'+b._id+'</span></p>' +
+              '<p class="mb-3"><strong class="text-navy">Guest:</strong> '+b.guest+'</p>' +
+              '<p class="mb-3"><strong class="text-navy">Room:</strong> '+b.room+'</p>' +
+            '</div>' +
+            '<div>' +
+              '<p class="mb-3"><strong class="text-navy">Check-in:</strong> '+Utils.formatDate(b.checkIn)+'</p>' +
+              '<p class="mb-3"><strong class="text-navy">Check-out:</strong> '+Utils.formatDate(b.checkOut)+'</p>' +
+              '<p class="mb-3"><strong class="text-navy">Amount:</strong> KSh '+Number(b.amount||0).toLocaleString('en-KE')+'</p>' +
+            '</div>' +
+            '<div class="md:col-span-2">' +
+              '<p><strong class="text-navy">Status:</strong> <span class="status-badge '+b.status+'">'+b.status.replace(/_/g,' ').replace(/\b\w/g,function(l){return l.toUpperCase();})+'</span></p>' +
+            '</div>' +
+          '</div>';
+        document.getElementById('bookingDetailModal').classList.add('show');
+      };
+
+      window.closeBookingModal=function(){
+        document.getElementById('bookingDetailModal').classList.remove('show');
+      };
+
+      document.getElementById('bookingDetailModal').addEventListener('click',function(e){
+        if(e.target===this)closeBookingModal();
+      });
+
+      window.updateStatus=function(id,status){
+        var b=bookings.find(function(x){return x._id===id;});if(b)b.status=status;loadBookings();
+        Swal.fire({icon:'success',title:'Status Updated',text:'Booking '+id+' is now '+status.replace(/_/g,' '),confirmButtonColor:'#D4AF37'});
+      };
+
+      loadBookings();
+    })();
+  </script>
+</body>
+</html>

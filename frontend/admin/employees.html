@@ -1,0 +1,824 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employees | Everett Hotel Admin</title>
+    <script src="/vendor/tailwindcss/tailwind.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/vendor/sweetalert2/sweetalert2.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#8B5E34',
+                        gold: '#D4AF37',
+                        beige: '#FAF7F2',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #8B5E34; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4b87a; }
+
+        /* Sidebar */
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(139,94,52,0.7); backdrop-filter: blur(4px);
+            z-index: 40; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .sidebar {
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
+            background: linear-gradient(180deg, #8B5E34 0%, #24180F 100%);
+            z-index: 50; transition: left 0.35s cubic-bezier(0.4,0,0.2,1);
+            display: flex; flex-direction: column; box-shadow: 4px 0 24px rgba(0,0,0,0.3);
+        }
+        .sidebar.open { left: 0; }
+
+        .sidebar-logo {
+            padding: 24px 20px; border-bottom: 1px solid rgba(212,175,55,0.15);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .sidebar-logo-icon {
+            width: 42px; height: 42px; background: linear-gradient(135deg, #D4AF37, #d4b87a);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            color: #8B5E34; font-weight: 800; font-size: 16px;
+        }
+        .sidebar-logo-text { color: #fff; font-weight: 700; font-size: 16px; letter-spacing: 0.5px; }
+        .sidebar-logo-sub { color: #D4AF37; font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; }
+
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 12px 0; }
+
+        .nav-section-title {
+            padding: 16px 20px 6px; font-size: 10px; font-weight: 700; color: rgba(212,175,55,0.5);
+            text-transform: uppercase; letter-spacing: 2px;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 12px; padding: 11px 20px; margin: 2px 10px;
+            color: rgba(255,255,255,0.55); text-decoration: none; font-size: 13px; font-weight: 500;
+            border-radius: 10px; transition: all 0.25s ease; position: relative;
+        }
+        .nav-item:hover { color: #fff; background: rgba(212,175,55,0.08); }
+        .nav-item i { width: 20px; text-align: center; font-size: 14px; }
+        .nav-item.active {
+            color: #8B5E34; background: linear-gradient(135deg, #D4AF37, #d4b87a);
+            font-weight: 600; box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+        }
+        .nav-item.active i { color: #8B5E34; }
+
+        .sidebar-footer {
+            padding: 16px 20px; border-top: 1px solid rgba(212,175,55,0.15);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .sidebar-footer-avatar {
+            width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #D4AF37, #d4b87a);
+            display: flex; align-items: center; justify-content: center; color: #8B5E34; font-weight: 700; font-size: 13px;
+        }
+        .sidebar-footer-name { color: #fff; font-size: 12px; font-weight: 600; }
+        .sidebar-footer-role { color: rgba(212,175,55,0.6); font-size: 10px; }
+
+        /* Topbar */
+        .topbar {
+            position: sticky; top: 0; z-index: 30;
+            background: rgba(246,244,239,0.85); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(139,94,52,0.06);
+        }
+
+        /* Table */
+        .table-wrapper { border-radius: 16px; overflow: hidden; border: 1px solid rgba(139,94,52,0.06); background: #fff; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table thead { background: #8B5E34; }
+        .data-table thead th {
+            padding: 14px 18px; text-align: left; font-size: 11px; font-weight: 700;
+            color: #D4AF37; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .data-table tbody tr { border-bottom: 1px solid rgba(139,94,52,0.04); transition: background 0.2s; }
+        .data-table tbody tr:hover { background: rgba(212,175,55,0.04); }
+        .data-table tbody td { padding: 14px 18px; font-size: 13px; color: #8B5E34; }
+        .data-table tbody tr:last-child { border-bottom: none; }
+
+        .avatar-circle {
+            width: 40px; height: 40px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0;
+        }
+
+        .dept-badge {
+            display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px;
+            border-radius: 8px; font-size: 11px; font-weight: 600;
+        }
+
+        .role-pill {
+            display: inline-block; padding: 2px 10px; border-radius: 20px;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+            background: rgba(212,175,55,0.14); color: #8B5E34; border: 1px solid rgba(212,175,55,0.3);
+        }
+        .role-pill.admin { background: rgba(139,94,52,0.14); color: #6E4A26; border-color: rgba(139,94,52,0.3); }
+
+        .action-btn {
+            width: 34px; height: 34px; border-radius: 10px; display: inline-flex;
+            align-items: center; justify-content: center; border: none; cursor: pointer;
+            transition: all 0.2s; font-size: 13px;
+        }
+        .action-btn.edit { background: rgba(212,175,55,0.1); color: #D4AF37; }
+        .action-btn.edit:hover { background: #D4AF37; color: #8B5E34; }
+        .action-btn.delete { background: rgba(220,53,69,0.08); color: #dc3545; }
+        .action-btn.delete:hover { background: #dc3545; color: #fff; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(139,94,52,0.7); backdrop-filter: blur(6px);
+            z-index: 100; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-panel {
+            background: #fff; border-radius: 20px; width: 90%; max-width: 560px;
+            box-shadow: 0 24px 60px rgba(139,94,52,0.25); transform: translateY(20px) scale(0.97);
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-overlay.active .modal-panel { transform: translateY(0) scale(1); }
+        .modal-header {
+            padding: 24px 28px 16px; border-bottom: 1px solid rgba(139,94,52,0.06);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .modal-body { padding: 24px 28px; }
+        .modal-footer { padding: 16px 28px 24px; display: flex; gap: 10px; justify-content: flex-end; }
+
+        .form-group { margin-bottom: 18px; }
+        .form-label { display: block; font-size: 11px; font-weight: 700; color: #8B5E34; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        .form-input, .form-select {
+            width: 100%; padding: 11px 14px; border: 1.5px solid rgba(139,94,52,0.1);
+            border-radius: 10px; font-size: 13px; color: #8B5E34; background: #FAF7F2;
+            transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+        }
+        .form-input:focus, .form-select:focus {
+            border-color: #D4AF37; box-shadow: 0 0 0 3px rgba(212,175,55,0.15); background: #fff;
+        }
+        .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%230B1F33' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+
+        /* Filter pills */
+        .filter-pill {
+            padding: 7px 16px; border-radius: 10px; font-size: 12px; font-weight: 600;
+            border: 1.5px solid rgba(139,94,52,0.08); background: #fff; color: #8B5E34;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .filter-pill:hover { border-color: #D4AF37; color: #D4AF37; }
+        .filter-pill.active {
+            background: #8B5E34; color: #D4AF37; border-color: #8B5E34;
+        }
+
+        /* Btn styles */
+        .btn-gold {
+            padding: 10px 22px; border-radius: 10px; font-size: 13px; font-weight: 600;
+            background: linear-gradient(135deg, #D4AF37, #d4b87a); color: #8B5E34;
+            border: none; cursor: pointer; transition: all 0.25s; display: inline-flex;
+            align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+        }
+        .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(212,175,55,0.4); }
+        .btn-navy {
+            padding: 10px 22px; border-radius: 10px; font-size: 13px; font-weight: 600;
+            background: #8B5E34; color: #fff; border: none; cursor: pointer; transition: all 0.25s;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-navy:hover { background: #A67C52; }
+        .btn-outline {
+            padding: 10px 22px; border-radius: 10px; font-size: 13px; font-weight: 600;
+            background: transparent; color: #8B5E34; border: 1.5px solid rgba(139,94,52,0.12);
+            cursor: pointer; transition: all 0.25s;
+        }
+        .btn-outline:hover { border-color: #8B5E34; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-up { animation: fadeUp 0.5s ease forwards; }
+    </style>
+</head>
+<body class="bg-beige min-h-screen">
+
+    <!-- Sidebar Overlay -->
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">EH</div>
+            <div>
+                <div class="sidebar-logo-text">Everett Hotel</div>
+                <div class="sidebar-logo-sub">Admin Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-title">Main</div>
+            <a href="dashboard.html" class="nav-item">
+                <i class="fa-solid fa-grid-2"></i> Dashboard
+            </a>
+
+            <div class="nav-section-title">Management</div>
+            <a href="rooms.html" class="nav-item">
+                <i class="fa-solid fa-bed"></i> Rooms
+            </a>
+            <a href="bookings.html" class="nav-item">
+                <i class="fa-solid fa-calendar-check"></i> Bookings
+            </a>
+            <a href="customers.html" class="nav-item">
+                <i class="fa-solid fa-users"></i> Customers
+            </a>
+            <a href="employees.html" class="nav-item active">
+                <i class="fa-solid fa-user-tie"></i> Employees
+            </a>
+
+            <div class="nav-section-title">Operations</div>
+            <a href="housekeeping.html" class="nav-item">
+                <i class="fa-solid fa-broom"></i> Housekeeping
+            </a>
+            <a href="restaurant.html" class="nav-item">
+                <i class="fa-solid fa-utensils"></i> Restaurant
+            </a>
+            <a href="payments.html" class="nav-item">
+                <i class="fa-solid fa-credit-card"></i> Payments
+            </a>
+            <a href="promotions.html" class="nav-item">
+                <i class="fa-solid fa-tags"></i> Promotions
+            </a>
+
+            <div class="nav-section-title">Content</div>
+            <a href="cms.html" class="nav-link">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    CMS
+</a>
+            <a href="gallery.html" class="nav-item">
+                <i class="fa-solid fa-images"></i> Gallery
+            </a>
+            <a href="reviews.html" class="nav-item">
+                <i class="fa-solid fa-star"></i> Reviews
+            </a>
+            <a href="messages.html" class="nav-item">
+                <i class="fa-solid fa-envelope"></i> Messages
+            </a>
+            <a href="newsletter.html" class="nav-item">
+                <i class="fa-solid fa-paper-plane"></i> Newsletter
+            </a>
+
+            <div class="nav-section-title">System</div>
+            <a href="reports.html" class="nav-item">
+                <i class="fa-solid fa-chart-column"></i> Reports
+            </a>
+            <a href="settings.html" class="nav-item">
+                <i class="fa-solid fa-gear"></i> Settings
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-footer-avatar">AD</div>
+            <div>
+                <div class="sidebar-footer-name">Admin User</div>
+                <div class="sidebar-footer-role">Super Admin</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Topbar -->
+    <header class="topbar">
+        <div class="flex items-center justify-between px-5 lg:px-8 py-3">
+            <div class="flex items-center gap-3">
+                <button id="sidebarToggle" onclick="toggleSidebar()" class="w-10 h-10 rounded-xl bg-navy/5 flex items-center justify-center text-navy hover:bg-navy/10 transition">
+                    <i class="fa-solid fa-bars text-base"></i>
+                </button>
+                <div class="hidden sm:flex items-center bg-white rounded-xl border border-navy/6 px-4 py-2.5 w-72">
+                    <i class="fa-solid fa-magnifying-glass text-navy/30 text-sm mr-2.5"></i>
+                    <input type="text" placeholder="Search employees..." class="bg-transparent outline-none text-sm text-navy w-full placeholder:text-navy/30">
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="w-10 h-10 rounded-xl bg-white border border-navy/6 flex items-center justify-center text-navy/40 hover:text-gold transition relative">
+                    <i class="fa-solid fa-bell text-sm"></i>
+                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[9px] text-white font-bold flex items-center justify-center">3</span>
+                </button>
+                <button id="profileBtn" class="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-xl hover:bg-white/60 transition cursor-pointer">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold to-amber-500 flex items-center justify-center text-navy font-bold text-xs">AD</div>
+                    <div class="hidden md:block text-left">
+                        <div class="text-xs font-bold text-navy leading-tight">Admin</div>
+                        <div class="text-[10px] text-navy/40">Super Admin</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down text-[10px] text-navy/30 hidden md:block"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="px-5 lg:px-8 py-6 max-w-7xl mx-auto">
+
+        <!-- Page Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 animate-fade-up">
+            <div>
+                <h1 class="text-2xl font-extrabold text-navy tracking-tight">Employees</h1>
+                <p class="text-sm text-navy/40 mt-1">Manage your hotel staff and departments</p>
+            </div>
+            <button onclick="openEmployeeModal()" class="btn-gold">
+                <i class="fa-solid fa-plus text-xs"></i> Add Employee
+            </button>
+        </div>
+
+        <!-- Department Filter -->
+        <div class="flex flex-wrap gap-2 mb-5 animate-fade-up" style="animation-delay:0.1s">
+            <button class="filter-pill active" onclick="filterByDepartment('all', this)">All</button>
+            <button class="filter-pill" onclick="filterByDepartment('Front Desk', this)">Front Desk</button>
+            <button class="filter-pill" onclick="filterByDepartment('Housekeeping', this)">Housekeeping</button>
+            <button class="filter-pill" onclick="filterByDepartment('Restaurant', this)">Restaurant</button>
+            <button class="filter-pill" onclick="filterByDepartment('Management', this)">Management</button>
+            <button class="filter-pill" onclick="filterByDepartment('Maintenance', this)">Maintenance</button>
+        </div>
+
+        <!-- Employees Table -->
+        <div class="table-wrapper animate-fade-up" style="animation-delay:0.15s">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Department</th>
+                        <th>Position</th>
+                        <th>Phone</th>
+                        <th>Salary</th>
+                        <th>Hire Date</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="employeesTableBody">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Employee Modal -->
+    <div id="employeeModal" class="modal-overlay" onclick="if(event.target===this)closeEmployeeModal()">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h3 id="modalTitle" class="text-lg font-bold text-navy">Add Employee</h3>
+                <button onclick="closeEmployeeModal()" class="w-8 h-8 rounded-lg bg-navy/5 flex items-center justify-center text-navy/40 hover:text-navy hover:bg-navy/10 transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editEmployeeId">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="form-group sm:col-span-2">
+                        <label class="form-label">Identification Photo</label>
+                        <div class="flex items-center gap-4">
+                            <div class="relative w-20 h-20 rounded-xl overflow-hidden bg-navy/5 border border-navy/10 flex items-center justify-center flex-shrink-0">
+                                <img id="empPhotoPreview" src="" alt="Employee photo" class="w-full h-full object-cover hidden">
+                                <i id="empPhotoPlaceholder" class="fa-solid fa-user text-navy/20 text-2xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <label for="empPhoto" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gold/30 text-gold text-sm font-semibold hover:bg-gold/10 transition cursor-pointer">
+                                    <i class="fa-solid fa-camera"></i> Choose Photo
+                                </label>
+                                <input type="file" id="empPhoto" accept="image/*" class="hidden">
+                                <p class="text-xs text-navy/35 mt-1.5">Clear frontal photo. Used for face verification at check-in. JPEG/PNG up to 5MB.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group sm:col-span-2">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="empName" class="form-input" placeholder="Enter full name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="empEmail" class="form-input" placeholder="employee@everett.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" id="empPhone" class="form-input" placeholder="+254 7XX XXX XXX">
+                    </div>
+                    <div class="form-group sm:col-span-2">
+                        <label class="form-label">Account Role</label>
+                        <select id="empRole" class="form-select">
+                            <option value="receptionist">Receptionist</option>
+                            <option value="housekeeping">Housekeeping</option>
+                            <option value="restaurant_staff">Restaurant Staff</option>
+                            <option value="manager">Manager</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <p class="text-xs text-navy/35 mt-1">New accounts sign in with the temporary password <strong>Welcome@123</strong>.</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Department</label>
+                        <select id="empDepartment" class="form-select">
+                            <option value="">Select department</option>
+                            <option value="Front Desk">Front Desk</option>
+                            <option value="Housekeeping">Housekeeping</option>
+                            <option value="Restaurant">Restaurant</option>
+                            <option value="Management">Management</option>
+                            <option value="Maintenance">Maintenance</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Position</label>
+                        <input type="text" id="empPosition" class="form-input" placeholder="e.g. Senior Manager">
+                    </div>
+                    <div class="form-group sm:col-span-2">
+                        <label class="form-label">Salary ($)</label>
+                        <input type="number" id="empSalary" class="form-input" placeholder="e.g. 45000">
+                    </div>
+                    <div class="form-group sm:col-span-2">
+                        <label class="form-label">Temporary Password</label>
+                        <input type="text" id="empPassword" class="form-input" placeholder="Leave blank for default">
+                        <p class="text-xs text-navy/35 mt-1">Optional. If left blank, the account signs in with <strong>Welcome@123</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeEmployeeModal()" class="btn-outline">Cancel</button>
+                <button onclick="saveEmployee()" class="btn-gold">
+                    <i class="fa-solid fa-check text-xs"></i> Save Employee
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Credentials Modal -->
+    <div id="credentialsModal" class="modal-overlay" onclick="if(event.target===this)closeCredentialsModal()">
+        <div class="modal-panel" style="max-width:460px">
+            <div class="modal-header">
+                <h3 class="text-lg font-bold text-navy">Account Created</h3>
+                <button onclick="closeCredentialsModal()" class="w-8 h-8 rounded-lg bg-navy/5 flex items-center justify-center text-navy/40 hover:text-navy hover:bg-navy/10 transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="rounded-xl border border-gold/20 bg-gold/5 p-4 text-sm text-navy">
+                    <div class="flex items-center gap-2 font-semibold mb-2"><i class="fa-solid fa-circle-info text-gold"></i> Share these credentials with the new employee:</div>
+                    <div class="space-y-1.5 mt-3 text-navy/70">
+                        <div><span class="font-semibold text-navy">Email:</span> <span id="credEmail" class="break-all"></span></div>
+                        <div><span class="font-semibold text-navy">Password:</span> <span id="credPassword"></span></div>
+                        <div><span class="font-semibold text-navy">Sign-in page:</span> http://localhost:5000/login.html</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeCredentialsModal()" class="btn-gold w-full"><i class="fa-solid fa-check text-xs"></i> Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/vendor/sweetalert2/sweetalert2.min.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../js/animations.js"></script>
+    <script>
+        // Auth guard
+        Auth.adminGuard();
+
+        // Sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        // Profile dropdown placeholder
+        document.getElementById('profileBtn')?.addEventListener('click', function() {
+            // profile dropdown logic
+        });
+
+        // Employees data
+        let employees = [];
+
+        const deptColors = {
+            'Front Desk': { bg: 'bg-blue-50', text: 'text-blue-700', icon: 'fa-headset' },
+            'Housekeeping': { bg: 'bg-emerald-50', text: 'text-emerald-700', icon: 'fa-broom' },
+            'Restaurant': { bg: 'bg-orange-50', text: 'text-orange-700', icon: 'fa-utensils' },
+            'Management': { bg: 'bg-purple-50', text: 'text-purple-700', icon: 'fa-crown' },
+            'Maintenance': { bg: 'bg-amber-50', text: 'text-amber-700', icon: 'fa-wrench' }
+        };
+
+        const avatarColors = [
+            'from-gold to-amber-500',
+            'from-blue-500 to-blue-600',
+            'from-emerald-500 to-emerald-600',
+            'from-orange-400 to-orange-600',
+            'from-purple-500 to-purple-600'
+        ];
+
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase();
+        }
+
+        function formatSalary(amount) {
+            return 'KSh ' + Number(amount || 0).toLocaleString('en-KE');
+        }
+
+        function formatDate(dateStr) {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        function loadEmployees(filter = 'all') {
+            const tbody = document.getElementById('employeesTableBody');
+            let filtered = filter === 'all' ? employees : employees.filter(e => e.department === filter);
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-12">
+                            <div class="flex flex-col items-center">
+                                <div class="w-14 h-14 rounded-2xl bg-navy/5 flex items-center justify-center mb-3">
+                                    <i class="fa-solid fa-user-slash text-navy/20 text-xl"></i>
+                                </div>
+                                <p class="text-navy/30 font-semibold text-sm">No employees found</p>
+                            </div>
+                        </td>
+                    </tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((emp, idx) => {
+                const dc = deptColors[emp.department] || { bg: 'bg-gray-50', text: 'text-gray-700', icon: 'fa-user' };
+                const colorClass = avatarColors[idx % avatarColors.length];
+                const avatarHtml = emp.profile_photo
+                    ? '<img src="' + photoAbsUrl(emp.profile_photo) + '" alt="" class="avatar-circle object-cover" style="width:40px;height:40px;border-radius:12px;">'
+                    : '<div class="avatar-circle bg-gradient-to-br ' + colorClass + '">' + getInitials(emp.name) + '</div>';
+                return `
+                    <tr>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                ${avatarHtml}
+                                <div>
+                                    <div class="font-semibold text-navy text-sm">${emp.name}</div>
+                                    <div class="text-navy/35 text-xs">${emp.email}</div>
+                                    <div class="mt-1"><span class="role-pill ${emp.role === 'admin' ? 'admin' : ''}">${emp.role || 'employee'}</span></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="dept-badge ${dc.bg} ${dc.text}">
+                                <i class="fa-solid ${dc.icon} text-[10px]"></i> ${emp.department}
+                            </span>
+                        </td>
+                        <td class="font-medium">${emp.position}</td>
+                        <td class="text-navy/50">${emp.phone}</td>
+                        <td class="font-semibold text-navy">${formatSalary(emp.salary)}</td>
+                        <td class="text-navy/50">${formatDate(emp.hireDate)}</td>
+                        <td class="text-right">
+                            <div class="flex items-center justify-end gap-1.5">
+                                <button onclick="editEmployee(${emp.id})" class="action-btn edit" title="Edit">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button onclick="deleteEmployee(${emp.id})" class="action-btn delete" title="Delete">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>`;
+            }).join('');
+        }
+
+        function filterByDepartment(dept, el) {
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            el.classList.add('active');
+            loadEmployees(dept);
+        }
+
+        function clearEmpPhoto() {
+            document.getElementById('empPhoto').value = '';
+            document.getElementById('empPhotoPreview').classList.add('hidden');
+            document.getElementById('empPhotoPreview').src = '';
+            document.getElementById('empPhotoPlaceholder').classList.remove('hidden');
+        }
+
+        function openEmployeeModal() {
+            document.getElementById('modalTitle').textContent = 'Add Employee';
+            document.getElementById('editEmployeeId').value = '';
+            document.getElementById('empName').value = '';
+            document.getElementById('empEmail').value = '';
+            document.getElementById('empPhone').value = '';
+            document.getElementById('empDepartment').value = '';
+            document.getElementById('empPosition').value = '';
+            document.getElementById('empSalary').value = '';
+            document.getElementById('empPassword').value = '';
+            document.getElementById('empRole').value = 'receptionist';
+            clearEmpPhoto();
+            document.getElementById('employeeModal').classList.add('active');
+        }
+
+        function photoAbsUrl(path) {
+            if (!path) return '';
+            return path.indexOf('http') === 0 ? path : CONFIG.API_URL + path;
+        }
+
+        document.getElementById('empPhoto')?.addEventListener('change', function() {
+            const file = this.files && this.files[0];
+            if (!file) { clearEmpPhoto(); return; }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('empPhotoPreview').src = e.target.result;
+                document.getElementById('empPhotoPreview').classList.remove('hidden');
+                document.getElementById('empPhotoPlaceholder').classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function closeEmployeeModal() {
+            document.getElementById('employeeModal').classList.remove('active');
+        }
+
+        function closeCredentialsModal() {
+            document.getElementById('credentialsModal').classList.remove('active');
+        }
+
+        function editEmployee(id) {
+            const emp = employees.find(e => e.id === id);
+            if (!emp) return;
+            document.getElementById('modalTitle').textContent = 'Edit Employee';
+            document.getElementById('editEmployeeId').value = emp.id;
+            document.getElementById('empName').value = emp.name;
+            document.getElementById('empEmail').value = emp.email;
+            document.getElementById('empPhone').value = emp.phone;
+            document.getElementById('empDepartment').value = emp.department;
+            document.getElementById('empPosition').value = emp.position;
+            document.getElementById('empSalary').value = emp.salary;
+            document.getElementById('empPassword').value = '';
+            document.getElementById('empRole').value = emp.role || 'receptionist';
+            clearEmpPhoto();
+            if (emp.profile_photo) {
+                document.getElementById('empPhotoPreview').src = photoAbsUrl(emp.profile_photo);
+                document.getElementById('empPhotoPreview').classList.remove('hidden');
+                document.getElementById('empPhotoPlaceholder').classList.add('hidden');
+            }
+            document.getElementById('employeeModal').classList.add('active');
+        }
+
+        function refreshTable(filter) {
+            loadEmployees(filter === 'all' ? 'all' : (document.querySelector('.filter-pill.active')?.textContent || 'all'));
+        }
+
+        function saveEmployee() {
+            const name = document.getElementById('empName').value.trim();
+            const email = document.getElementById('empEmail').value.trim();
+            const phone = document.getElementById('empPhone').value.trim();
+            const department = document.getElementById('empDepartment').value;
+            const position = document.getElementById('empPosition').value.trim();
+            const salary = document.getElementById('empSalary').value;
+            const password = document.getElementById('empPassword').value.trim();
+            const role = document.getElementById('empRole').value;
+            const editId = document.getElementById('editEmployeeId').value;
+
+            if (!name || !email || !role) {
+                Swal.fire({ icon: 'warning', title: 'Incomplete Form', text: 'Please fill in name, email and role.', confirmButtonColor: '#D4AF37', background: '#FAF7F2', color: '#8B5E34' });
+                return;
+            }
+
+            const nameParts = name.split(/\s+/);
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '-';
+            const today = new Date().toISOString().split('T')[0];
+            const photoFile = document.getElementById('empPhoto').files && document.getElementById('empPhoto').files[0];
+
+            function buildPayload() {
+                const fd = new FormData();
+                fd.append('firstName', firstName);
+                fd.append('lastName', lastName);
+                fd.append('email', email);
+                fd.append('phone', phone);
+                fd.append('department', department);
+                fd.append('position', position);
+                fd.append('salary', salary ? parseInt(salary) : 0);
+                return fd;
+            }
+
+            if (editId) {
+                const payload = buildPayload();
+                if (photoFile) payload.append('profilePhoto', photoFile);
+                Swal.fire({ icon: 'info', title: 'Updating...', text: 'Please wait', showConfirmButton: false, allowOutsideClick: false, background: '#FAF7F2', color: '#8B5E34' });
+                if (typeof api !== 'undefined' && api.adminUpdateEmployee) {
+                    api.adminUpdateEmployee(parseInt(editId), payload)
+                        .then(function() {
+                            Swal.close();
+                            closeEmployeeModal();
+                            loadEmployeesFromApi();
+                            Swal.fire({ icon: 'success', title: 'Updated!', text: 'Employee has been updated.', confirmButtonColor: '#D4AF37', background: '#FAF7F2', color: '#8B5E34', timer: 1500, showConfirmButton: false });
+                        })
+                        .catch(function(err) {
+                            Swal.fire({ icon: 'error', title: 'Update Failed', text: (err && err.message) || 'Could not update the employee.', confirmButtonColor: '#D4AF37', background: '#FAF7F2', color: '#8B5E34' });
+                        });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'API Missing', text: 'api.js did not load. Hard refresh the page.', confirmButtonColor: '#D4AF37', background: '#FAF7F2', color: '#8B5E34' });
+                }
+                return;
+            }
+
+            const payload = buildPayload();
+            payload.append('hireDate', today);
+            payload.append('role', role);
+            if (password) payload.append('password', password);
+            if (photoFile) payload.append('profilePhoto', photoFile);
+
+            Swal.fire({ icon: 'info', title: 'Creating account...', text: 'Please wait', showConfirmButton: false, allowOutsideClick: false, background: '#FAF7F2', color: '#8B5E34' });
+
+            if (typeof api !== 'undefined' && api.adminCreateEmployee) {
+                api.adminCreateEmployee(payload)
+                    .then(function(res) {
+                        const created = res && res.data && res.data.employee;
+                        const signInPassword = password || 'Welcome@123';
+                        Swal.close();
+                        closeEmployeeModal();
+                        loadEmployeesFromApi();
+                        document.getElementById('credEmail').textContent = created ? created.email : email;
+                        document.getElementById('credPassword').textContent = signInPassword;
+                        document.getElementById('credentialsModal').classList.add('active');
+                    })
+                    .catch(function(err) {
+                        Swal.fire({ icon: 'error', title: 'Creation Failed', text: (err && err.message) || 'Could not create the account. Check that the backend is running.', confirmButtonColor: '#D4AF37', background: '#FAF7F2', color: '#8B5E34' });
+                    });
+            } else {
+                Swal.fire({ icon: 'error', title: 'API Missing', text: 'api.js did not load. Hard refresh the page.', confirmButtonColor: '#D4AF37', background: '#FAF7F2', color: '#8B5E34' });
+            }
+        }
+
+        function deleteEmployee(id) {
+            const emp = employees.find(e => e.id === id);
+            if (!emp) return;
+            Swal.fire({
+                icon: 'warning',
+                title: 'Delete Employee?',
+                html: `Are you sure you want to remove <strong>${emp.name}</strong>?`,
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#8B5E34',
+                confirmButtonText: 'Yes, delete',
+                cancelButtonText: 'Cancel',
+                background: '#FAF7F2',
+                color: '#8B5E34'
+            }).then((result) => {
+                if (result.isConfirmed && typeof api !== 'undefined' && api.adminDeleteEmployee) {
+                    api.adminDeleteEmployee(id)
+                        .then(function() {
+                            loadEmployeesFromApi();
+                            Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Employee has been removed.', confirmButtonColor: '#D4AF37', background: '#FAF7F2', color: '#8B5E34', timer: 1500, showConfirmButton: false });
+                        })
+                        .catch(function(err) {
+                            Swal.fire({ icon: 'error', title: 'Delete Failed', text: (err && err.message) || 'Could not delete the employee.', confirmButtonColor: '#D4AF37', background: '#FAF7F2', color: '#8B5E34' });
+                        });
+                } else if (result.isConfirmed) {
+                    Swal.fire({ icon: 'error', title: 'API Missing', text: 'api.js did not load. Hard refresh the page.', confirmButtonColor: '#D4AF37', background: '#FAF7F2', color: '#8B5E34' });
+                }
+            });
+        }
+
+        function loadEmployeesFromApi() {
+            if (typeof api === 'undefined' || !api.adminGetEmployees) {
+                loadEmployees();
+                return;
+            }
+            api.adminGetEmployees({ limit: 100 })
+                .then(function(res) {
+                    const list = (res && res.data && res.data.employees) || [];
+                    employees = list.map(function(e) {
+                        return {
+                            id: e.id,
+                            name: [e.first_name, e.last_name].filter(Boolean).join(' '),
+                            email: e.email,
+                            phone: e.phone || '—',
+                            department: e.department || 'Front Desk',
+                            position: e.position || '—',
+                            salary: e.salary ? Number(e.salary) : 0,
+                            hireDate: e.hire_date || new Date().toISOString().split('T')[0],
+                            role: e.role_name || 'employee',
+                            profile_photo: e.profile_photo || ''
+                        };
+                    });
+                    loadEmployees(document.querySelector('.filter-pill.active')?.textContent.toLowerCase() === 'all' ? 'all' : document.querySelector('.filter-pill.active')?.textContent || 'all');
+                })
+                .catch(function() {
+                    loadEmployees();
+                });
+        }
+
+        // Initial load
+        loadEmployeesFromApi();
+    </script>
+</body>
+</html>

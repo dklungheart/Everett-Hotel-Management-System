@@ -1,0 +1,514 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Everett Hotel Admin - Messages</title>
+    <script src="/vendor/tailwindcss/tailwind.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/vendor/sweetalert2/sweetalert2.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: { DEFAULT: '#8B5E34', 50: '#F3E9DC', 100: '#E3CDB0', 200: '#C9A586', 300: '#A67C52', 400: '#8B5E34', 500: '#6E4A26', 600: '#3B2A1A', 700: '#8B5E34', 800: '#24180F', 900: '#24180F' },
+                        gold: { DEFAULT: '#D4AF37', 50: '#FBF7EE', 100: '#F5ECD4', 200: '#ECDCA8', 300: '#E3CD7D', 400: '#D4B86A', 500: '#D4AF37', 600: '#B4924A', 700: '#8A703A', 800: '#5F4E29', 900: '#342B17' },
+                        beige: { DEFAULT: '#FAF7F2', 50: '#FDFCF9', 100: '#FAF9F5', 200: '#FAF7F2', 300: '#EDE9DF', 400: '#E2DCD0', 500: '#D6CEBC', 600: '#B8AD97', 700: '#998D72', 800: '#7A6E4D', 900: '#5B5029' }
+                    },
+                    fontFamily: { inter: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #FAF7F2; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #B4924A; }
+        .sidebar-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+        .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+        .sidebar.active { transform: translateX(0); }
+        .nav-link { transition: all 0.2s ease; }
+        .nav-link:hover { background: rgba(200, 169, 106, 0.1); color: #D4AF37; }
+        .nav-link.active { background: linear-gradient(135deg, #D4AF37 0%, #B4924A 100%); color: #8B5E34; font-weight: 600; }
+        .nav-link.active i { color: #8B5E34; }
+        .section-label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: #A67C52; font-weight: 700; }
+        .table-row { transition: all 0.2s ease; }
+        .table-row:hover { background: rgba(200, 169, 106, 0.05); }
+        .btn-gold { background: linear-gradient(135deg, #D4AF37 0%, #B4924A 100%); color: #8B5E34; font-weight: 600; transition: all 0.2s ease; }
+        .btn-gold:hover { background: linear-gradient(135deg, #D4B86A 0%, #D4AF37 100%); transform: translateY(-1px); box-shadow: 0 4px 15px rgba(200, 169, 106, 0.3); }
+        .btn-outline { border: 1.5px solid #D4AF37; color: #D4AF37; transition: all 0.2s ease; }
+        .btn-outline:hover { background: #D4AF37; color: #8B5E34; }
+        .modal-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { transform: translateY(20px) scale(0.98); transition: transform 0.3s ease; }
+        .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
+        .badge { font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 9999px; }
+        .badge-unread { background: rgba(200, 169, 106, 0.15); color: #D4AF37; }
+        .badge-read { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+        .badge-replied { background: rgba(59, 130, 246, 0.1); color: #3B82F6; }
+        .badge-archived { background: rgba(107, 114, 128, 0.1); color: #6B7280; }
+        .search-box { transition: all 0.3s ease; }
+        .search-box:focus-within { box-shadow: 0 0 0 2px rgba(200, 169, 106, 0.3); }
+        .fade-in { animation: fadeIn 0.4s ease forwards; opacity: 0; }
+        @keyframes fadeIn { to { opacity: 1; } }
+        .stagger-1 { animation-delay: 0.05s; }
+        .stagger-2 { animation-delay: 0.1s; }
+        .stagger-3 { animation-delay: 0.15s; }
+        .stagger-4 { animation-delay: 0.2s; }
+        .stagger-5 { animation-delay: 0.25s; }
+        .action-btn { transition: all 0.2s ease; }
+        .action-btn:hover { transform: translateY(-1px); }
+    </style>
+</head>
+<body class="bg-beige-200 min-h-screen">
+
+    <!-- Sidebar Overlay -->
+    <div id="sidebarOverlay" class="sidebar-overlay fixed inset-0 bg-navy/60 backdrop-blur-sm z-40 lg:hidden"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full w-72 bg-navy-700 z-50 overflow-y-auto">
+        <div class="p-6 border-b border-navy-600">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold to-gold-600 flex items-center justify-center">
+                    <i class="fas fa-hotel text-navy-700 text-sm font-bold"></i>
+                </div>
+                <div>
+                    <h1 class="text-white font-bold text-lg leading-tight">Everett</h1>
+                    <p class="text-navy-200 text-xs tracking-wider uppercase">Hotel Admin</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="p-4 space-y-1">
+            <p class="section-label px-3 pt-2 pb-1">Main</p>
+            <a href="dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-th-large w-5 text-center text-navy-200"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <p class="section-label px-3 pt-4 pb-1">Management</p>
+            <a href="rooms.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-door-open w-5 text-center text-navy-200"></i>
+                <span>Rooms</span>
+            </a>
+            <a href="bookings.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-calendar-check w-5 text-center text-navy-200"></i>
+                <span>Bookings</span>
+            </a>
+            <a href="customers.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-users w-5 text-center text-navy-200"></i>
+                <span>Customers</span>
+            </a>
+            <a href="employees.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-user-tie w-5 text-center text-navy-200"></i>
+                <span>Employees</span>
+            </a>
+            <a href="attendance.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-fingerprint w-5 text-center text-navy-200"></i>
+                <span>Attendance</span>
+            </a>
+
+            <p class="section-label px-3 pt-4 pb-1">Operations</p>
+            <a href="housekeeping.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-broom w-5 text-center text-navy-200"></i>
+                <span>Housekeeping</span>
+            </a>
+            <a href="restaurant.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-utensils w-5 text-center text-navy-200"></i>
+                <span>Restaurant</span>
+            </a>
+            <a href="payments.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-credit-card w-5 text-center text-navy-200"></i>
+                <span>Payments</span>
+            </a>
+            <a href="promotions.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-tags w-5 text-center text-navy-200"></i>
+                <span>Promotions</span>
+            </a>
+
+            <p class="section-label px-3 pt-4 pb-1">Content</p>
+            <a href="cms.html" class="nav-link">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    CMS
+</a>
+            <a href="gallery.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-images w-5 text-center text-navy-200"></i>
+                <span>Gallery</span>
+            </a>
+            <a href="reviews.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-star w-5 text-center text-navy-200"></i>
+                <span>Reviews</span>
+            </a>
+            <a href="messages.html" class="nav-link active flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm">
+                <i class="fas fa-envelope w-5 text-center"></i>
+                <span>Messages</span>
+            </a>
+            <a href="newsletter.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-paper-plane w-5 text-center text-navy-200"></i>
+                <span>Newsletter</span>
+            </a>
+
+            <p class="section-label px-3 pt-4 pb-1">System</p>
+            <a href="reports.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-chart-bar w-5 text-center text-navy-200"></i>
+                <span>Reports</span>
+            </a>
+            <a href="settings.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-navy-100 text-sm">
+                <i class="fas fa-cog w-5 text-center text-navy-200"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="p-4 mt-4 border-t border-navy-600">
+            <div class="bg-navy-600/50 rounded-xl p-4">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-8 h-8 rounded-lg bg-gold/20 flex items-center justify-center">
+                        <i class="fas fa-headset text-gold text-xs"></i>
+                    </div>
+                    <div>
+                        <p class="text-white text-xs font-semibold">Need Help?</p>
+                        <p class="text-navy-200 text-xs">Contact support</p>
+                    </div>
+                </div>
+                <a href="#" class="block text-center text-xs bg-navy-500 hover:bg-navy-400 text-white py-2 rounded-lg transition-colors">
+                    Get Support
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="lg:ml-72 min-h-screen">
+        <!-- Topbar -->
+        <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-beige-300">
+            <div class="flex items-center justify-between px-4 lg:px-8 h-16">
+                <div class="flex items-center gap-4">
+                    <button id="sidebarToggle" class="lg:hidden w-10 h-10 rounded-xl bg-beige-200 hover:bg-beige-300 flex items-center justify-center transition-colors">
+                        <i class="fas fa-bars text-navy-600"></i>
+                    </button>
+                    <div class="search-box hidden sm:flex items-center gap-2 bg-beige-200 rounded-xl px-4 py-2.5 border border-beige-300">
+                        <i class="fas fa-search text-navy-300 text-sm"></i>
+                        <input type="text" placeholder="Search messages..." class="bg-transparent border-none outline-none text-sm text-navy-600 placeholder-navy-300 w-48 lg:w-64">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button class="relative w-10 h-10 rounded-xl bg-beige-200 hover:bg-beige-300 flex items-center justify-center transition-colors">
+                        <i class="fas fa-bell text-navy-500"></i>
+                        <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-gold rounded-full border-2 border-white"></span>
+                    </button>
+                    <div id="profileBtn" class="flex items-center gap-3 pl-3 border-l border-beige-300 cursor-pointer">
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-navy to-navy-600 flex items-center justify-center">
+                            <i class="fas fa-user text-gold text-sm"></i>
+                        </div>
+                        <div class="hidden md:block">
+                            <p class="text-navy-700 text-sm font-semibold leading-tight">Admin</p>
+                            <p class="text-navy-400 text-xs">Super Admin</p>
+                        </div>
+                        <i class="fas fa-chevron-down text-navy-400 text-xs hidden md:block"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="p-4 lg:p-8">
+            <!-- Page Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 fade-in">
+                <div>
+                    <h1 class="text-2xl lg:text-3xl font-bold text-navy-700">Messages</h1>
+                    <p class="text-navy-400 text-sm mt-1">Manage guest inquiries and communications</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-navy-400 text-sm"><i class="fas fa-inbox mr-1.5"></i><span id="totalMessages">0</span> total</span>
+                    <span class="w-px h-5 bg-beige-300"></span>
+                    <span class="text-gold text-sm font-semibold"><i class="fas fa-envelope-open mr-1.5"></i><span id="unreadCount">0</span> unread</span>
+                </div>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="bg-white rounded-2xl border border-beige-300 p-4 mb-6 fade-in stagger-1 flex flex-col sm:flex-row sm:items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <label class="text-navy-500 text-sm font-semibold whitespace-nowrap"><i class="fas fa-filter mr-1.5 text-gold"></i>Filter:</label>
+                    <select id="statusFilter" class="bg-beige-200 border border-beige-300 text-navy-600 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-gold transition-colors cursor-pointer">
+                        <option value="all">All Messages</option>
+                        <option value="unread">Unread</option>
+                        <option value="read">Read</option>
+                        <option value="replied">Replied</option>
+                        <option value="archived">Archived</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Messages Table -->
+            <div class="bg-white rounded-2xl border border-beige-300 overflow-hidden fade-in stagger-2">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-beige-300">
+                                <th class="text-left text-xs font-semibold text-navy-400 uppercase tracking-wider px-6 py-4">From</th>
+                                <th class="text-left text-xs font-semibold text-navy-400 uppercase tracking-wider px-6 py-4">Subject</th>
+                                <th class="text-left text-xs font-semibold text-navy-400 uppercase tracking-wider px-6 py-4 hidden md:table-cell">Message</th>
+                                <th class="text-left text-xs font-semibold text-navy-400 uppercase tracking-wider px-6 py-4 hidden lg:table-cell">Date</th>
+                                <th class="text-left text-xs font-semibold text-navy-400 uppercase tracking-wider px-6 py-4">Status</th>
+                                <th class="text-center text-xs font-semibold text-navy-400 uppercase tracking-wider px-6 py-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesTableBody">
+                            <!-- Messages will be rendered here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="emptyState" class="hidden text-center py-16 px-6">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-beige-200 flex items-center justify-center mb-4">
+                        <i class="fas fa-envelope-open text-navy-300 text-2xl"></i>
+                    </div>
+                    <p class="text-navy-400 text-sm font-medium">No messages found</p>
+                    <p class="text-navy-300 text-xs mt-1">Messages matching your filter will appear here</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Message Detail Modal -->
+    <div id="messageModal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-navy/60 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden border border-beige-300">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-beige-300 bg-beige-50">
+                <div>
+                    <h3 class="text-navy-700 font-bold text-lg">Message Details</h3>
+                    <p id="modalSenderInfo" class="text-navy-400 text-xs mt-0.5"></p>
+                </div>
+                <button onclick="closeModal()" class="w-9 h-9 rounded-xl bg-beige-200 hover:bg-beige-300 flex items-center justify-center transition-colors">
+                    <i class="fas fa-times text-navy-400 text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto max-h-[50vh]">
+                <div class="mb-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold/20 to-gold-600/20 flex items-center justify-center">
+                            <i class="fas fa-user text-gold text-sm"></i>
+                        </div>
+                        <div>
+                            <p id="modalSenderName" class="text-navy-700 font-semibold text-sm"></p>
+                            <p id="modalSenderEmail" class="text-navy-400 text-xs"></p>
+                        </div>
+                        <div class="ml-auto">
+                            <p id="modalDate" class="text-navy-300 text-xs"></p>
+                        </div>
+                    </div>
+                    <div class="bg-beige-200 rounded-xl p-4 border border-beige-300">
+                        <p id="modalSubject" class="text-navy-700 font-semibold text-sm mb-2"></p>
+                        <p id="modalMessage" class="text-navy-500 text-sm leading-relaxed whitespace-pre-wrap"></p>
+                    </div>
+                </div>
+
+                <!-- Reply Form -->
+                <div>
+                    <h4 class="text-navy-700 font-semibold text-sm mb-3 flex items-center gap-2">
+                        <i class="fas fa-reply text-gold"></i> Reply
+                    </h4>
+                    <textarea id="replyText" rows="4" class="w-full bg-beige-50 border border-beige-300 rounded-xl p-4 text-sm text-navy-600 placeholder-navy-300 outline-none focus:border-gold transition-colors resize-none" placeholder="Type your reply here..."></textarea>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-beige-300 bg-beige-50">
+                <button onclick="closeModal()" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-navy-500 hover:bg-beige-200 transition-colors">
+                    Close
+                </button>
+                <button onclick="sendReply()" class="btn-gold px-6 py-2.5 rounded-xl text-sm">
+                    <i class="fas fa-paper-plane mr-1.5"></i>Send Reply
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 -->
+    <script src="/vendor/sweetalert2/sweetalert2.min.js"></script>
+
+    <!-- Scripts -->
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/animations.js"></script>
+
+    <script>
+        Auth.adminGuard();
+
+        // Sidebar toggle
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        });
+
+        // Profile toggle
+        const profileBtn = document.getElementById('profileBtn');
+        profileBtn.addEventListener('click', () => {
+            Swal.fire({
+                title: 'Profile Options',
+                html: '<p class="text-sm text-gray-500">Manage your account settings</p>',
+                showDenyButton: true,
+                confirmButtonText: '<i class="fas fa-sign-out-alt mr-2"></i>Logout',
+                denyButtonText: '<i class="fas fa-times mr-2"></i>Cancel',
+                confirmButtonColor: '#D4AF37',
+                denyButtonColor: '#6B7280',
+                customClass: { confirmButton: 'swal2-confirm-gold' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (typeof Auth !== 'undefined' && Auth.removeUserKey) Auth.removeUserKey();
+                    window.location.href = '../login.html';
+                }
+            });
+        });
+
+        let currentMsgId = null;
+
+        let messages = [];
+
+        function loadMessages() {
+            const filter = document.getElementById('statusFilter').value;
+            const tbody = document.getElementById('messagesTableBody');
+            const emptyState = document.getElementById('emptyState');
+
+            let filtered = messages;
+            if (filter !== 'all') {
+                filtered = messages.filter(m => m.status === filter);
+            }
+
+            document.getElementById('totalMessages').textContent = messages.length;
+            document.getElementById('unreadCount').textContent = messages.filter(m => m.status === 'unread').length;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            tbody.innerHTML = filtered.map((msg, i) => `
+                <tr class="table-row border-b border-beige-200 cursor-pointer" onclick="viewMessage(${msg.id})">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-navy to-navy-600 flex items-center justify-center flex-shrink-0">
+                                <span class="text-gold text-xs font-bold">${msg.name.split(' ').map(n => n[0]).join('')}</span>
+                            </div>
+                            <div>
+                                <p class="text-navy-700 font-semibold text-sm ${msg.status === 'unread' ? 'font-bold' : ''}">${msg.name}</p>
+                                <p class="text-navy-400 text-xs">${msg.email}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="text-navy-600 text-sm font-medium ${msg.status === 'unread' ? 'font-bold' : ''}">${msg.subject}</p>
+                    </td>
+                    <td class="px-6 py-4 hidden md:table-cell">
+                        <p class="text-navy-400 text-xs truncate max-w-xs">${msg.message}</p>
+                    </td>
+                    <td class="px-6 py-4 hidden lg:table-cell">
+                        <p class="text-navy-400 text-xs">${msg.date}</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="badge badge-${msg.status}">${msg.status.charAt(0).toUpperCase() + msg.status.slice(1)}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center justify-center gap-2" onclick="event.stopPropagation()">
+                            <button onclick="viewMessage(${msg.id})" class="action-btn w-8 h-8 rounded-lg bg-gold/10 hover:bg-gold/20 flex items-center justify-center" title="View">
+                                <i class="fas fa-eye text-gold text-xs"></i>
+                            </button>
+                            <button onclick="deleteMessage(${msg.id})" class="action-btn w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 flex items-center justify-center" title="Delete">
+                                <i class="fas fa-trash text-red-500 text-xs"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('statusFilter').addEventListener('change', loadMessages);
+
+        function viewMessage(id) {
+            currentMsgId = id;
+            const msg = messages.find(m => m.id === id);
+            if (!msg) return;
+
+            msg.status = msg.status === 'unread' ? 'read' : msg.status;
+
+            document.getElementById('modalSenderInfo').textContent = 'Message from guest';
+            document.getElementById('modalSenderName').textContent = msg.name;
+            document.getElementById('modalSenderEmail').textContent = msg.email;
+            document.getElementById('modalDate').textContent = msg.date;
+            document.getElementById('modalSubject').textContent = msg.subject;
+            document.getElementById('modalMessage').textContent = msg.message;
+            document.getElementById('replyText').value = '';
+
+            document.getElementById('messageModal').classList.add('active');
+            loadMessages();
+        }
+
+        function closeModal() {
+            document.getElementById('messageModal').classList.remove('active');
+            currentMsgId = null;
+        }
+
+        function sendReply() {
+            const replyText = document.getElementById('replyText').value.trim();
+            if (!replyText) {
+                Swal.fire({ icon: 'warning', title: 'Empty Reply', text: 'Please type a reply before sending.', confirmButtonColor: '#D4AF37' });
+                return;
+            }
+            if (!currentMsgId) return;
+
+            const msg = messages.find(m => m.id === currentMsgId);
+            if (msg) {
+                msg.status = 'replied';
+            }
+
+            Swal.fire({ icon: 'success', title: 'Reply Sent!', text: 'Your reply has been sent successfully.', confirmButtonColor: '#D4AF37', timer: 2000, showConfirmButton: false });
+            closeModal();
+            loadMessages();
+        }
+
+        function deleteMessage(id) {
+            Swal.fire({
+                title: 'Delete Message?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    messages = messages.filter(m => m.id !== id);
+                    Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Message has been deleted.', confirmButtonColor: '#D4AF37', timer: 1500, showConfirmButton: false });
+                    loadMessages();
+                }
+            });
+        }
+
+        loadMessages();
+    </script>
+</body>
+</html>

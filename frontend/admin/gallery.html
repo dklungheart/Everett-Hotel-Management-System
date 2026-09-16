@@ -1,0 +1,583 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery Management — Everett Hotel Admin</title>
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#8B5E34',
+            gold: '#D4AF37',
+            beige: '#FAF7F2',
+            'navy-light': '#A67C52',
+            'navy-dark': '#24180F',
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="/vendor/sweetalert2/sweetalert2.min.css">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #8B5E34; }
+    ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 3px; }
+    .sidebar-link { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .sidebar-link:hover, .sidebar-link.active {
+      background: linear-gradient(135deg, rgba(200, 169, 106, 0.15), rgba(200, 169, 106, 0.05));
+      color: #D4AF37;
+      border-left: 3px solid #D4AF37;
+    }
+    .sidebar-link.active i { color: #D4AF37; }
+    .gallery-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    .gallery-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(11, 31, 51, 0.3); }
+    .gallery-card:hover .gallery-overlay { opacity: 1; }
+    .gallery-card:hover .gallery-img { transform: scale(1.08); }
+    .gallery-overlay { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    .gallery-img { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    .upload-zone {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px dashed rgba(200, 169, 106, 0.4);
+    }
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: #D4AF37;
+      background: rgba(200, 169, 106, 0.05);
+      transform: scale(1.01);
+    }
+    .upload-zone.drag-over { box-shadow: 0 0 30px rgba(200, 169, 106, 0.15); }
+    .gold-glow { box-shadow: 0 0 20px rgba(200, 169, 106, 0.2); }
+    .topbar-blur { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .sidebar-section-label { letter-spacing: 0.1em; }
+  </style>
+</head>
+<body class="bg-beige min-h-screen">
+
+  <!-- Sidebar Overlay -->
+  <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-navy z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 overflow-y-auto">
+    <!-- Brand -->
+    <div class="px-6 py-6 border-b border-white/5">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold to-yellow-600 flex items-center justify-center gold-glow">
+          <i class="fas fa-hotel text-white text-sm"></i>
+        </div>
+        <div>
+          <h1 class="text-white font-bold text-lg leading-tight">Everett</h1>
+          <p class="text-gold/60 text-xs tracking-widest uppercase">Hotel Admin</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="py-4 px-3">
+      <!-- Main -->
+      <p class="sidebar-section-label text-[10px] text-white/30 uppercase font-semibold px-4 mb-2 mt-2">Main</p>
+      <a href="dashboard.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-th-large w-5 text-center text-xs"></i>
+        <span>Dashboard</span>
+      </a>
+
+      <!-- Management -->
+      <p class="sidebar-section-label text-[10px] text-white/30 uppercase font-semibold px-4 mb-2 mt-5">Management</p>
+      <a href="rooms.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-bed w-5 text-center text-xs"></i>
+        <span>Rooms</span>
+      </a>
+      <a href="bookings.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-calendar-check w-5 text-center text-xs"></i>
+        <span>Bookings</span>
+      </a>
+      <a href="customers.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-users w-5 text-center text-xs"></i>
+        <span>Customers</span>
+      </a>
+      <a href="employees.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-user-tie w-5 text-center text-xs"></i>
+        <span>Employees</span>
+      </a>
+      <a href="attendance.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-fingerprint w-5 text-center text-xs"></i>
+        <span>Attendance</span>
+      </a>
+
+      <!-- Operations -->
+      <p class="sidebar-section-label text-[10px] text-white/30 uppercase font-semibold px-4 mb-2 mt-5">Operations</p>
+      <a href="housekeeping.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-broom w-5 text-center text-xs"></i>
+        <span>Housekeeping</span>
+      </a>
+      <a href="restaurant.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-utensils w-5 text-center text-xs"></i>
+        <span>Restaurant</span>
+      </a>
+      <a href="payments.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-credit-card w-5 text-center text-xs"></i>
+        <span>Payments</span>
+      </a>
+      <a href="promotions.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-tags w-5 text-center text-xs"></i>
+        <span>Promotions</span>
+      </a>
+
+      <!-- Content -->
+      <p class="sidebar-section-label text-[10px] text-white/30 uppercase font-semibold px-4 mb-2 mt-5">Content</p>
+      <a href="cms.html" class="nav-link">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    CMS
+</a>
+      <a href="gallery.html" class="sidebar-link active flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-images w-5 text-center text-xs"></i>
+        <span>Gallery</span>
+      </a>
+      <a href="reviews.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-star w-5 text-center text-xs"></i>
+        <span>Reviews</span>
+      </a>
+      <a href="messages.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-envelope w-5 text-center text-xs"></i>
+        <span>Messages</span>
+      </a>
+      <a href="newsletter.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-paper-plane w-5 text-center text-xs"></i>
+        <span>Newsletter</span>
+      </a>
+
+      <!-- System -->
+      <p class="sidebar-section-label text-[10px] text-white/30 uppercase font-semibold px-4 mb-2 mt-5">System</p>
+      <a href="reports.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-chart-bar w-5 text-center text-xs"></i>
+        <span>Reports</span>
+      </a>
+      <a href="settings.html" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 text-sm mb-0.5 border-l-3 border-transparent">
+        <i class="fas fa-cog w-5 text-center text-xs"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="px-6 py-4 mt-auto border-t border-white/5">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-gold/20 to-gold/5 flex items-center justify-center">
+          <i class="fas fa-shield-halved text-gold text-xs"></i>
+        </div>
+        <div>
+          <p class="text-white/40 text-[10px] uppercase tracking-wider">Admin Panel</p>
+          <p class="text-gold/60 text-xs">v2.0.0</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="lg:ml-72 min-h-screen">
+    <!-- Topbar -->
+    <header class="sticky top-0 z-30 bg-navy/95 topbar-blur border-b border-white/5">
+      <div class="flex items-center justify-between px-6 py-3">
+        <!-- Left: Toggle + Search -->
+        <div class="flex items-center gap-4">
+          <button id="sidebarToggle" onclick="toggleSidebar()" class="text-white/60 hover:text-gold transition-colors lg:hidden">
+            <i class="fas fa-bars text-lg"></i>
+          </button>
+          <button id="sidebarToggleDesktop" onclick="toggleSidebar()" class="text-white/60 hover:text-gold transition-colors hidden lg:block">
+            <i class="fas fa-bars text-lg"></i>
+          </button>
+          <div class="relative hidden sm:block">
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-sm"></i>
+            <input type="text" placeholder="Search gallery..." class="bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/20 w-64 transition-all">
+          </div>
+        </div>
+
+        <!-- Right: Actions + Profile -->
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <button id="notifBtn" class="relative w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-gold transition-all">
+              <i class="fas fa-bell text-sm"></i>
+              <span id="notifBadge" style="display:none" class="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 bg-red-500 rounded-full text-[9px] text-white items-center justify-center font-bold">0</span>
+            </button>
+            <div id="notifDropdown" class="hidden absolute right-0 top-full mt-2 w-80 bg-navy-light border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-white/10">
+                <span class="text-white text-sm font-semibold">Notifications</span>
+                <button id="notifMarkAll" class="text-xs text-gold font-semibold hover:text-gold/70 transition-all">Mark all read</button>
+              </div>
+              <div id="notifList" class="max-h-72 overflow-y-auto"></div>
+              <div id="notifEmpty" class="hidden text-center text-white/40 text-sm py-6">No notifications</div>
+            </div>
+          </div>
+
+          <!-- Profile Dropdown -->
+          <div class="relative">
+            <button id="profileToggle" onclick="toggleProfile()" class="flex items-center gap-3 pl-1 pr-3 py-1 rounded-xl hover:bg-white/5 transition-all">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold to-yellow-600 flex items-center justify-center text-white font-bold text-sm">
+                A
+              </div>
+              <div class="hidden md:block text-left">
+                <p class="text-white text-sm font-semibold leading-tight">Admin</p>
+                <p class="text-gold/60 text-[10px] uppercase tracking-wider">Super Admin</p>
+              </div>
+              <i class="fas fa-chevron-down text-white/40 text-[10px] hidden md:block"></i>
+            </button>
+            <div id="profileDropdown" class="hidden absolute right-0 top-full mt-2 w-52 bg-navy-light border border-white/10 rounded-xl shadow-2xl py-2 z-50">
+              <a href="settings.html" class="flex items-center gap-3 px-4 py-2.5 text-white/60 hover:text-gold hover:bg-white/5 text-sm transition-all">
+                <i class="fas fa-user-circle w-4 text-center"></i>
+                <span>My Profile</span>
+              </a>
+              <a href="settings.html" class="flex items-center gap-3 px-4 py-2.5 text-white/60 hover:text-gold hover:bg-white/5 text-sm transition-all">
+                <i class="fas fa-cog w-4 text-center"></i>
+                <span>Settings</span>
+              </a>
+              <div class="border-t border-white/5 my-1"></div>
+              <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-red-400 hover:text-red-300 hover:bg-red-500/5 text-sm transition-all">
+                <i class="fas fa-sign-out-alt w-4 text-center"></i>
+                <span>Sign Out</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="p-6">
+      <!-- Page Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 fade-in">
+        <div>
+          <h1 class="text-2xl font-bold text-navy">Gallery Management</h1>
+          <p class="text-navy/50 text-sm mt-1">Showcase your hotel's finest moments and spaces</p>
+        </div>
+        <div class="flex items-center gap-3 mt-4 sm:mt-0">
+          <button onclick="var z=document.getElementById('uploadZone');z.scrollIntoView({behavior:'smooth'});setTimeout(function(){document.getElementById('imageInput').click();},350);" class="inline-flex items-center gap-2 px-5 py-2.5 bg-navy text-white rounded-xl text-sm font-semibold hover:bg-navy-light transition-all">
+            <i class="fas fa-cloud-arrow-up text-xs"></i>
+            Upload Image
+          </button>
+        </div>
+      </div>
+
+      <!-- Upload Zone -->
+      <div id="uploadZone" onclick="document.getElementById('imageInput').click();" class="upload-zone rounded-2xl bg-white p-10 mb-8 text-center cursor-pointer fade-in" style="animation-delay: 0.1s;">
+        <div class="flex flex-col items-center gap-4">
+          <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-gold/10 to-gold/5 flex items-center justify-center">
+            <i class="fas fa-cloud-arrow-up text-gold text-3xl"></i>
+          </div>
+          <div>
+            <p class="text-navy font-semibold text-lg">Drag & Drop your images here</p>
+            <p class="text-navy/40 text-sm mt-1">or click to browse — supports JPG, PNG, WEBP up to 10MB</p>
+          </div>
+          <button class="px-6 py-2.5 bg-gold text-navy rounded-xl text-sm font-semibold hover:bg-gold/90 transition-all">
+            <i class="fas fa-folder-open mr-2 text-xs"></i>Browse Files
+          </button>
+        </div>
+      </div>
+      <input type="file" id="imageInput" accept="image/*" multiple class="hidden">
+
+      <!-- Gallery Grid -->
+      <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 fade-in" style="animation-delay: 0.2s;">
+        <!-- Gallery cards rendered by JS -->
+      </div>
+    </main>
+  </div>
+
+  <!-- SweetAlert2 -->
+  <script src="/vendor/sweetalert2/sweetalert2.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/animations.js"></script>
+  <script>
+    Auth.adminGuard();
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.toggle('-translate-x-full');
+      overlay.classList.toggle('hidden');
+    }
+
+    function toggleProfile() {
+      const dropdown = document.getElementById('profileDropdown');
+      dropdown.classList.toggle('hidden');
+    }
+
+    document.addEventListener('click', function(e) {
+      const dropdown = document.getElementById('profileDropdown');
+      const toggle = document.getElementById('profileToggle');
+      if (!dropdown.contains(e.target) && !toggle.contains(e.target)) {
+        dropdown.classList.add('hidden');
+      }
+    });
+
+    const images = [
+      { id: 1, url: '/images/gallery-main.jpg', title: 'Grand Lobby', category: 'Interior' },
+      { id: 2, url: '/images/room-1.5.jpg', title: 'Presidential Suite', category: 'Rooms' },
+      { id: 3, url: '/images/swimming-pool.jpg', title: 'Pool Area', category: 'Amenities' },
+      { id: 4, url: '/images/room-1.4.jpg', title: 'Executive Suite', category: 'Views' },
+      { id: 5, url: '/images/restaurant.jpg', title: 'Fine Dining', category: 'Restaurant' },
+      { id: 6, url: '/images/about.jpg', title: 'Hotel Exterior', category: 'Exterior' },
+      { id: 7, url: '/images/room-1.2.jpg', title: 'Deluxe Suite', category: 'Amenities' },
+      { id: 8, url: '/images/gallery-1.2.jpg', title: 'Lounge', category: 'Views' }
+    ];
+
+    function renderGallery() {
+      const grid = document.getElementById('galleryGrid');
+      grid.innerHTML = images.map(img => `
+        <div class="gallery-card bg-white rounded-2xl overflow-hidden shadow-sm border border-navy/5">
+          <div class="relative overflow-hidden aspect-[4/3]">
+            <img src="${img.url}" alt="${img.title}" class="gallery-img w-full h-full object-cover">
+            <div class="gallery-overlay absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/40 to-transparent opacity-0 flex flex-col justify-end p-5">
+              <span class="text-gold text-[10px] uppercase tracking-widest font-semibold mb-1">${img.category}</span>
+              <h3 class="text-white font-bold text-lg">${img.title}</h3>
+              <div class="flex items-center gap-2 mt-3">
+                <button onclick="editImage(${img.id})" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-gold/30 flex items-center justify-center text-white hover:text-gold transition-all">
+                  <i class="fas fa-pen text-xs"></i>
+                </button>
+                <button onclick="deleteImage(${img.id})" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-red-500/30 flex items-center justify-center text-white hover:text-red-400 transition-all">
+                  <i class="fas fa-trash text-xs"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function editImage(id) {
+      const img = images.find(i => i.id === id);
+      Swal.fire({
+        title: 'Edit Image',
+        html: `
+          <input id="swal-title" class="swal2-input" placeholder="Image Title" value="${img.title}">
+          <select id="swal-category" class="swal2-select">
+            <option value="Interior" ${img.category === 'Interior' ? 'selected' : ''}>Interior</option>
+            <option value="Exterior" ${img.category === 'Exterior' ? 'selected' : ''}>Exterior</option>
+            <option value="Rooms" ${img.category === 'Rooms' ? 'selected' : ''}>Rooms</option>
+            <option value="Amenities" ${img.category === 'Amenities' ? 'selected' : ''}>Amenities</option>
+            <option value="Restaurant" ${img.category === 'Restaurant' ? 'selected' : ''}>Restaurant</option>
+            <option value="Views" ${img.category === 'Views' ? 'selected' : ''}>Views</option>
+          </select>
+        `,
+        showCancelButton: true,
+        confirmButtonColor: '#D4AF37',
+        cancelButtonColor: '#8B5E34',
+        confirmButtonText: 'Save Changes'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          img.title = document.getElementById('swal-title').value;
+          img.category = document.getElementById('swal-category').value;
+          fetch(CONFIG.API_URL + '/gallery/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ title: img.title, category: img.category })
+          }).then(function(res) {
+            if (!res.ok) throw new Error('Update failed');
+            renderGallery();
+            Swal.fire({ icon: 'success', title: 'Updated!', text: 'Image details have been updated.', timer: 1500, showConfirmButton: false });
+          }).catch(function() {
+            Swal.fire({ icon: 'error', title: 'Update Failed', text: 'Could not save the image details.', confirmButtonColor: '#D4AF37' });
+          });
+        }
+      });
+    }
+
+    function deleteImage(id) {
+      Swal.fire({
+        title: 'Delete Image?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#8B5E34',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(CONFIG.API_URL + '/gallery/' + id, {
+            method: 'DELETE',
+            credentials: 'include'
+          }).then(function(res) {
+            if (!res.ok) throw new Error('Delete failed');
+            const index = images.findIndex(i => i.id === id);
+            if (index > -1) images.splice(index, 1);
+            renderGallery();
+            Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Image has been removed.', timer: 1500, showConfirmButton: false });
+          }).catch(function() {
+            Swal.fire({ icon: 'error', title: 'Delete Failed', text: 'Could not delete the image.', confirmButtonColor: '#D4AF37' });
+          });
+        }
+      });
+    }
+
+    function absUrl(u) {
+      if (!u) return u;
+      if (/^https?:\/\//i.test(u)) return u;
+      return CONFIG.API_URL.replace(/\/api$/, '') + u;
+    }
+
+    async function uploadImages(files) {
+      if (!files || files.length === 0) return;
+      
+      const formData = new FormData();
+      files.forEach(f => formData.append('images', f));
+      Swal.fire({ title: 'Uploading...', text: 'Please wait', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      try {
+        const res = await fetch(CONFIG.API_URL + '/gallery', {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error((data && data.message) || 'Upload failed');
+        const uploaded = data.data.images || [];
+        uploaded.forEach(img => images.unshift({ id: img.id, url: absUrl(img.image_url), title: img.title, category: img.category }));
+        renderGallery();
+        Swal.fire({ icon: 'success', title: 'Upload Successful!', text: uploaded.length + ' image(s) uploaded.', timer: 2000, showConfirmButton: false });
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Upload Failed', text: err.message || 'Could not upload images.', confirmButtonColor: '#D4AF37' });
+      }
+    }
+
+    const uploadZone = document.getElementById('uploadZone');
+    const imageInput = document.getElementById('imageInput');
+
+    imageInput.addEventListener('change', function() {
+      if (!this.files.length) return;
+      uploadImages(Array.from(this.files));
+      this.value = '';
+    });
+
+    uploadZone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      uploadZone.classList.add('drag-over');
+    });
+
+    uploadZone.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      uploadZone.classList.remove('drag-over');
+    });
+
+    uploadZone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      uploadZone.classList.remove('drag-over');
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+        uploadImages(Array.from(e.dataTransfer.files));
+      }
+    });
+
+    async function loadImagesFromApi() {
+      try {
+        const res = await fetch(CONFIG.API_URL + '/gallery?limit=50', { credentials: 'include' });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.success && data.data.images && data.data.images.length) {
+          images.length = 0;
+          data.data.images.forEach(img => images.push({ id: img.id, url: absUrl(img.image_url), title: img.title, category: img.category }));
+        }
+      } catch (e) {}
+      renderGallery();
+    }
+
+    function timeAgo(dt) {
+      if (!dt) return '';
+      const s = Math.floor((Date.now() - new Date(dt).getTime()) / 1000);
+      if (s < 60) return 'just now';
+      if (s < 3600) return Math.floor(s / 60) + 'm ago';
+      if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+      return Math.floor(s / 86400) + 'd ago';
+    }
+
+    function notifIcon(type) {
+      if (type === 'booking') return 'fa-calendar-check';
+      if (type === 'payment') return 'fa-credit-card';
+      if (type === 'review') return 'fa-star';
+      if (type === 'promotion') return 'fa-tag';
+      return 'fa-circle-info';
+    }
+
+    async function loadNotifications() {
+      
+      const badge = document.getElementById('notifBadge');
+      const list = document.getElementById('notifList');
+      const empty = document.getElementById('notifEmpty');
+      try {
+        const res = await fetch(CONFIG.API_URL + '/notifications?limit=20', { credentials: 'include' });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data.success) return;
+        const notifs = data.data.notifications || [];
+        const unread = data.data.unreadCount || 0;
+        if (badge) {
+          if (unread > 0) {
+            badge.textContent = unread > 9 ? '9+' : unread;
+            badge.style.display = 'flex';
+          } else {
+            badge.style.display = 'none';
+          }
+        }
+        if (list) {
+          if (notifs.length === 0) {
+            if (empty) empty.classList.remove('hidden');
+            list.innerHTML = '';
+          } else {
+            if (empty) empty.classList.add('hidden');
+            list.innerHTML = notifs.map(n => `
+              <button onclick="markNotifRead(${n.id})" class="w-full text-left px-4 py-3 border-b border-white/5 hover:bg-white/5 transition-all ${n.is_read ? 'opacity-60' : ''}">
+                <div class="flex items-start gap-2.5">
+                  <i class="fas ${notifIcon(n.type)} text-xs mt-0.5 ${n.is_read ? 'text-white/30' : 'text-gold'}"></i>
+                  <div class="flex-1">
+                    <div class="text-white text-sm font-semibold">${n.title}</div>
+                    <div class="text-white/50 text-xs mt-0.5">${n.message}</div>
+                    <div class="text-white/30 text-[10px] mt-1">${timeAgo(n.created_at)}</div>
+                  </div>
+                </div>
+              </button>`).join('');
+          }
+        }
+      } catch (e) {}
+    }
+
+    function markNotifRead(id) {
+      
+      fetch(CONFIG.API_URL + '/notifications/' + id + '/read', { method: 'PUT', credentials: 'include' })
+        .then(function() { loadNotifications(); });
+    }
+
+    const notifBtn = document.getElementById('notifBtn');
+    const notifDropdown = document.getElementById('notifDropdown');
+    if (notifBtn && notifDropdown) {
+      notifBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        notifDropdown.classList.toggle('hidden');
+        if (!notifDropdown.classList.contains('hidden')) loadNotifications();
+      });
+      document.addEventListener('click', function(e) {
+        if (!notifDropdown.contains(e.target)) notifDropdown.classList.add('hidden');
+      });
+    }
+    const notifMarkAll = document.getElementById('notifMarkAll');
+    if (notifMarkAll) {
+      notifMarkAll.addEventListener('click', function() {
+        fetch(CONFIG.API_URL + '/notifications/read-all', { method: 'PUT', credentials: 'include' })
+          .then(function() { loadNotifications(); });
+      });
+    }
+
+    loadImagesFromApi();
+    loadNotifications();
+  </script>
+</body>
+</html>

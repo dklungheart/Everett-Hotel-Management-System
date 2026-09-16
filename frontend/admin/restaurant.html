@@ -1,0 +1,552 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Management - Everett Hotel Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/vendor/sweetalert2/sweetalert2.min.css">
+    <script src="/vendor/tailwindcss/tailwind.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: { DEFAULT: '#8B5E34', light: '#A67C52', dark: '#24180F' },
+                        gold: { DEFAULT: '#D4AF37', light: '#D4BC8A', dark: '#B89A5A' },
+                        beige: { DEFAULT: '#FAF7F2', dark: '#E8E4DA' }
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        :root {
+            --navy: #8B5E34;
+            --navy-light: #A67C52;
+            --navy-dark: #24180F;
+            --gold: #D4AF37;
+            --gold-light: #D4BC8A;
+            --gold-dark: #B89A5A;
+            --beige: #FAF7F2;
+            --beige-dark: #E8E4DA;
+        }
+        body { background: var(--beige); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--beige); }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold-dark); }
+
+        /* Sidebar */
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(139,94,52,0.6);
+            backdrop-filter: blur(4px); z-index: 998; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+        .admin-sidebar {
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
+            background: var(--navy); z-index: 999; transition: left 0.3s ease;
+            overflow-y: auto; border-right: 1px solid rgba(212,175,55,0.15);
+        }
+        .admin-sidebar.open { left: 0; }
+        .sidebar-nav-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 20px; color: rgba(255,255,255,0.55); font-size: 13.5px;
+            font-weight: 500; transition: all 0.2s ease; border-radius: 8px;
+            margin: 2px 12px; text-decoration: none;
+        }
+        .sidebar-nav-link:hover { color: #fff; background: rgba(212,175,55,0.1); }
+        .sidebar-nav-link.active { color: #D4AF37; background: rgba(212,175,55,0.12); font-weight: 600; }
+        .sidebar-nav-link i { width: 20px; text-align: center; font-size: 14px; }
+        .sidebar-section-label {
+            padding: 16px 20px 6px; font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1.5px; color: rgba(212,175,55,0.4);
+        }
+
+        /* Main content */
+        .admin-main { margin-left: 0; transition: margin-left 0.3s ease; }
+        @media (min-width: 1024px) { .admin-main { margin-left: 280px; } }
+
+        /* Topbar */
+        .admin-topbar {
+            position: sticky; top: 0; z-index: 100; background: rgba(246,244,239,0.85);
+            backdrop-filter: blur(12px); border-bottom: 1px solid rgba(139,94,52,0.06);
+        }
+
+        /* Cards */
+        .luxury-card {
+            background: #fff; border-radius: 16px;
+            border: 1px solid rgba(139,94,52,0.05);
+            box-shadow: 0 1px 3px rgba(139,94,52,0.04), 0 8px 24px rgba(139,94,52,0.03);
+        }
+
+        /* Tabs */
+        .tab-btn {
+            padding: 10px 24px; border-radius: 10px; font-weight: 600; font-size: 14px;
+            transition: all 0.25s ease; border: 2px solid transparent;
+            background: transparent; color: #94a3b8; cursor: pointer;
+        }
+        .tab-btn:hover { color: var(--navy); background: rgba(139,94,52,0.03); }
+        .tab-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+        /* Table */
+        .luxury-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .luxury-table thead th {
+            padding: 14px 16px; font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px; color: #94a3b8;
+            border-bottom: 2px solid rgba(139,94,52,0.06); background: rgba(246,244,239,0.5);
+        }
+        .luxury-table tbody td {
+            padding: 16px; font-size: 14px; color: #334155;
+            border-bottom: 1px solid rgba(139,94,52,0.04); vertical-align: middle;
+        }
+        .luxury-table tbody tr { transition: background 0.2s ease; }
+        .luxury-table tbody tr:hover { background: rgba(212,175,55,0.04); }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+        .status-badge::before {
+            content: ''; width: 7px; height: 7px; border-radius: 50%;
+        }
+        .status-available, .status-ready, .status-delivered { background: rgba(34,197,94,0.1); color: #16a34a; }
+        .status-available::before, .status-ready::before, .status-delivered::before { background: #22c55e; }
+        .status-unavailable, .status-cancelled { background: rgba(239,68,68,0.1); color: #dc2626; }
+        .status-unavailable::before, .status-cancelled::before { background: #ef4444; }
+        .status-preparing { background: rgba(245,158,11,0.1); color: #d97706; }
+        .status-preparing::before { background: #f59e0b; }
+        .status-pending { background: rgba(99,102,241,0.1); color: #6366f1; }
+        .status-pending::before { background: #6366f1; }
+
+        /* Action buttons */
+        .action-btn {
+            width: 34px; height: 34px; border-radius: 8px; display: inline-flex;
+            align-items: center; justify-content: center; font-size: 13px;
+            transition: all 0.2s ease; border: 1px solid rgba(139,94,52,0.08);
+            background: #fff; color: #64748b; cursor: pointer;
+        }
+        .action-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.06); }
+        .action-btn.danger:hover { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.06); }
+        .action-btn.success:hover { border-color: #22c55e; color: #22c55e; background: rgba(34,197,94,0.06); }
+
+        /* Modal overlay */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(139,94,52,0.6);
+            backdrop-filter: blur(6px); z-index: 1000; display: none;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-panel {
+            background: #fff; border-radius: 20px; width: 100%; max-width: 520px;
+            box-shadow: 0 25px 60px rgba(139,94,52,0.2);
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-input {
+            width: 100%; padding: 12px 16px; border-radius: 10px;
+            border: 1.5px solid rgba(139,94,52,0.1); font-size: 14px;
+            transition: border-color 0.2s ease; outline: none; background: var(--beige);
+        }
+        .modal-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,175,55,0.15); }
+        .modal-input::placeholder { color: #94a3b8; }
+        .modal-label {
+            display: block; font-size: 12px; font-weight: 700; color: #64748b;
+            text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px;
+        }
+        .modal-btn-primary {
+            padding: 12px 28px; border-radius: 10px; font-weight: 700; font-size: 14px;
+            background: var(--gold); color: #fff; border: none; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .modal-btn-primary:hover { background: var(--gold-dark); transform: translateY(-1px); }
+        .modal-btn-secondary {
+            padding: 12px 28px; border-radius: 10px; font-weight: 600; font-size: 14px;
+            background: transparent; color: #64748b; border: 1.5px solid rgba(139,94,52,0.1);
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .modal-btn-secondary:hover { border-color: var(--navy); color: var(--navy); }
+
+        /* Profile dropdown */
+        .profile-dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0; background: #fff;
+            border-radius: 14px; box-shadow: 0 12px 40px rgba(139,94,52,0.12);
+            border: 1px solid rgba(139,94,52,0.05); min-width: 200px;
+            padding: 8px; opacity: 0; pointer-events: none; transform: translateY(-6px);
+            transition: all 0.2s ease; z-index: 200;
+        }
+        .profile-dropdown.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+        /* Responsive table wrapper */
+        .table-responsive { overflow-x: auto; }
+    </style>
+</head>
+<body class="bg-beige min-h-screen">
+
+    <!-- Sidebar Overlay -->
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside id="adminSidebar" class="admin-sidebar">
+        <div class="p-5 border-b border-white/5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
+                    <i class="fa-solid fa-hotel text-white text-sm"></i>
+                </div>
+                <div>
+                    <div class="text-white font-bold text-sm tracking-wide">EVERETT</div>
+                    <div class="text-gold/50 text-[10px] font-semibold tracking-[2px] uppercase">Hotel Admin</div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="py-4">
+            <div class="sidebar-section-label">Main</div>
+            <a href="dashboard.html" class="sidebar-nav-link"><i class="fa-solid fa-gauge-high"></i>Dashboard</a>
+
+            <div class="sidebar-section-label">Management</div>
+            <a href="rooms.html" class="sidebar-nav-link"><i class="fa-solid fa-bed"></i>Rooms</a>
+            <a href="bookings.html" class="sidebar-nav-link"><i class="fa-solid fa-calendar-check"></i>Bookings</a>
+            <a href="customers.html" class="sidebar-nav-link"><i class="fa-solid fa-users"></i>Customers</a>
+            <a href="employees.html" class="sidebar-nav-link"><i class="fa-solid fa-user-tie"></i>Employees</a>
+            <a href="attendance.html" class="sidebar-nav-link"><i class="fa-solid fa-fingerprint"></i>Attendance</a>
+
+            <div class="sidebar-section-label">Operations</div>
+            <a href="housekeeping.html" class="sidebar-nav-link"><i class="fa-solid fa-broom"></i>Housekeeping</a>
+            <a href="restaurant.html" class="sidebar-nav-link active"><i class="fa-solid fa-utensils"></i>Restaurant</a>
+            <a href="payments.html" class="sidebar-nav-link"><i class="fa-solid fa-credit-card"></i>Payments</a>
+            <a href="promotions.html" class="sidebar-nav-link"><i class="fa-solid fa-tags"></i>Promotions</a>
+
+            <div class="sidebar-section-label">Content</div>
+            <a href="cms.html" class="nav-link">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    CMS
+</a>
+            <a href="gallery.html" class="sidebar-nav-link"><i class="fa-solid fa-images"></i>Gallery</a>
+            <a href="reviews.html" class="sidebar-nav-link"><i class="fa-solid fa-star"></i>Reviews</a>
+            <a href="messages.html" class="sidebar-nav-link"><i class="fa-solid fa-envelope"></i>Messages</a>
+            <a href="newsletter.html" class="sidebar-nav-link"><i class="fa-solid fa-newspaper"></i>Newsletter</a>
+
+            <div class="sidebar-section-label">System</div>
+            <a href="reports.html" class="sidebar-nav-link"><i class="fa-solid fa-chart-bar"></i>Reports</a>
+            <a href="settings.html" class="sidebar-nav-link"><i class="fa-solid fa-gear"></i>Settings</a>
+        </nav>
+
+        <div class="p-5 mt-auto border-t border-white/5">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-gold/15 flex items-center justify-center text-gold text-xs font-bold" id="sidebarAvatar"></div>
+                <div>
+                    <div class="text-white text-sm font-semibold" id="sidebarName"></div>
+                    <div class="text-white/30 text-[11px]">Administrator</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="admin-main min-h-screen">
+        <!-- Topbar -->
+        <header class="admin-topbar">
+            <div class="flex items-center justify-between px-4 lg:px-8 h-[68px]">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="lg:hidden w-10 h-10 rounded-xl bg-navy/5 flex items-center justify-center text-navy hover:bg-navy/10 transition">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="hidden md:flex items-center bg-white rounded-xl border border-navy/5 px-4 py-2.5 w-72 focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/15 transition">
+                        <i class="fa-solid fa-magnifying-glass text-navy/25 text-sm mr-3"></i>
+                        <input type="text" placeholder="Search anything..." class="bg-transparent outline-none text-sm text-navy w-full placeholder:text-navy/30">
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="md:hidden w-10 h-10 rounded-xl bg-white border border-navy/5 flex items-center justify-center text-navy/40 hover:text-navy transition">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </button>
+                    <button class="relative w-10 h-10 rounded-xl bg-white border border-navy/5 flex items-center justify-center text-navy/40 hover:text-navy transition">
+                        <i class="fa-solid fa-bell text-sm"></i>
+                        <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">3</span>
+                    </button>
+                    <div class="admin-profile relative">
+                        <button onclick="toggleProfileDropdown()" class="flex items-center gap-3 bg-white rounded-xl border border-navy/5 pl-1.5 pr-3 py-1.5 hover:shadow-sm transition cursor-pointer">
+                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center text-white text-xs font-bold" id="adminAvatar"></div>
+                            <div class="hidden sm:block text-left">
+                                <div class="text-sm font-semibold text-navy leading-tight" id="adminName"></div>
+                                <div class="text-[11px] text-navy/35">Admin</div>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-navy/25 ml-1"></i>
+                        </button>
+                        <div id="profileDropdown" class="profile-dropdown">
+                            <a href="settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-navy/70 hover:bg-beige hover:text-navy transition"><i class="fa-solid fa-user w-4"></i>My Profile</a>
+                            <a href="settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-navy/70 hover:bg-beige hover:text-navy transition"><i class="fa-solid fa-gear w-4"></i>Settings</a>
+                            <div class="my-1.5 border-t border-navy/5"></div>
+                            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-500 hover:bg-red-50 transition"><i class="fa-solid fa-right-from-bracket w-4"></i>Sign Out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="p-4 lg:p-8">
+            <!-- Page Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                <div>
+                    <h1 class="text-2xl lg:text-3xl font-extrabold text-navy tracking-tight">Restaurant Management</h1>
+                    <p class="text-navy/40 text-sm mt-1 font-medium">Manage menu items and track dining orders</p>
+                </div>
+                <button onclick="openMenuModal()" class="mt-4 sm:mt-0 inline-flex items-center gap-2 bg-gold hover:bg-gold-dark text-white font-bold text-sm px-5 py-3 rounded-xl transition-all hover:shadow-lg hover:shadow-gold/20">
+                    <i class="fa-solid fa-plus text-xs"></i>Add Menu Item
+                </button>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="luxury-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center text-gold"><i class="fa-solid fa-utensils text-sm"></i></div>
+                        <span class="text-[11px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">Active</span>
+                    </div>
+                    <div class="text-2xl font-extrabold text-navy" id="statMenuItems">5</div>
+                    <div class="text-navy/35 text-xs font-semibold mt-1">Menu Items</div>
+                </div>
+                <div class="luxury-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500"><i class="fa-solid fa-receipt text-sm"></i></div>
+                        <span class="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">Today</span>
+                    </div>
+                    <div class="text-2xl font-extrabold text-navy" id="statTotalOrders">3</div>
+                    <div class="text-navy/35 text-xs font-semibold mt-1">Total Orders</div>
+                </div>
+                <div class="luxury-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500"><i class="fa-solid fa-fire-burner text-sm"></i></div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-navy" id="statPreparing">1</div>
+                    <div class="text-navy/35 text-xs font-semibold mt-1">Preparing</div>
+                </div>
+                <div class="luxury-card p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500"><i class="fa-solid fa-check-circle text-sm"></i></div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-navy" id="statDelivered">1</div>
+                    <div class="text-navy/35 text-xs font-semibold mt-1">Delivered</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex items-center gap-2 mb-6 bg-white rounded-xl p-1.5 border border-navy/5 w-fit">
+                <button onclick="switchTab('menu',this)" class="tab-btn active" data-tab="menu">
+                    <i class="fa-solid fa-utensils mr-1.5"></i>Menu Items
+                </button>
+                <button onclick="switchTab('orders',this)" class="tab-btn" data-tab="orders">
+                    <i class="fa-solid fa-receipt mr-1.5"></i>Orders
+                </button>
+            </div>
+
+            <!-- Menu Items Tab -->
+            <div id="menuTab" class="luxury-card">
+                <div class="p-5 border-b border-navy/5">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-navy">Menu Items</h3>
+                        <div class="flex items-center gap-2">
+                            <div class="flex items-center bg-beige rounded-lg px-3 py-2 border border-navy/5 focus-within:border-gold transition">
+                                <i class="fa-solid fa-filter text-navy/25 text-xs mr-2"></i>
+                                <select class="bg-transparent outline-none text-sm text-navy font-medium cursor-pointer">
+                                    <option>All Categories</option>
+                                    <option>Appetizer</option>
+                                    <option>Main Course</option>
+                                    <option>Dessert</option>
+                                    <option>Beverage</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="luxury-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menuTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Orders Tab -->
+            <div id="ordersTab" class="luxury-card" style="display:none;">
+                <div class="p-5 border-b border-navy/5">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-navy">Dining Orders</h3>
+                        <div class="flex items-center gap-2">
+                            <div class="flex items-center bg-beige rounded-lg px-3 py-2 border border-navy/5 focus-within:border-gold transition">
+                                <i class="fa-solid fa-filter text-navy/25 text-xs mr-2"></i>
+                                <select class="bg-transparent outline-none text-sm text-navy font-medium cursor-pointer">
+                                    <option>All Status</option>
+                                    <option>Pending</option>
+                                    <option>Preparing</option>
+                                    <option>Ready</option>
+                                    <option>Delivered</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="luxury-table">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Room</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Item Modal -->
+    <div id="menuModal" class="modal-overlay">
+        <div class="modal-panel">
+            <div class="flex items-center justify-between p-6 pb-0">
+                <h3 id="menuModalTitle" class="text-xl font-bold text-navy">Add Menu Item</h3>
+                <button onclick="closeMenuModal()" class="w-9 h-9 rounded-lg bg-navy/5 flex items-center justify-center text-navy/40 hover:text-navy hover:bg-navy/10 transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <input type="hidden" id="menuItemId">
+                <div class="space-y-4">
+                    <div>
+                        <label class="modal-label">Item Image</label>
+                        <div class="flex items-center gap-4">
+                            <div class="relative w-24 h-24 rounded-xl overflow-hidden bg-navy/5 border border-navy/10 flex items-center justify-center flex-shrink-0">
+                                <img id="menuPhotoPreview" src="" alt="Item image" class="w-full h-full object-cover hidden">
+                                <i id="menuPhotoPlaceholder" class="fa-solid fa-utensils text-navy/20 text-2xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <label for="menuPhoto" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gold/30 text-gold text-sm font-semibold hover:bg-gold/10 transition cursor-pointer">
+                                    <i class="fa-solid fa-camera"></i> Choose Image
+                                </label>
+                                <input type="file" id="menuPhoto" accept="image/*" class="hidden">
+                                <p class="text-xs text-navy/35 mt-1.5">Photo of the food or drink. JPEG/PNG/GIF/WebP up to 5MB.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="modal-label">Item Name</label>
+                        <input type="text" id="menuItemName" class="modal-input" placeholder="Enter item name">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="modal-label">Price (KSh)</label>
+                            <input type="number" id="menuItemPrice" class="modal-input" placeholder="0.00" step="0.01">
+                        </div>
+                        <div>
+                            <label class="modal-label">Category</label>
+                            <select id="menuItemCategory" class="modal-input cursor-pointer">
+                                <option value="appetizer">Appetizer</option>
+                                <option value="main_course">Main Course</option>
+                                <option value="dessert">Dessert</option>
+                                <option value="beverage">Beverage</option>
+                                <option value="breakfast">Breakfast</option>
+                                <option value="lunch">Lunch</option>
+                                <option value="dinner">Dinner</option>
+                                <option value="special">Special</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="modal-label">Status</label>
+                        <select id="menuItemStatus" class="modal-input cursor-pointer">
+                            <option value="available">Available</option>
+                            <option value="unavailable">Unavailable</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="modal-label">Description</label>
+                        <textarea id="menuItemDesc" class="modal-input" rows="3" placeholder="Enter item description" style="resize:vertical;"></textarea>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-3 mt-6 pt-5 border-t border-navy/5">
+                    <button onclick="closeMenuModal()" class="modal-btn-secondary">Cancel</button>
+                    <button onclick="saveMenuItem()" class="modal-btn-primary">
+                        <i class="fa-solid fa-check mr-1.5"></i>Save Item
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/vendor/sweetalert2/sweetalert2.min.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/animations.js"></script>
+    <script>
+        window.closeMenuModal = function() {
+            document.getElementById('menuModal').classList.remove('show');
+        };
+
+        var originalOpenMenuModal = window.openMenuModal;
+
+        (function(){if(!Auth.adminGuard())return;var user=Auth.getCurrentUser();if(user){var n=user.name||(user.firstName+' '+(user.lastName||''));document.getElementById('adminName').textContent=n;document.getElementById('adminAvatar').textContent=Utils.getInitials(n);var sb=document.getElementById('sidebarName');var sa=document.getElementById('sidebarAvatar');if(sb)sb.textContent=n;if(sa)sa.textContent=Utils.getInitials(n);}
+window.toggleSidebar=function(){document.getElementById('adminSidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('show');};
+window.toggleProfileDropdown=function(){document.getElementById('profileDropdown').classList.toggle('show');};
+document.addEventListener('click',function(e){if(!e.target.closest('.admin-profile'))document.getElementById('profileDropdown').classList.remove('show');});
+
+window.switchTab=function(tab,btn){document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');document.getElementById('menuTab').style.display=tab==='menu'?'block':'none';document.getElementById('ordersTab').style.display=tab==='orders'?'block':'none';};
+
+var menuItems=[];
+var orders=[];
+var categoryLabels={appetizer:'Appetizer',main_course:'Main Course',dessert:'Dessert',beverage:'Beverage',breakfast:'Breakfast',lunch:'Lunch',dinner:'Dinner',special:'Special'};
+
+function absUrl(path){if(!path)return '';return path.indexOf('http')===0?path:CONFIG.API_URL+path;}
+
+function menuImgHtml(m){if(m.image){return '<img src="'+absUrl(m.image)+'" alt="" class="w-14 h-14 rounded-xl object-cover border border-navy/10" style="min-width:56px;">';}return '<div class="w-14 h-14 rounded-xl bg-navy/5 flex items-center justify-center text-navy/20 text-lg" style="min-width:56px;"><i class="fa-solid fa-utensils"></i></div>';}
+
+function renderMenu(){document.getElementById('menuTableBody').innerHTML=menuItems.map(function(m){var label=categoryLabels[m.category]||m.category;var avail=m.is_available===1||m.is_available===true;return '<tr><td><div class="flex items-center gap-3">'+menuImgHtml(m)+'<div><strong class="text-navy">'+m.name+'</strong><br><small style="color:#94a3b8;">'+m.description+'</small></div></div></td><td><span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-navy/5 text-navy">'+label+'</span></td><td><strong class="text-navy">KSh '+Number(m.price||0).toLocaleString('en-KE')+'</strong></td><td><span class="status-badge '+(avail?'status-available':'status-unavailable')+'">'+(avail?'Available':'Unavailable')+'</span></td><td><div class="flex items-center gap-1.5"><button class="action-btn" onclick="editMenuItem('+m.id+')"><i class="fa-solid fa-pen text-xs"></i></button><button class="action-btn danger" onclick="deleteMenuItem('+m.id+')"><i class="fa-solid fa-trash text-xs"></i></button></div></td>';}).join('')||'<tr><td colspan="5" class="text-center py-12 text-navy/25"><i class="fa-solid fa-utensils text-3xl mb-3 block"></i>No menu items found</td></tr>';}
+function renderOrders(){document.getElementById('ordersTableBody').innerHTML=orders.map(function(o){return '<tr><td><strong class="text-gold">'+o._id+'</strong></td><td>'+o.room+'</td><td>'+o.items+'</td><td><strong>KSh '+Number(o.total||0).toLocaleString('en-KE')+'</strong></td><td><span class="status-badge status-'+o.status+'">'+o.status.charAt(0).toUpperCase()+o.status.slice(1)+'</span></td><td>'+o.time+'</td><td><div class="flex items-center gap-1.5"><button class="action-btn success" onclick="advanceOrder(\''+o._id+'\')"><i class="fa-solid fa-arrow-right text-xs"></i></button></div></td></tr>';}).join('')||'<tr><td colspan="7" class="text-center py-12 text-navy/25"><i class="fa-solid fa-receipt text-3xl mb-3 block"></i>No orders found</td></tr>';}
+
+function clearMenuPhoto(){var f=document.getElementById('menuPhoto');if(f)f.value='';var p=document.getElementById('menuPhotoPreview');p.classList.add('hidden');p.src='';document.getElementById('menuPhotoPlaceholder').classList.remove('hidden');}
+document.getElementById('menuPhoto')?.addEventListener('change',function(){var file=this.files&&this.files[0];if(!file){clearMenuPhoto();return;}var reader=new FileReader();reader.onload=function(e){var p=document.getElementById('menuPhotoPreview');p.src=e.target.result;p.classList.remove('hidden');document.getElementById('menuPhotoPlaceholder').classList.add('hidden');};reader.readAsDataURL(file);});
+
+function loadMenuFromApi(){if(typeof api==='undefined'||!api.adminGetMenuItems){renderMenu();return;}api.adminGetMenuItems({limit:100}).then(function(res){menuItems=(res&&res.data&&res.data.items)||[];document.getElementById('statMenuItems').textContent=menuItems.length;renderMenu();}).catch(function(){renderMenu();});}
+
+window.openMenuModal=function(item){document.getElementById('menuModalTitle').textContent=item?'Edit Item':'Add Menu Item';document.getElementById('menuItemId').value=item?item.id:'';document.getElementById('menuItemName').value=item?item.name:'';document.getElementById('menuItemPrice').value=item?item.price:'';document.getElementById('menuItemCategory').value=item?item.category:'appetizer';document.getElementById('menuItemStatus').value=(item&&(item.is_available===1||item.is_available===true))?'available':'unavailable';document.getElementById('menuItemDesc').value=item?item.description:'';clearMenuPhoto();if(item&&item.image){document.getElementById('menuPhotoPreview').src=absUrl(item.image);document.getElementById('menuPhotoPreview').classList.remove('hidden');document.getElementById('menuPhotoPlaceholder').classList.add('hidden');}document.getElementById('menuModal').classList.add('show');};
+window.editMenuItem=function(id){var m=menuItems.find(function(x){return x.id===id;});if(m)openMenuModal(m);};
+window.saveMenuItem=function(){var name=document.getElementById('menuItemName').value.trim();var price=parseFloat(document.getElementById('menuItemPrice').value);var category=document.getElementById('menuItemCategory').value;var status=document.getElementById('menuItemStatus').value;var description=document.getElementById('menuItemDesc').value.trim();if(!name||isNaN(price)||price<0){Swal.fire({icon:'warning',title:'Incomplete Form',text:'Please enter a name and a valid price.',confirmButtonColor:'#D4AF37'});return;}var id=document.getElementById('menuItemId').value;var photoFile=document.getElementById('menuPhoto').files&&document.getElementById('menuPhoto').files[0];var fd=new FormData();fd.append('name',name);fd.append('price',price);fd.append('category',category);fd.append('description',description);fd.append('isAvailable',status==='available'?1:0);if(photoFile)fd.append('images',photoFile);Swal.fire({icon:'info',title:id?'Updating...':'Adding...',text:'Please wait',showConfirmButton:false,allowOutsideClick:false});var action=id?api.adminUpdateMenuItem(id,fd):api.adminCreateMenuItem(fd);action.then(function(){Swal.close();closeMenuModal();loadMenuFromApi();Swal.fire({icon:'success',title:id?'Item Updated':'Item Added',confirmButtonColor:'#D4AF37'});}).catch(function(err){Swal.close();Swal.fire({icon:'error',title:'Save Failed',text:(err&&err.message)||'Could not save the menu item.',confirmButtonColor:'#D4AF37'});});};
+window.deleteMenuItem=function(id){Swal.fire({title:'Delete Item?',icon:'warning',showCancelButton:true,confirmButtonColor:'#D4AF37',confirmButtonText:'Delete'}).then(function(r){if(r.isConfirmed&&typeof api!=='undefined'&&api.adminDeleteMenuItem){api.adminDeleteMenuItem(id).then(function(){loadMenuFromApi();Swal.fire({icon:'success',title:'Deleted',confirmButtonColor:'#D4AF37'});}).catch(function(err){Swal.fire({icon:'error',title:'Delete Failed',text:(err&&err.message)||'Could not delete the item.',confirmButtonColor:'#D4AF37'});});}else if(r.isConfirmed){Swal.fire({icon:'error',title:'API Missing',text:'api.js did not load. Hard refresh the page.',confirmButtonColor:'#D4AF37'});}});};
+window.advanceOrder=function(id){var orderFlow=['pending','preparing','ready','delivered'];var o=orders.find(function(x){return x._id===id;});if(!o)return;var idx=orderFlow.indexOf(o.status);if(idx<orderFlow.length-1){o.status=orderFlow[idx+1];renderOrders();Swal.fire({icon:'success',title:'Order Updated',text:'Status: '+o.status,confirmButtonColor:'#D4AF37'});}};
+loadMenuFromApi();renderOrders();})();
+    </script>
+</body>
+</html>

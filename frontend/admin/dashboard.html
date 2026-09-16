@@ -1,0 +1,664 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Everett Hotel Admin</title>
+    <script src="/vendor/tailwindcss/tailwind.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#8B5E34',
+                        gold: '#D4AF37',
+                        beige: '#FAF7F2',
+                        charcoal: '#211A14',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #8B5E34; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 3px; }
+
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            z-index: 40; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .admin-sidebar {
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
+            background: linear-gradient(180deg, #8B5E34 0%, #24180F 100%);
+            z-index: 50; transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+        .admin-sidebar.open { left: 0; }
+
+        .nav-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 20px; color: rgba(255,255,255,0.6);
+            font-size: 13.5px; font-weight: 500; transition: all 0.2s;
+            border-left: 3px solid transparent; text-decoration: none;
+        }
+        .nav-link:hover { color: #D4AF37; background: rgba(212,175,55,0.08); }
+        .nav-link.active {
+            color: #D4AF37; background: rgba(212,175,55,0.12);
+            border-left-color: #D4AF37; font-weight: 600;
+        }
+        .nav-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .nav-section-label {
+            padding: 18px 20px 6px; font-size: 10px; font-weight: 700;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            color: rgba(212,175,55,0.45);
+        }
+
+        .topbar {
+            position: fixed; top: 0; left: 0; right: 0; height: 64px;
+            background: rgba(139,94,52,0.92); backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(212,175,55,0.12);
+            z-index: 30; display: flex; align-items: center;
+            padding: 0 24px; gap: 16px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #FAFAF7 100%);
+            border: 1px solid rgba(212,175,55,0.15);
+            border-radius: 14px; padding: 22px 24px;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .stat-card::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 4px; height: 100%; background: #D4AF37; border-radius: 0 4px 4px 0;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(139,94,52,0.08); }
+
+        .chart-card {
+            background: #FFFFFF; border: 1px solid rgba(212,175,55,0.12);
+            border-radius: 14px; padding: 24px;
+        }
+
+        .table-card {
+            background: #FFFFFF; border: 1px solid rgba(212,175,55,0.12);
+            border-radius: 14px; overflow: hidden;
+        }
+
+        .badge-confirmed {
+            background: rgba(34,197,94,0.12); color: #16a34a;
+            padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+        .badge-pending {
+            background: rgba(245,158,11,0.12); color: #d97706;
+            padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+        .badge-checkedout {
+            background: rgba(107,114,128,0.12); color: #6b7280;
+            padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+        .badge-cancelled {
+            background: rgba(239,68,68,0.12); color: #dc2626;
+            padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+
+        .profile-dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            background: #FFFFFF; border: 1px solid rgba(212,175,55,0.15);
+            border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            min-width: 200px; opacity: 0; pointer-events: none;
+            transform: translateY(-8px); transition: all 0.25s ease; z-index: 60;
+        }
+        .profile-dropdown.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+        .menu-btn { display: none; }
+        @media (max-width: 1023px) {
+            .menu-btn { display: flex; }
+            .main-content { margin-left: 0 !important; }
+            .topbar { left: 0; }
+        }
+    </style>
+</head>
+<body class="bg-beige min-h-screen">
+
+    <!-- Sidebar Overlay -->
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Admin Sidebar -->
+    <aside id="adminSidebar" class="admin-sidebar">
+        <div class="flex items-center gap-3 px-6 py-5 border-b border-white/5">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold to-yellow-600 flex items-center justify-center">
+                <span class="text-navy font-extrabold text-sm">EH</span>
+            </div>
+            <div>
+                <span class="text-white font-semibold text-sm tracking-[6px]">EVERETT</span>
+                <div class="text-white/30 text-[11px] font-medium">Admin Panel</div>
+            </div>
+        </div>
+
+        <nav class="py-3">
+            <div class="nav-section-label">Main</div>
+            <a href="dashboard.html" class="nav-link active">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                Dashboard
+            </a>
+
+            <div class="nav-section-label">Management</div>
+            <a href="rooms.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                Rooms
+            </a>
+            <a href="bookings.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Bookings
+            </a>
+            <a href="customers.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                Customers
+            </a>
+            <a href="employees.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                Employees
+            </a>
+            <a href="attendance.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2 2-.9 2-2zm6 0c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2 2-.9 2-2zM6 11c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2 2-.9 2-2zm12-3.5c.4-2.8 1.8-4 3.5-3.5 1.7.5 1.7 3.2-1 5.5-2.7 2.3-6.8 2-10.5 2S6.2 13.8 3.5 11.5C.8 9.2.8 6.5 2.5 6c1.7-.5 3.1.7 3.5 3.5M6 8c.3-2.2 1.4-3.6 3-3.5M9 2c1-.2 1.7.4 2 1.5"/></svg>
+                Attendance
+            </a>
+
+            <div class="nav-section-label">Operations</div>
+            <a href="housekeeping.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                Housekeeping
+            </a>
+            <a href="restaurant.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                Restaurant
+            </a>
+            <a href="payments.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                Payments
+            </a>
+            <a href="promotions.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                Promotions
+            </a>
+
+            <div class="nav-section-label">Content</div>
+            <a href="cms.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                CMS
+            </a>
+            <a href="gallery.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Gallery
+            </a>
+            <a href="reviews.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                Reviews
+            </a>
+            <a href="messages.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                Messages
+            </a>
+            <a href="newsletter.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                Newsletter
+            </a>
+
+            <div class="nav-section-label">System</div>
+            <a href="reports.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Reports
+            </a>
+            <a href="settings.html" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                Settings
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Topbar -->
+    <header class="topbar">
+        <button onclick="toggleSidebar()" class="menu-btn w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-white hover:bg-gold/20 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+
+        <div class="hidden md:flex items-center flex-1 max-w-md bg-white/5 rounded-xl px-4 py-2.5 border border-white/5 focus-within:border-gold/30 transition">
+            <svg class="w-4 h-4 text-white/30 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" placeholder="Search anything..." class="bg-transparent text-white text-sm w-full outline-none placeholder-white/30">
+        </div>
+
+        <div class="flex items-center gap-3 ml-auto">
+            <button id="themeToggle" class="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-white/60 hover:text-gold hover:bg-gold/10 transition" title="Toggle Theme">
+                <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+            </button>
+
+            <button class="relative w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-white/60 hover:text-gold hover:bg-gold/10 transition">
+                <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full text-[9px] text-white flex items-center justify-center font-bold">3</span>
+            </button>
+
+            <div class="relative">
+                <button id="profileToggle" class="flex items-center gap-2.5 bg-white/5 rounded-xl pl-1.5 pr-3 py-1.5 hover:bg-gold/10 transition">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-gold to-yellow-600 flex items-center justify-center">
+                        <span class="text-navy text-xs font-bold">AD</span>
+                    </div>
+                    <div class="hidden sm:block text-left">
+                        <div class="text-white text-xs font-semibold leading-tight">Admin</div>
+                        <div className="text-white/40 text-[10px]">Super Admin</div>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div id="profileDropdown" class="profile-dropdown">
+                    <div class="px-4 py-3 border-b border-gray-100">
+                        <div class="text-sm font-semibold text-gray-800">Admin User</div>
+                        <div class="text-xs text-gray-400">admin@everetthotel.com</div>
+                    </div>
+                    <a href="settings.html" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-gold transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        Profile
+                    </a>
+                    <a href="settings.html" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-gold transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        Settings
+                    </a>
+                    <div class="border-t border-gray-100">
+                        <a href="#" id="logoutBtn" class="flex items-center gap-2 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content pt-[64px] ml-[280px] min-h-screen lg:ml-[280px]">
+        <div class="p-6 lg:p-8">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-navy tracking-tight">Dashboard</h1>
+                        <p class="text-gray-500 text-sm mt-1">Welcome back, here's your hotel overview</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <select id="reportPeriod" class="bg-white border border-gold/20 text-gray-600 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-gold/30">
+                            <option value="month">This Month</option>
+                            <option value="lastmonth">Last Month</option>
+                            <option value="year">This Year</option>
+                        </select>
+                        <button onclick="exportDashboardReport()" class="bg-gradient-to-r from-gold to-yellow-600 text-navy font-bold text-sm px-5 py-2.5 rounded-xl hover:shadow-lg hover:shadow-gold/25 transition-all">
+                            Export Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stat Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+                <div class="stat-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-11 h-11 rounded-xl bg-navy/5 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-navy">KES 0</div>
+                    <div class="text-gray-400 text-xs font-medium mt-1">Total Revenue</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-11 h-11 rounded-xl bg-gold/10 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-navy">0</div>
+                    <div class="text-gray-400 text-xs font-medium mt-1">Total Bookings</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-11 h-11 rounded-xl bg-navy/5 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-navy">0%</div>
+                    <div class="text-gray-400 text-xs font-medium mt-1">Occupancy Rate</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-11 h-11 rounded-xl bg-gold/10 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-navy">0</div>
+                    <div class="text-gray-400 text-xs font-medium mt-1">Total Rooms</div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
+                <!-- Revenue Chart -->
+                <div class="chart-card lg:col-span-2">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-navy font-bold text-base">Revenue Overview</h3>
+                            <p class="text-gray-400 text-xs mt-0.5">Monthly revenue trend</p>
+                        </div>
+                    </div>
+                    <div style="height: 280px;">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Room Status Chart -->
+                <div class="chart-card">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-navy font-bold text-base">Room Status</h3>
+                            <p class="text-gray-400 text-xs mt-0.5">Current distribution</p>
+                        </div>
+                    </div>
+                    <div style="height: 280px;" class="flex items-center justify-center">
+                        <canvas id="roomStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookings Chart -->
+            <div class="chart-card mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-navy font-bold text-base">Bookings Analytics</h3>
+                        <p class="text-gray-400 text-xs mt-0.5">Weekly booking trends</p>
+                    </div>
+                </div>
+                <div style="height: 260px;">
+                    <canvas id="bookingsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Bookings Table -->
+            <div class="table-card">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <div>
+                        <h3 class="text-navy font-bold text-base">Recent Bookings</h3>
+                        <p class="text-gray-400 text-xs mt-0.5">Latest guest reservations</p>
+                    </div>
+                    <a href="bookings.html" class="text-gold text-xs font-bold hover:underline">View All →</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-50/80">
+                                <th class="text-left px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Guest</th>
+                                <th class="text-left px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Room</th>
+                                <th class="text-left px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Check-in</th>
+                                <th class="text-left px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Check-out</th>
+                                <th class="text-left px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Amount</th>
+                                <th class="text-left px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50" id="recentBookingsBody">
+                            <tr><td colspan="6" class="px-6 py-12 text-center text-sm text-gray-400">No recent bookings yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="/vendor/sweetalert2/sweetalert2.min.js"></script>
+    <script src="/vendor/chart.js/chart.umd.min.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/animations.js"></script>
+
+    <script>
+        // Sidebar Toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('adminSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        // Profile Dropdown
+        const profileToggle = document.getElementById('profileToggle');
+        const profileDropdown = document.getElementById('profileDropdown');
+
+        if (profileToggle && profileDropdown) {
+            profileToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profileDropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', (e) => {
+                if (!profileDropdown.contains(e.target) && !profileToggle.contains(e.target)) {
+                    profileDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // Auth Guard
+        if (typeof Auth !== 'undefined' && Auth.adminGuard) {
+            Auth.adminGuard();
+        }
+
+        // Logout
+        document.getElementById('logoutBtn')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Logout?',
+                text: 'You will be redirected to the login page',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#D4AF37',
+                cancelButtonColor: '#8B5E34',
+                confirmButtonText: 'Yes, logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (typeof Auth !== 'undefined' && Auth.removeUserKey) Auth.removeUserKey();
+                    window.location.href = '../login.html';
+                }
+            });
+        });
+
+        // Load Dashboard Data from API
+        async function loadDashboard() {
+            try {
+                const res = await fetch('http://localhost:5000/api/dashboard/executive', {
+                    credentials: 'include'
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                if (!data.success) return;
+
+                const d = data.data;
+
+                // Update stat cards
+                const cards = document.querySelectorAll('.stat-card');
+                if (cards[0]) cards[0].querySelector('.text-2xl').textContent = 'KES ' + Number(d.today.revenue).toLocaleString();
+                if (cards[1]) cards[1].querySelector('.text-2xl').textContent = d.bookings.total || 0;
+                if (cards[2]) cards[2].querySelector('.text-2xl').textContent = d.today.occupancyRate + '%';
+                if (cards[3]) cards[3].querySelector('.text-2xl').textContent = d.today.totalRooms || 0;
+
+                // Update room status chart
+                const roomChart = Chart.getChart('roomStatusChart');
+                if (roomChart) {
+                    roomChart.data.datasets[0].data = [
+                        d.today.occupiedRooms,
+                        d.today.availableRooms,
+                        d.today.maintenanceRooms,
+                        0
+                    ];
+                    roomChart.update();
+                }
+
+                // Update revenue chart
+                if (d.revenue && d.revenue.monthly && d.revenue.monthly.length > 0) {
+                    const revChart = Chart.getChart('revenueChart');
+                    if (revChart) {
+                        revChart.data.labels = d.revenue.monthly.map(function(r) { return r.month; });
+                        revChart.data.datasets[0].data = d.revenue.monthly.map(function(r) { return parseFloat(r.revenue); });
+                        revChart.update();
+                    }
+                }
+
+                // Update bookings table
+                if (d.bookings && d.bookings.recent && d.bookings.recent.length > 0) {
+                    var tbody = document.querySelector('table tbody');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        d.bookings.recent.slice(0, 5).forEach(function(b) {
+                            var initials = (b.first_name || '')[0] + (b.last_name || '')[0];
+                            var badgeClass = 'badge-pending';
+                            if (b.status === 'confirmed') badgeClass = 'badge-confirmed';
+                            else if (b.status === 'checked_in') badgeClass = 'badge-confirmed';
+                            else if (b.status === 'checked_out') badgeClass = 'badge-checkedout';
+                            else if (b.status === 'cancelled') badgeClass = 'badge-cancelled';
+                            tbody.innerHTML += '<tr class="hover:bg-gray-50/50 transition">' +
+                                '<td class="px-6 py-4"><div class="flex items-center gap-3">' +
+                                '<div class="w-9 h-9 rounded-lg bg-navy/5 flex items-center justify-center text-navy text-xs font-bold">' + initials.toUpperCase() + '</div>' +
+                                '<div><div class="text-sm font-semibold text-navy">' + (b.first_name || '') + ' ' + (b.last_name || '') + '</div>' +
+                                '<div class="text-xs text-gray-400">' + (b.room_number || '') + '</div></div></div></td>' +
+                                '<td class="px-6 py-4 text-sm text-gray-600 font-medium">' + (b.room_number || '') + '</td>' +
+                                '<td class="px-6 py-4 text-sm text-gray-500">' + (b.check_in || '').slice(0, 10) + '</td>' +
+                                '<td class="px-6 py-4 text-sm text-gray-500">' + (b.check_out || '').slice(0, 10) + '</td>' +
+                                '<td class="px-6 py-4 text-sm font-bold text-navy">KES ' + Number(b.final_amount || 0).toLocaleString() + '</td>' +
+                                '<td class="px-6 py-4"><span class="' + badgeClass + '">' + (b.status || '').replace('_', ' ') + '</span></td></tr>';
+                        });
+                    }
+                }
+            } catch (err) {
+                console.log('Dashboard API not available, using static data');
+            }
+        }
+
+        // Chart.js Initialization
+        const revenueCtx = document.getElementById('revenueChart')?.getContext('2d');
+        if (revenueCtx) {
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [12000, 19000, 15000, 22000, 18000, 25000, 21000, 28000, 24000, 30000, 27000, 32000],
+                        borderColor: '#D4AF37',
+                        backgroundColor: 'rgba(200, 169, 106, 0.08)',
+                        borderWidth: 2.5,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#D4AF37',
+                        pointBorderColor: '#FFFFFF',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#9CA3AF', font: { size: 11, family: 'Inter' } } },
+                        y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#9CA3AF', font: { size: 11, family: 'Inter' }, callback: (v) => 'KSh ' + (v/1000) + 'k' } }
+                    }
+                }
+            });
+        }
+
+        const roomCtx = document.getElementById('roomStatusChart')?.getContext('2d');
+        if (roomCtx) {
+            new Chart(roomCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Occupied', 'Available', 'Maintenance', 'Reserved'],
+                    datasets: [{
+                        data: [78, 45, 12, 15],
+                        backgroundColor: ['#D4AF37', '#8B5E34', '#E5E7EB', '#94A3B8'],
+                        borderWidth: 0,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '72%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { padding: 16, usePointStyle: true, pointStyleWidth: 10, color: '#6B7280', font: { size: 11, family: 'Inter', weight: '500' } }
+                        }
+                    }
+                }
+            });
+        }
+
+        const bookingsCtx = document.getElementById('bookingsChart')?.getContext('2d');
+        if (bookingsCtx) {
+            new Chart(bookingsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Bookings',
+                        data: [28, 35, 42, 38, 52, 65, 48],
+                        backgroundColor: '#D4AF37',
+                        borderRadius: 8,
+                        borderSkipped: false,
+                        barThickness: 32
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#9CA3AF', font: { size: 11, family: 'Inter' } } },
+                        y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#9CA3AF', font: { size: 11, family: 'Inter' } } }
+                    }
+                }
+            });
+        }
+
+        // Init
+        loadDashboard();
+
+        // Export Report (PDF) for the selected period
+        function exportDashboardReport() {
+            var period = document.getElementById('reportPeriod').value;
+            var now = new Date();
+            var fmt = function(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+            var startDate = '', endDate = '';
+            if (period === 'month') { startDate = fmt(new Date(now.getFullYear(), now.getMonth(), 1)); endDate = fmt(now); }
+            else if (period === 'lastmonth') { startDate = fmt(new Date(now.getFullYear(), now.getMonth() - 1, 1)); endDate = fmt(new Date(now.getFullYear(), now.getMonth(), 0)); }
+            else if (period === 'year') { startDate = fmt(new Date(now.getFullYear(), 0, 1)); endDate = fmt(now); }
+            var url = CONFIG.API_URL + '/exports/bookings?format=pdf'
+                + '&startDate=' + encodeURIComponent(startDate)
+                + '&endDate=' + encodeURIComponent(endDate);
+            downloadExport(url, 'bookings-report.pdf').then(function() {
+                Swal.fire({ icon: 'success', title: 'Export Complete', text: 'Bookings report downloaded.', confirmButtonColor: '#D4AF37' });
+            }).catch(function(err) {
+                Swal.fire({ icon: 'error', title: 'Export Failed', text: err.message || 'Could not export the report.', confirmButtonColor: '#D4AF37' });
+            });
+        }
+    </script>
+</body>
+</html>

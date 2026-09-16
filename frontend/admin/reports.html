@@ -1,0 +1,377 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports | Everett Hotel Admin</title>
+    <script src="/vendor/tailwindcss/tailwind.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#8B5E34',
+                        'navy-deep': '#24180F',
+                        gold: '#D4AF37',
+                        'gold-dark': '#B8960C',
+                        beige: '#FAF7F2',
+                        charcoal: '#211A14',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+    <link href="/vendor/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #8B5E34; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 3px; }
+
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            z-index: 40; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .admin-sidebar {
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
+            background: linear-gradient(180deg, #8B5E34 0%, #24180F 100%);
+            z-index: 50; transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+        .admin-sidebar.open { left: 0; }
+
+        .nav-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 24px; color: rgba(255,255,255,0.6);
+            text-decoration: none; font-size: 14px; font-weight: 500;
+            transition: all 0.2s ease; border-left: 3px solid transparent;
+            margin: 1px 0;
+        }
+        .nav-link:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .nav-link.active {
+            color: #D4AF37; background: rgba(212,175,55,0.08);
+            border-left-color: #D4AF37;
+        }
+        .nav-link i { width: 20px; text-align: center; font-size: 15px; }
+
+        .admin-topbar {
+            position: fixed; top: 0; left: 280px; right: 0; height: 64px;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+            z-index: 30; display: flex; align-items: center;
+            justify-content: space-between; padding: 0 28px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .profile-dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            background: white; border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+            min-width: 180px; display: none; z-index: 100;
+            overflow: hidden; border: 1px solid rgba(0,0,0,0.06);
+        }
+        .profile-dropdown.show { display: block; }
+        .profile-dropdown a {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 16px; color: #334155; font-size: 14px;
+            text-decoration: none; transition: background 0.15s;
+        }
+        .profile-dropdown a:hover { background: #f8fafc; }
+        .profile-dropdown hr { margin: 4px 0; border: none; border-top: 1px solid #f1f5f9; }
+
+        .admin-content {
+            margin-left: 280px; margin-top: 64px; padding: 28px;
+            min-height: calc(100vh - 64px);
+            transition: margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .report-type-card {
+            border: 2px solid #e5e7eb; border-radius: 14px; padding: 24px 20px;
+            text-align: center; cursor: pointer; transition: all 0.25s ease;
+            background: white;
+        }
+        .report-type-card:hover {
+            border-color: #D4AF37; background: rgba(212,175,55,0.04);
+            transform: translateY(-2px); box-shadow: 0 4px 15px rgba(212,175,55,0.12);
+        }
+        .report-type-card.active {
+            border-color: #D4AF37; background: rgba(212,175,55,0.06);
+            box-shadow: 0 4px 20px rgba(212,175,55,0.15);
+        }
+        .report-type-card i {
+            font-size: 32px; color: #D4AF37; margin-bottom: 10px; display: block;
+        }
+        .report-type-card h6 { margin: 0; color: #8B5E34; font-weight: 700; }
+        .report-type-card p { margin: 4px 0 0; font-size: 12px; color: #94a3b8; }
+
+        .table-admin { width: 100%; border-collapse: collapse; }
+        .table-admin th {
+            font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+            color: #94a3b8; font-weight: 700; padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9; text-align: left;
+        }
+        .table-admin td {
+            padding: 12px 16px; font-size: 14px; vertical-align: middle;
+            border-bottom: 1px solid #f8fafc;
+        }
+
+        @media (max-width: 1023px) {
+            .admin-sidebar { left: -280px; }
+            .admin-sidebar.open { left: 0; }
+            .admin-topbar { left: 0; }
+            .admin-content { margin-left: 0; }
+            .sidebar-toggle { display: block !important; }
+        }
+        @media (max-width: 640px) {
+            .admin-content { padding: 16px; }
+            .topbar-search { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-beige">
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="flex items-center gap-3 px-6 py-5 border-b border-white/10">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center font-extrabold text-navy text-sm">EH</div>
+            <div class="text-white font-bold text-lg tracking-tight">EVERETT <span class="text-gold">HOTEL</span></div>
+        </div>
+        <nav class="py-3">
+            <div class="px-6 pt-2 pb-1 text-[11px] uppercase tracking-widest text-white/30 font-bold">Main</div>
+            <a href="dashboard.html" class="nav-link"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+
+            <div class="px-6 pt-4 pb-1 text-[11px] uppercase tracking-widest text-white/30 font-bold">Management</div>
+            <a href="rooms.html" class="nav-link"><i class="fa-solid fa-bed"></i> Rooms</a>
+            <a href="bookings.html" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Bookings</a>
+            <a href="customers.html" class="nav-link"><i class="fa-solid fa-users"></i> Customers</a>
+            <a href="employees.html" class="nav-link"><i class="fa-solid fa-user-tie"></i> Employees</a>
+            <a href="attendance.html" class="nav-link"><i class="fa-solid fa-fingerprint"></i> Attendance</a>
+
+            <div class="px-6 pt-4 pb-1 text-[11px] uppercase tracking-widest text-white/30 font-bold">Operations</div>
+            <a href="housekeeping.html" class="nav-link"><i class="fa-solid fa-broom"></i> Housekeeping</a>
+            <a href="restaurant.html" class="nav-link"><i class="fa-solid fa-utensils"></i> Restaurant</a>
+            <a href="payments.html" class="nav-link"><i class="fa-solid fa-credit-card"></i> Payments</a>
+            <a href="promotions.html" class="nav-link"><i class="fa-solid fa-tags"></i> Promotions</a>
+
+            <div class="px-6 pt-4 pb-1 text-[11px] uppercase tracking-widest text-white/30 font-bold">Content</div>
+            <a href="cms.html" class="nav-link">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    CMS
+</a>
+            <a href="gallery.html" class="nav-link"><i class="fa-solid fa-images"></i> Gallery</a>
+            <a href="reviews.html" class="nav-link"><i class="fa-solid fa-star"></i> Reviews</a>
+            <a href="messages.html" class="nav-link"><i class="fa-solid fa-envelope"></i> Messages</a>
+            <a href="newsletter.html" class="nav-link"><i class="fa-solid fa-newspaper"></i> Newsletter</a>
+
+            <div class="px-6 pt-4 pb-1 text-[11px] uppercase tracking-widest text-white/30 font-bold">System</div>
+            <a href="reports.html" class="nav-link active"><i class="fa-solid fa-chart-line"></i> Reports</a>
+            <a href="settings.html" class="nav-link"><i class="fa-solid fa-gear"></i> Settings</a>
+        </nav>
+    </aside>
+
+    <!-- Topbar -->
+    <header class="admin-topbar" id="adminTopbar">
+        <div class="flex items-center gap-4">
+            <button class="sidebar-toggle hidden text-navy text-xl p-2 rounded-lg hover:bg-beige transition" onclick="toggleSidebar()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="topbar-search relative">
+                <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm bg-beige outline-none focus:border-gold focus:ring-2 focus:ring-gold/10 w-72 transition">
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:bg-beige transition theme-toggle">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:bg-beige transition relative">
+                <i class="fa-solid fa-bell"></i>
+                <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+            <div class="relative cursor-pointer" onclick="toggleProfileDropdown()">
+                <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl hover:bg-beige transition">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center font-bold text-navy text-sm" id="adminAvatar">A</div>
+                    <div class="hidden sm:block">
+                        <div class="text-sm font-semibold text-navy" id="adminName">Admin</div>
+                        <div class="text-[11px] text-slate-400">Administrator</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-1"></i>
+                </div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <a href="settings.html"><i class="fa-solid fa-user"></i> Profile</a>
+                    <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+                    <hr>
+                    <a href="#" class="text-red-500" onclick="Auth.logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="admin-content" id="adminContent">
+        <!-- Page Header -->
+        <div class="mb-7">
+            <h2 class="text-2xl font-extrabold text-navy tracking-tight">Reports</h2>
+            <p class="text-slate-500 text-sm mt-1">Generate and export hotel reports</p>
+        </div>
+
+        <!-- Report Type Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <div class="report-type-card active" onclick="selectReport('revenue',this)">
+                <i class="fa-solid fa-dollar-sign"></i>
+                <h6 class="text-base">Revenue Report</h6>
+                <p>Monthly revenue overview</p>
+            </div>
+            <div class="report-type-card" onclick="selectReport('occupancy',this)">
+                <i class="fa-solid fa-bed"></i>
+                <h6 class="text-base">Occupancy Report</h6>
+                <p>Room occupancy rates</p>
+            </div>
+            <div class="report-type-card" onclick="selectReport('bookings',this)">
+                <i class="fa-solid fa-calendar-check"></i>
+                <h6 class="text-base">Bookings Report</h6>
+                <p>Booking statistics</p>
+            </div>
+        </div>
+
+        <!-- Date Range + Actions -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Start Date</label>
+                <input type="date" id="reportStartDate" value="2026-01-01" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm bg-white outline-none focus:border-gold focus:ring-2 focus:ring-gold/10 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">End Date</label>
+                <input type="date" id="reportEndDate" value="2026-07-21" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm bg-white outline-none focus:border-gold focus:ring-2 focus:ring-gold/10 transition">
+            </div>
+            <div class="flex items-end gap-3 sm:col-span-2 lg:col-span-2">
+                <button onclick="generateReport()" class="flex items-center gap-2 px-5 py-2.5 bg-gold text-navy font-bold text-sm rounded-xl hover:bg-gold-dark hover:text-white transition-all duration-200 shadow-sm hover:shadow-md">
+                    <i class="fa-solid fa-chart-bar"></i> Generate
+                </button>
+                <button onclick="exportReport()" class="flex items-center gap-2 px-5 py-2.5 border-2 border-slate-200 text-slate-600 font-bold text-sm rounded-xl hover:border-gold hover:text-gold transition-all duration-200">
+                    <i class="fa-solid fa-download"></i> Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Chart Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <h5 class="text-base font-bold text-navy" id="reportTitle">Revenue Report</h5>
+            </div>
+            <div class="p-6">
+                <canvas id="reportChart" height="300"></canvas>
+            </div>
+        </div>
+
+        <!-- Table Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <h5 class="text-base font-bold text-navy" id="reportTableTitle">Revenue Breakdown</h5>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="table-admin">
+                    <thead id="reportTableHead">
+                        <tr>
+                            <th>Month</th>
+                            <th>Revenue</th>
+                            <th>Bookings</th>
+                            <th>Avg. Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="/vendor/sweetalert2/sweetalert2.min.js"></script>
+    <script src="/vendor/chart.js/chart.umd.min.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../js/animations.js"></script>
+    <script>
+        (function(){if(!Auth.adminGuard())return;var user=Auth.getCurrentUser();if(user){var n=user.name||(user.firstName+' '+(user.lastName||''));document.getElementById('adminName').textContent=n;document.getElementById('adminAvatar').textContent=Utils.getInitials(n);}
+        window.toggleSidebar=function(){document.getElementById('adminSidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('active');};window.toggleProfileDropdown=function(){document.getElementById('profileDropdown').classList.toggle('show');};document.addEventListener('click',function(e){if(!e.target.closest('.relative'))document.getElementById('profileDropdown').classList.remove('show');});
+
+        var currentReport='revenue';
+        var reportChart=null;
+        var labels=['Jan','Feb','Mar','Apr','May','Jun','Jul'];
+        var reportData={
+          revenue:{title:'Revenue Report',tableTitle:'Revenue Breakdown',data:[1560000,2470000,1950000,2860000,2340000,3250000,3640000],color:'#D4AF37',label:'Revenue (KES)',format:'KES'},
+          occupancy:{title:'Occupancy Report',tableTitle:'Occupancy Rates',data:[65,72,68,78,75,82,78],color:'#22c55e',label:'Occupancy %',format:'%'},
+          bookings:{title:'Bookings Report',tableTitle:'Booking Statistics',data:[45,52,38,60,55,70,85],color:'#3b82f6',label:'Bookings',format:''}
+        };
+
+        function initChart(){
+          var ctx=document.getElementById('reportChart').getContext('2d');
+          var d=reportData[currentReport];
+          reportChart=new Chart(ctx,{type:currentReport==='bookings'?'bar':'line',data:{labels:labels,datasets:[{label:d.label,data:d.data,borderColor:d.color,backgroundColor:currentReport==='bookings'?d.color+'cc':d.color+'22',fill:currentReport!=='bookings',tension:.4,borderWidth:2,borderRadius:currentReport==='bookings'?4:0,pointBackgroundColor:d.color,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'#f1f5f9'},ticks:{callback:function(v){return d.format==='KES'?'KES '+(v/1000000).toFixed(1)+'M':d.format==='%'?v+'%':v;}}},x:{grid:{display:false}}}}});
+        }
+
+        window.selectReport=function(type,el){
+          currentReport=type;
+          document.querySelectorAll('.report-type-card').forEach(function(c){c.classList.remove('active');});el.classList.add('active');
+          var d=reportData[type];
+          document.getElementById('reportTitle').textContent=d.title;document.getElementById('reportTableTitle').textContent=d.tableTitle;
+          reportChart.data.datasets[0].data=d.data;reportChart.data.datasets[0].label=d.label;reportChart.data.datasets[0].borderColor=d.color;
+          reportChart.data.datasets[0].backgroundColor=type==='bookings'?d.color+'cc':d.color+'22';
+          reportChart.data.datasets[0].fill=type!=='bookings';reportChart.config.type=type==='bookings'?'bar':'line';reportChart.update();renderTable();
+        };
+
+        function renderTable(){var d=reportData[currentReport];var rows=labels.map(function(l,i){
+          var val=d.format==='KES'?'KES '+d.data[i].toLocaleString():d.format==='%'?d.data[i]+'%':d.data[i];
+          var extra=currentReport==='revenue'?'<td>'+Math.floor(d.data[i]/300)+'</td><td>KES '+Math.floor(d.data[i]/Math.max(1,Math.floor(d.data[i]/300)))+'</td>':'';
+          return '<tr><td><strong>'+l+' 2026</strong></td><td>'+val+'</td>'+extra+'</tr>';}).join('');
+          if(currentReport==='revenue')document.getElementById('reportTableHead').innerHTML='<tr><th>Month</th><th>Revenue</th><th>Bookings</th><th>Avg. Rate</th></tr>';
+          else if(currentReport==='occupancy')document.getElementById('reportTableHead').innerHTML='<tr><th>Month</th><th>Occupancy Rate</th></tr>';
+          else document.getElementById('reportTableHead').innerHTML='<tr><th>Month</th><th>Bookings</th></tr>';
+          document.getElementById('reportTableBody').innerHTML=rows;}
+
+        window.generateReport=function(){renderTable();Swal.fire({icon:'success',title:'Report Generated',confirmButtonColor:'#D4AF37'});};
+        window.exportReport=function(){
+          Swal.fire({
+            title: 'Export Report',
+            text: 'Choose export format',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#D4AF37',
+            confirmButtonText: 'PDF',
+            cancelButtonText: 'Excel'
+          }).then(async function(result) {
+            if (result.dismiss) return;
+            var format = result.isConfirmed ? 'pdf' : 'excel';
+            var startDate = document.getElementById('reportStartDate').value;
+            var endDate = document.getElementById('reportEndDate').value;
+            var url = CONFIG.API_URL + '/exports/bookings?format=' + format
+              + '&startDate=' + encodeURIComponent(startDate)
+              + '&endDate=' + encodeURIComponent(endDate);
+            try {
+              await downloadExport(url, 'bookings-report.' + (format === 'pdf' ? 'pdf' : 'xlsx'));
+              Swal.fire({icon:'success',title:'Export Complete',text:'Your report has been downloaded.',confirmButtonColor:'#D4AF37'});
+            } catch (err) {
+              Swal.fire({icon:'error',title:'Export Failed',text:err.message || 'Could not export the report.',confirmButtonColor:'#D4AF37'});
+            }
+          });
+        };
+        initChart();renderTable();})();
+    </script>
+</body>
+</html>

@@ -1,0 +1,401 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payments | Everett Hotel Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+  <link href="/vendor/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#8B5E34',
+            'navy-light': '#A67C52',
+            'navy-dark': '#24180F',
+            gold: '#D4AF37',
+            'gold-light': '#D4BC8A',
+            'gold-dark': '#B0923D',
+            beige: '#FAF7F2',
+            'beige-dark': '#EDE9E0',
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --gold: #D4AF37;
+      --gold-dark: #B0923D;
+      --gold-light: #D4BC8A;
+      --navy: #8B5E34;
+      --navy-light: #A67C52;
+      --beige: #FAF7F2;
+      --sidebar-width: 260px;
+      --topbar-height: 64px;
+      --white: #fff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: var(--beige); color: #333; overflow-x: hidden; }
+
+    .admin-sidebar {
+      position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100vh;
+      background: var(--navy); z-index: 1040; display: flex; flex-direction: column;
+      transition: transform .3s cubic-bezier(.4,0,.2,1); overflow-y: auto;
+    }
+    .sidebar-logo {
+      padding: 20px 24px; display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid rgba(212,175,55,.12);
+    }
+    .sidebar-logo .logo-icon {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-family: 'Inter', sans-serif; font-weight: 800; font-size: 15px; color: var(--navy);
+    }
+    .sidebar-logo .logo-text {
+      font-family: 'Inter', sans-serif; color: var(--white); font-size: 17px; font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .sidebar-logo .logo-text span { color: var(--gold); }
+
+    .sidebar-nav { flex: 1; padding: 12px 0; }
+    .sidebar-nav .nav-section {
+      padding: 10px 24px 4px; font-size: 10px; text-transform: uppercase;
+      letter-spacing: .1em; color: rgba(212,175,55,.4); font-weight: 700;
+    }
+    .sidebar-nav a {
+      display: flex; align-items: center; gap: 12px; padding: 10px 24px;
+      color: rgba(255,255,255,.55); text-decoration: none; font-size: 13.5px; font-weight: 500;
+      transition: all .2s; border-left: 3px solid transparent; margin: 1px 0;
+    }
+    .sidebar-nav a:hover { color: var(--white); background: rgba(255,255,255,.05); }
+    .sidebar-nav a.active {
+      color: var(--gold); background: rgba(212,175,55,.08); border-left-color: var(--gold);
+    }
+    .sidebar-nav a i { width: 20px; text-align: center; font-size: 14px; }
+
+    .admin-topbar {
+      position: fixed; top: 0; left: var(--sidebar-width); right: 0; height: var(--topbar-height);
+      background: var(--white); z-index: 1030; display: flex; align-items: center;
+      justify-content: space-between; padding: 0 28px;
+      border-bottom: 1px solid rgba(139,94,52,.06); transition: left .3s;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .sidebar-toggle {
+      display: none; background: none; border: none; font-size: 20px;
+      color: var(--navy); cursor: pointer; padding: 4px 8px;
+    }
+    .topbar-search { position: relative; }
+    .topbar-search input {
+      padding: 9px 16px 9px 38px; border: 1px solid rgba(139,94,52,.1); border-radius: 10px;
+      font-size: 13.5px; width: 280px; background: var(--beige); outline: none;
+      font-family: 'Inter', sans-serif; transition: border-color .2s;
+    }
+    .topbar-search input:focus { border-color: var(--gold); }
+    .topbar-search i { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .topbar-icon-btn {
+      position: relative; background: none; border: none; font-size: 17px;
+      color: #64748b; cursor: pointer; padding: 8px; border-radius: 10px; transition: all .2s;
+    }
+    .topbar-icon-btn:hover { background: var(--beige); color: var(--navy); }
+    .topbar-icon-btn .badge-dot {
+      position: absolute; top: 6px; right: 6px; width: 8px; height: 8px;
+      background: #ef4444; border-radius: 50%; border: 2px solid var(--white);
+    }
+    .admin-profile {
+      display: flex; align-items: center; gap: 10px; cursor: pointer;
+      padding: 4px 12px 4px 4px; border-radius: 10px; position: relative; transition: background .2s;
+    }
+    .admin-profile:hover { background: var(--beige); }
+    .admin-avatar {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: var(--navy);
+    }
+    .admin-profile .admin-name { font-size: 13.5px; font-weight: 600; color: var(--navy); }
+    .admin-profile .admin-role { font-size: 11px; color: #94a3b8; font-weight: 500; }
+    .profile-dropdown {
+      position: absolute; top: calc(100% + 8px); right: 0; background: var(--white);
+      border-radius: 12px; box-shadow: 0 12px 48px rgba(139,94,52,.12);
+      min-width: 180px; display: none; z-index: 1050; overflow: hidden;
+      border: 1px solid rgba(139,94,52,.06);
+    }
+    .profile-dropdown.show { display: block; }
+    .profile-dropdown a {
+      display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+      color: #475569; text-decoration: none; font-size: 13px; font-weight: 500; transition: background .2s;
+    }
+    .profile-dropdown a:hover { background: var(--beige); color: var(--navy); }
+    .profile-dropdown hr { border: none; border-top: 1px solid rgba(139,94,52,.06); margin: 4px 0; }
+
+    .admin-content {
+      margin-left: var(--sidebar-width); margin-top: var(--topbar-height);
+      padding: 28px; min-height: calc(100vh - var(--topbar-height)); transition: margin-left .3s;
+    }
+
+    .stat-card {
+      background: var(--white); border-radius: 14px; padding: 22px 24px;
+      display: flex; align-items: center; gap: 16px;
+      box-shadow: 0 1px 4px rgba(139,94,52,.04); border: 1px solid rgba(139,94,52,.04);
+      transition: transform .25s, box-shadow .25s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(139,94,52,.08); }
+    .stat-icon {
+      width: 54px; height: 54px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
+    }
+    .stat-icon.gold { background: rgba(212,175,55,.1); color: var(--gold); }
+    .stat-icon.green { background: rgba(34,197,94,.1); color: #22c55e; }
+    .stat-icon.blue { background: rgba(59,130,246,.1); color: #3b82f6; }
+    .stat-icon.red { background: rgba(239,68,68,.1); color: #ef4444; }
+    .stat-info h3 { font-family: 'Inter', sans-serif; font-size: 26px; font-weight: 800; color: var(--navy); margin: 0; }
+    .stat-info p { font-size: 13px; color: #64748b; margin: 0; font-weight: 500; }
+
+    .card-admin {
+      background: var(--white); border-radius: 14px;
+      box-shadow: 0 1px 4px rgba(139,94,52,.04); border: 1px solid rgba(139,94,52,.04); overflow: hidden;
+    }
+    .table-admin { margin: 0; }
+    .table-admin th {
+      font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+      color: #94a3b8; font-weight: 700; border-bottom: 1px solid rgba(139,94,52,.06);
+      padding: 14px 18px; background: var(--beige);
+    }
+    .table-admin td {
+      padding: 14px 18px; font-size: 13.5px; vertical-align: middle;
+      border-bottom: 1px solid rgba(139,94,52,.04);
+    }
+    .table-admin tbody tr { transition: background .15s; }
+    .table-admin tbody tr:hover { background: rgba(246,244,239,.6); }
+
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(139,94,52,.5); z-index: 1035; }
+    .sidebar-overlay.show { display: block; }
+
+    .status-badge {
+      display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.01em;
+    }
+    .status-badge.pending { background: rgba(217,119,6,.1); color: #d97706; }
+    .status-badge.completed { background: rgba(5,150,105,.1); color: #059669; }
+    .status-badge.failed { background: rgba(220,38,38,.1); color: #dc2626; }
+    .status-badge.refunded { background: rgba(124,58,237,.1); color: #7c3aed; }
+
+    .filter-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+    .filter-bar select {
+      padding: 9px 14px; border: 1px solid rgba(139,94,52,.1); border-radius: 10px;
+      font-size: 13.5px; background: var(--white); outline: none;
+      font-family: 'Inter', sans-serif; font-weight: 500; color: var(--navy);
+      transition: border-color .2s; cursor: pointer;
+    }
+    .filter-bar select:focus { border-color: var(--gold); }
+
+    .btn-gold {
+      background: var(--gold); color: var(--navy); border: none; padding: 9px 22px;
+      border-radius: 10px; font-weight: 700; font-size: 13.5px; cursor: pointer;
+      transition: all .2s; font-family: 'Inter', sans-serif;
+    }
+    .btn-gold:hover { background: var(--gold-dark); color: var(--white); }
+
+    .btn-refund {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 700;
+      border: 1px solid rgba(217,119,6,.3); background: rgba(217,119,6,.06);
+      color: #d97706; cursor: pointer; transition: all .2s; font-family: 'Inter', sans-serif;
+    }
+    .btn-refund:hover { background: rgba(217,119,6,.15); border-color: rgba(217,119,6,.5); }
+
+    @media (max-width: 991px) {
+      .admin-sidebar { transform: translateX(-100%); }
+      .admin-sidebar.open { transform: translateX(0); }
+      .admin-topbar { left: 0; }
+      .admin-content { margin-left: 0; }
+      .sidebar-toggle { display: block; }
+      .topbar-search input { width: 180px; }
+    }
+    @media (max-width: 576px) {
+      .topbar-search { display: none; }
+      .admin-content { padding: 16px; }
+    }
+  </style>
+</head>
+<body class="font-inter">
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">EH</div>
+      <div class="logo-text">EVERETT <span>HOTEL</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      <div class="nav-section">Management</div>
+      <a href="rooms.html"><i class="fa-solid fa-bed"></i> Rooms</a>
+      <a href="bookings.html"><i class="fa-solid fa-calendar-check"></i> Bookings</a>
+      <a href="customers.html"><i class="fa-solid fa-users"></i> Customers</a>
+      <a href="employees.html"><i class="fa-solid fa-user-tie"></i> Employees</a>
+            <a href="attendance.html"><i class="fa-solid fa-fingerprint"></i> Attendance</a>
+      <div class="nav-section">Operations</div>
+      <a href="housekeeping.html"><i class="fa-solid fa-broom"></i> Housekeeping</a>
+      <a href="restaurant.html"><i class="fa-solid fa-utensils"></i> Restaurant</a>
+      <a href="payments.html" class="active"><i class="fa-solid fa-credit-card"></i> Payments</a>
+      <a href="promotions.html"><i class="fa-solid fa-tags"></i> Promotions</a>
+      <div class="nav-section">Content</div>
+      <a href="cms.html" class="nav-link">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    CMS
+</a>
+      <a href="gallery.html"><i class="fa-solid fa-images"></i> Gallery</a>
+      <a href="reviews.html"><i class="fa-solid fa-star"></i> Reviews</a>
+      <a href="messages.html"><i class="fa-solid fa-envelope"></i> Messages</a>
+      <a href="newsletter.html"><i class="fa-solid fa-newspaper"></i> Newsletter</a>
+      <div class="nav-section">System</div>
+      <a href="reports.html"><i class="fa-solid fa-chart-line"></i> Reports</a>
+      <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+    </nav>
+  </aside>
+
+  <header class="admin-topbar">
+    <div class="topbar-left">
+      <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <div class="topbar-search">
+        <i class="fa-solid fa-search"></i>
+        <input type="text" placeholder="Search payments...">
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-icon-btn theme-toggle"><i class="fa-solid fa-moon"></i></button>
+      <button class="topbar-icon-btn">
+        <i class="fa-solid fa-bell"></i>
+        <span class="badge-dot"></span>
+      </button>
+      <div class="admin-profile" onclick="toggleProfileDropdown()">
+        <div class="admin-avatar" id="adminAvatar">A</div>
+        <div>
+          <div class="admin-name" id="adminName">Admin</div>
+          <div class="admin-role">Administrator</div>
+        </div>
+        <i class="fa-solid fa-chevron-down" style="font-size:10px;color:#94a3b8;"></i>
+        <div class="profile-dropdown" id="profileDropdown">
+          <a href="settings.html"><i class="fa-solid fa-user"></i> Profile</a>
+          <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+          <hr>
+          <a href="#" onclick="Auth.logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-content">
+    <div class="mb-7">
+      <h2 class="text-2xl font-extrabold text-navy tracking-tight">Payment Management</h2>
+      <p class="text-sm font-medium mt-1" style="color:#64748b;">Track and manage all transactions</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-7">
+      <div class="stat-card">
+        <div class="stat-icon gold"><i class="fa-solid fa-dollar-sign"></i></div>
+        <div class="stat-info"><h3>KES 19.2M</h3><p>Total Revenue</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fa-solid fa-check-circle"></i></div>
+        <div class="stat-info"><h3>KES 17.1M</h3><p>Completed</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fa-solid fa-clock"></i></div>
+        <div class="stat-info"><h3>KES 1.6M</h3><p>Pending</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon red"><i class="fa-solid fa-rotate-left"></i></div>
+        <div class="stat-info"><h3>KES 453K</h3><p>Refunded</p></div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <select id="filterPayStatus" onchange="loadPayments()">
+        <option value="">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="completed">Completed</option>
+        <option value="failed">Failed</option>
+        <option value="refunded">Refunded</option>
+      </select>
+      <select id="filterMethod" onchange="loadPayments()">
+        <option value="">All Methods</option>
+        <option value="mpesa">M-Pesa</option>
+        <option value="card">Card (Stripe)</option>
+        <option value="credit_card">Credit Card</option>
+        <option value="debit_card">Debit Card</option>
+        <option value="bank_transfer">Bank Transfer</option>
+        <option value="cash">Cash</option>
+      </select>
+    </div>
+
+    <div class="card-admin">
+      <div style="overflow-x:auto;">
+        <table class="table-admin w-full mb-0">
+          <thead>
+            <tr>
+              <th>Payment ID</th>
+              <th>Guest</th>
+              <th>Booking</th>
+              <th>Amount</th>
+              <th>Method</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="paymentsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="/vendor/sweetalert2/sweetalert2.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/animations.js"></script>
+  <script>
+    (function(){if(!Auth.adminGuard())return;var user=Auth.getCurrentUser();if(user){var n=user.name||(user.firstName+' '+(user.lastName||''));document.getElementById('adminName').textContent=n;document.getElementById('adminAvatar').textContent=Utils.getInitials(n);}
+    window.toggleSidebar=function(){document.getElementById('adminSidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('show');};window.toggleProfileDropdown=function(){document.getElementById('profileDropdown').classList.toggle('show');};document.addEventListener('click',function(e){if(!e.target.closest('.admin-profile'))document.getElementById('profileDropdown').classList.remove('show');});
+
+    var payments=[];
+
+    async function fetchPayments(){
+      try{
+        var res=await api.get('/payments/admin/all');
+        payments=(res.data&&res.data.payments||[]).map(function(p){
+          return {_id:String(p.id),guest:p.first_name+' '+p.last_name,booking:p.booking_reference,amount:parseFloat(p.amount),method:p.method,status:p.status,date:p.created_at,paymentRef:p.payment_reference};
+        });
+      }catch(e){payments=[];}
+      loadPayments();
+    }
+
+    function loadPayments(){var st=document.getElementById('filterPayStatus').value;var mt=document.getElementById('filterMethod').value;
+    var filtered=payments.filter(function(p){if(st&&p.status!==st)return false;if(mt&&p.method!==mt)return false;return true;});
+    document.getElementById('paymentsTableBody').innerHTML=filtered.map(function(p){var methodIcons={mpesa:'fa-mobile-alt',card:'fa-credit-card',credit_card:'fa-credit-card',debit_card:'fa-credit-card',cash:'fa-money-bill',bank_transfer:'fa-university',online:'fa-globe'};var actions='';if(p.status==='completed'){actions='<button class="btn-refund" onclick="refundPayment(\''+p._id+'\')"><i class="fa-solid fa-rotate-left"></i> Refund</button>';}if(p.status==='pending'&&p.method==='bank_transfer'){actions='<button class="btn-approve" onclick="approveBankTransfer(\''+p._id+'\')" style="background:#0F766E;color:#fff;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;border:none;"><i class="fa-solid fa-check"></i> Approve</button>';}return '<tr><td><strong style="color:var(--gold);">'+p.paymentRef+'</strong></td><td>'+p.guest+'</td><td>'+p.booking+'</td><td><strong>KES '+p.amount.toLocaleString()+'</strong></td><td><i class="fa-solid '+(methodIcons[p.method]||'fa-credit-card')+'"></i> '+p.method.replace(/_/g,' ').replace(/\b\w/g,function(l){return l.toUpperCase();})+'</td><td><span class="status-badge '+p.status+'">'+p.status.charAt(0).toUpperCase()+p.status.slice(1)+'</span></td><td>'+Utils.formatDate(p.date)+'</td><td><div class="flex gap-1">'+actions+'</div></td></tr>';}).join('')||'<tr><td colspan="8" class="text-center py-4 text-gray-400">No payments found</td></tr>';}
+
+    window.approveBankTransfer=function(id){Swal.fire({title:'Approve Bank Transfer?',text:'This will mark the payment as completed and notify the guest.',icon:'question',showCancelButton:true,confirmButtonColor:'#0F766E',confirmButtonText:'Approve'}).then(async function(r){if(r.isConfirmed){try{await api.put('/card-bank/bank-transfer/'+id+'/approve');Swal.fire({icon:'success',title:'Approved',text:'Bank transfer approved. Guest has been notified.',confirmButtonColor:'#D4AF37'});fetchPayments();}catch(e){Swal.fire({icon:'error',title:'Error',text:e.message||'Failed to approve',confirmButtonColor:'#D4AF37'});}}});};
+
+    window.refundPayment=function(id){Swal.fire({title:'Process Refund?',text:'This will refund the payment.',icon:'warning',showCancelButton:true,confirmButtonColor:'#D4AF37',confirmButtonText:'Refund'}).then(function(r){if(r.isConfirmed){var p=payments.find(function(x){return x._id===id;});if(p)p.status='refuded';loadPayments();Swal.fire({icon:'success',title:'Refunded',confirmButtonColor:'#D4AF37'});}});};
+    fetchPayments();})();
+  </script>
+</body>
+</html>

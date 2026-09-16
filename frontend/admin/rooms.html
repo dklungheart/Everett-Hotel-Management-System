@@ -1,0 +1,435 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room Management | Everett Hotel Admin</title>
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { DEFAULT: '#8B5E34', light: '#A67C52', lighter: '#3B2A1A' },
+            gold: { DEFAULT: '#D4AF37', dark: '#A8894A', light: '#D4BA80', pale: 'rgba(212,175,55,0.1)' },
+            beige: '#FAF7F2',
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+  <link href="/vendor/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #FAF7F2; color: #8B5E34; overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 3px; }
+
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(139,94,52,0.5); backdrop-filter: blur(4px); z-index: 1035; }
+    .sidebar-overlay.show { display: block; }
+
+    .admin-sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #8B5E34; z-index: 1040; display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); overflow-y: auto; }
+    .admin-sidebar::-webkit-scrollbar { width: 4px; }
+    .admin-sidebar::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.3); }
+
+    .sidebar-logo { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(212,175,55,0.12); }
+    .sidebar-logo .logo-icon { width: 42px; height: 42px; background: linear-gradient(135deg, #D4AF37, #A8894A); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #8B5E34; letter-spacing: -0.5px; }
+    .sidebar-logo .logo-text { color: #fff; font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+    .sidebar-logo .logo-text span { color: #D4AF37; }
+
+    .sidebar-nav { flex: 1; padding: 12px 0; }
+    .sidebar-nav .nav-section { padding: 10px 24px 4px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(212,175,55,0.4); font-weight: 700; }
+    .sidebar-nav a { display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: rgba(255,255,255,0.55); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: all 0.2s; border-left: 3px solid transparent; margin: 1px 0; }
+    .sidebar-nav a:hover { color: rgba(255,255,255,0.9); background: rgba(212,175,55,0.06); }
+    .sidebar-nav a.active { color: #D4AF37; background: rgba(212,175,55,0.1); border-left-color: #D4AF37; font-weight: 600; }
+    .sidebar-nav a i { width: 20px; text-align: center; font-size: 14px; }
+
+    .admin-topbar { position: fixed; top: 0; left: 260px; right: 0; height: 64px; background: #FFFFFF; z-index: 1030; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; border-bottom: 1px solid rgba(139,94,52,0.06); transition: left 0.3s; box-shadow: 0 1px 3px rgba(139,94,52,0.04); }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .sidebar-toggle { display: none; background: none; border: none; font-size: 20px; color: #8B5E34; cursor: pointer; padding: 4px 8px; }
+    .topbar-search { position: relative; }
+    .topbar-search input { padding: 9px 16px 9px 38px; border: 1px solid rgba(139,94,52,0.1); border-radius: 10px; font-size: 13.5px; width: 280px; background: #FAF7F2; outline: none; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .topbar-search input:focus { border-color: #D4AF37; box-shadow: 0 0 0 3px rgba(212,175,55,0.12); }
+    .topbar-search i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 13px; }
+
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .topbar-icon-btn { position: relative; background: none; border: none; font-size: 17px; color: #64748b; cursor: pointer; padding: 9px; border-radius: 10px; transition: all 0.2s; }
+    .topbar-icon-btn:hover { background: #FAF7F2; color: #8B5E34; }
+    .topbar-icon-btn .badge-dot { position: absolute; top: 7px; right: 7px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 2px solid #fff; }
+
+    .admin-profile { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 5px 14px 5px 5px; border-radius: 10px; position: relative; transition: background 0.2s; }
+    .admin-profile:hover { background: #FAF7F2; }
+    .admin-avatar { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #D4AF37, #A8894A); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #8B5E34; }
+    .admin-profile .admin-name { font-size: 13.5px; font-weight: 600; color: #8B5E34; }
+    .admin-profile .admin-role { font-size: 11px; color: #94a3b8; font-weight: 500; }
+
+    .profile-dropdown { position: absolute; top: calc(100% + 8px); right: 0; background: #fff; border-radius: 12px; box-shadow: 0 10px 40px rgba(139,94,52,0.12); min-width: 180px; display: none; z-index: 1050; overflow: hidden; border: 1px solid rgba(139,94,52,0.06); }
+    .profile-dropdown.show { display: block; }
+    .profile-dropdown a { display: flex; align-items: center; gap: 10px; padding: 11px 16px; color: #475569; text-decoration: none; font-size: 13.5px; font-weight: 500; transition: background 0.2s; }
+    .profile-dropdown a:hover { background: #FAF7F2; }
+    .profile-dropdown a.text-danger { color: #ef4444; }
+    .profile-dropdown hr { margin: 0; border: none; border-top: 1px solid rgba(139,94,52,0.06); }
+
+    .admin-content { margin-left: 260px; margin-top: 64px; padding: 28px; min-height: calc(100vh - 64px); transition: margin-left 0.3s; }
+
+    .page-header { margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .page-header h2 { margin-bottom: 0; font-weight: 700; letter-spacing: -0.5px; }
+
+    .filter-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+    .filter-bar select, .filter-bar input { padding: 9px 14px; border: 1px solid rgba(139,94,52,0.1); border-radius: 10px; font-size: 13.5px; background: #fff; outline: none; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .filter-bar select:focus, .filter-bar input:focus { border-color: #D4AF37; box-shadow: 0 0 0 3px rgba(212,175,55,0.12); }
+
+    .status-badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.01em; }
+    .status-badge.available { background: rgba(5,150,105,0.1); color: #059669; }
+    .status-badge.occupied { background: rgba(220,38,38,0.1); color: #dc2626; }
+    .status-badge.maintenance { background: rgba(217,119,6,0.1); color: #d97706; }
+    .status-badge.reserved { background: rgba(37,99,235,0.1); color: #2563eb; }
+
+    .btn-gold { background: linear-gradient(135deg, #D4AF37, #A8894A); color: #8B5E34; border: none; padding: 10px 22px; border-radius: 10px; font-weight: 700; font-size: 13.5px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-gold:hover { background: linear-gradient(135deg, #A8894A, #8E7440); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212,175,55,0.3); }
+    .btn-gold-sm { padding: 6px 14px; font-size: 12.5px; border-radius: 8px; }
+
+    .btn-outline-danger-sm { background: none; border: 1px solid rgba(220,38,38,0.2); color: #dc2626; padding: 6px 12px; border-radius: 8px; font-size: 12.5px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+    .btn-outline-danger-sm:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
+
+    .btn-outline-primary-sm { background: none; border: 1px solid rgba(212,175,55,0.3); color: #D4AF37; padding: 6px 12px; border-radius: 8px; font-size: 12.5px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+    .btn-outline-primary-sm:hover { background: #D4AF37; color: #8B5E34; border-color: #D4AF37; }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(139,94,52,0.5); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.show { display: flex; }
+    .modal-panel { background: #fff; border-radius: 16px; box-shadow: 0 25px 60px rgba(139,94,52,0.2); width: 100%; max-height: 90vh; overflow-y: auto; animation: modalSlideIn 0.3s ease; }
+    .modal-panel-lg { max-width: 640px; }
+    .modal-panel-md { max-width: 480px; }
+    @keyframes modalSlideIn { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal-head { padding: 20px 28px; border-bottom: 1px solid rgba(139,94,52,0.06); display: flex; align-items: center; justify-content: space-between; }
+    .modal-head h5 { font-size: 17px; font-weight: 700; color: #8B5E34; letter-spacing: -0.3px; }
+    .modal-head .close-modal { background: none; border: none; font-size: 18px; color: #94a3b8; cursor: pointer; padding: 4px 8px; border-radius: 8px; transition: all 0.2s; }
+    .modal-head .close-modal:hover { background: #FAF7F2; color: #8B5E34; }
+    .modal-body { padding: 24px 28px; }
+    .modal-foot { padding: 16px 28px; border-top: 1px solid rgba(139,94,52,0.06); display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 12.5px; font-weight: 600; color: #475569; margin-bottom: 6px; letter-spacing: 0.01em; }
+    .form-input { width: 100%; padding: 10px 14px; border: 1px solid rgba(139,94,52,0.1); border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; background: #FAF7F2; }
+    .form-input:focus { border-color: #D4AF37; box-shadow: 0 0 0 3px rgba(212,175,55,0.12); background: #fff; }
+    textarea.form-input { resize: vertical; }
+
+    .category-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid rgba(139,94,52,0.06); border-radius: 8px; transition: background 0.2s; }
+    .category-item:hover { background: #FAF7F2; }
+    .category-item span { font-size: 14px; font-weight: 500; color: #8B5E34; }
+
+    .btn-cancel { background: #FAF7F2; color: #475569; border: 1px solid rgba(139,94,52,0.1); padding: 10px 20px; border-radius: 10px; font-weight: 600; font-size: 13.5px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+    .btn-cancel:hover { background: #e8e5dd; }
+
+    @media (max-width: 991px) {
+      .admin-sidebar { transform: translateX(-100%); }
+      .admin-sidebar.open { transform: translateX(0); }
+      .admin-topbar { left: 0; }
+      .admin-content { margin-left: 0; }
+      .sidebar-toggle { display: block; }
+      .topbar-search input { width: 180px; }
+    }
+    @media (max-width: 576px) {
+      .topbar-search { display: none; }
+      .admin-content { padding: 16px; }
+      .page-header { flex-direction: column; align-items: flex-start; }
+      .modal-panel { margin: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">EH</div>
+      <div class="logo-text">EVERETT <span>HOTEL</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+
+      <div class="nav-section">Management</div>
+      <a href="rooms.html" class="active"><i class="fa-solid fa-bed"></i> Rooms</a>
+      <a href="bookings.html"><i class="fa-solid fa-calendar-check"></i> Bookings</a>
+      <a href="customers.html"><i class="fa-solid fa-users"></i> Customers</a>
+      <a href="employees.html"><i class="fa-solid fa-user-tie"></i> Employees</a>
+            <a href="attendance.html"><i class="fa-solid fa-fingerprint"></i> Attendance</a>
+
+      <div class="nav-section">Operations</div>
+      <a href="housekeeping.html"><i class="fa-solid fa-broom"></i> Housekeeping</a>
+      <a href="restaurant.html"><i class="fa-solid fa-utensils"></i> Restaurant</a>
+      <a href="payments.html"><i class="fa-solid fa-credit-card"></i> Payments</a>
+      <a href="promotions.html"><i class="fa-solid fa-tags"></i> Promotions</a>
+
+      <div class="nav-section">Content</div>
+      <a href="cms.html" class="nav-link">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    CMS
+</a>
+      <a href="gallery.html"><i class="fa-solid fa-images"></i> Gallery</a>
+      <a href="reviews.html"><i class="fa-solid fa-star"></i> Reviews</a>
+      <a href="messages.html"><i class="fa-solid fa-envelope"></i> Messages</a>
+      <a href="newsletter.html"><i class="fa-solid fa-newspaper"></i> Newsletter</a>
+
+      <div class="nav-section">System</div>
+      <a href="reports.html"><i class="fa-solid fa-chart-line"></i> Reports</a>
+      <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+    </nav>
+  </aside>
+
+  <header class="admin-topbar" id="adminTopbar">
+    <div class="topbar-left">
+      <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <div class="topbar-search">
+        <i class="fa-solid fa-search"></i>
+        <input type="text" placeholder="Search rooms...">
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-icon-btn theme-toggle"><i class="fa-solid fa-moon"></i></button>
+      <button class="topbar-icon-btn"><i class="fa-solid fa-bell"></i><span class="badge-dot"></span></button>
+      <div class="admin-profile" onclick="toggleProfileDropdown()">
+        <div class="admin-avatar" id="adminAvatar">A</div>
+        <div>
+          <div class="admin-name" id="adminName">Admin</div>
+          <div class="admin-role">Administrator</div>
+        </div>
+        <i class="fa-solid fa-chevron-down" style="font-size:10px;color:#94a3b8;"></i>
+        <div class="profile-dropdown" id="profileDropdown">
+          <a href="settings.html"><i class="fa-solid fa-user"></i> Profile</a>
+          <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+          <hr>
+          <a href="#" class="text-danger" onclick="Auth.logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-content">
+    <div class="page-header">
+      <div>
+        <h2 class="text-navy text-2xl">Room Management</h2>
+        <p class="text-sm mt-1" style="color:#64748b;">Manage hotel rooms and categories</p>
+      </div>
+      <div class="flex gap-2">
+        <button class="btn-gold" onclick="openCategoryModal()"><i class="fa-solid fa-folder-plus"></i> Categories</button>
+        <button class="btn-gold" onclick="openRoomModal()"><i class="fa-solid fa-plus"></i> Add Room</button>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <select id="filterCategory" onchange="loadRooms()"><option value="">All Categories</option></select>
+      <select id="filterStatus" onchange="loadRooms()">
+        <option value="">All Status</option>
+        <option value="available">Available</option>
+        <option value="occupied">Occupied</option>
+        <option value="maintenance">Maintenance</option>
+        <option value="reserved">Reserved</option>
+      </select>
+      <input type="text" id="filterSearch" placeholder="Search by room number..." oninput="loadRooms()">
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm overflow-hidden" style="border:1px solid rgba(139,94,52,0.04);">
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th class="text-left px-6 py-3.5 text-xs font-semibold uppercase tracking-wider" style="color:#94a3b8; border-bottom:1px solid rgba(139,94,52,0.06);">Room #</th>
+              <th class="text-left px-6 py-3.5 text-xs font-semibold uppercase tracking-wider" style="color:#94a3b8; border-bottom:1px solid rgba(139,94,52,0.06);">Category</th>
+              <th class="text-left px-6 py-3.5 text-xs font-semibold uppercase tracking-wider" style="color:#94a3b8; border-bottom:1px solid rgba(139,94,52,0.06);">Floor</th>
+              <th class="text-left px-6 py-3.5 text-xs font-semibold uppercase tracking-wider" style="color:#94a3b8; border-bottom:1px solid rgba(139,94,52,0.06);">Price/Night</th>
+              <th class="text-left px-6 py-3.5 text-xs font-semibold uppercase tracking-wider" style="color:#94a3b8; border-bottom:1px solid rgba(139,94,52,0.06);">Status</th>
+              <th class="text-left px-6 py-3.5 text-xs font-semibold uppercase tracking-wider" style="color:#94a3b8; border-bottom:1px solid rgba(139,94,52,0.06);">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="roomsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Room Modal -->
+  <div class="modal-overlay" id="roomModal">
+    <div class="modal-panel modal-panel-lg">
+      <div class="modal-head">
+        <h5 id="roomModalTitle">Add Room</h5>
+        <button class="close-modal" onclick="closeRoomModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="roomId">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="form-group"><label>Room Number</label><input type="text" class="form-input" id="roomNumber"></div>
+          <div class="form-group"><label>Category</label><select class="form-input" id="roomCategory"></select></div>
+          <div class="form-group"><label>Floor</label><input type="number" class="form-input" id="roomFloor"></div>
+          <div class="form-group"><label>Price per Night (KSh)</label><input type="number" class="form-input" id="roomPrice"></div>
+          <div class="form-group"><label>Status</label>
+            <select class="form-input" id="roomStatus">
+              <option value="available">Available</option>
+              <option value="occupied">Occupied</option>
+              <option value="maintenance">Maintenance</option>
+              <option value="reserved">Reserved</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Max Guests</label><input type="number" class="form-input" id="roomCapacity"></div>
+          <div class="form-group"><label>Bed Type</label>
+            <select class="form-input" id="roomBedType">
+              <option value="single">Single</option>
+              <option value="double">Double</option>
+              <option value="queen">Queen</option>
+              <option value="king">King</option>
+              <option value="twin">Twin</option>
+            </select>
+          </div>
+          <div class="form-group md:col-span-2"><label>Description</label><textarea class="form-input" id="roomDescription" rows="3"></textarea></div>
+          <div class="form-group md:col-span-3"><label>Amenities (comma-separated)</label><input type="text" class="form-input" id="roomAmenities" placeholder="WiFi, TV, AC, Mini Bar"></div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-cancel" onclick="closeRoomModal()">Cancel</button>
+        <button class="btn-gold" onclick="saveRoom()">Save Room</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Modal -->
+  <div class="modal-overlay" id="categoryModal">
+    <div class="modal-panel modal-panel-md">
+      <div class="modal-head">
+        <h5>Room Categories</h5>
+        <button class="close-modal" onclick="closeCategoryModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="flex gap-2 mb-4">
+          <input type="text" class="form-input flex-1" id="newCategoryName" placeholder="Category name">
+          <button class="btn-gold btn-gold-sm" onclick="addCategory()">Add</button>
+        </div>
+        <div id="categoriesList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/vendor/sweetalert2/sweetalert2.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/animations.js"></script>
+  <script>
+    (function() {
+      if (!Auth.adminGuard()) return;
+      var user = Auth.getCurrentUser();
+      if (user) { var name = user.name || (user.firstName + ' ' + (user.lastName || '')); document.getElementById('adminName').textContent = name; document.getElementById('adminAvatar').textContent = Utils.getInitials(name); }
+      window.toggleSidebar = function() { document.getElementById('adminSidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('show'); };
+      window.toggleProfileDropdown = function() { document.getElementById('profileDropdown').classList.toggle('show'); };
+      document.addEventListener('click', function(e) { if (!e.target.closest('.admin-profile')) document.getElementById('profileDropdown').classList.remove('show'); });
+
+      var categories = [];
+      var rooms = [];
+
+      var fallbackRooms = [];
+
+      window.closeRoomModal = function() { document.getElementById('roomModal').classList.remove('show'); };
+      window.closeCategoryModal = function() { document.getElementById('categoryModal').classList.remove('show'); };
+
+      window.openRoomModal = function(room) {
+        document.getElementById('roomModalTitle').textContent = room ? 'Edit Room' : 'Add Room';
+        document.getElementById('roomId').value = room ? room._id : '';
+        document.getElementById('roomNumber').value = room ? room.number : '';
+        document.getElementById('roomFloor').value = room ? room.floor : '';
+        document.getElementById('roomPrice').value = room ? room.price : '';
+        document.getElementById('roomStatus').value = room ? room.status : 'available';
+        document.getElementById('roomCapacity').value = room ? room.capacity : 2;
+        document.getElementById('roomBedType').value = room ? room.bedType : 'double';
+        document.getElementById('roomDescription').value = room ? room.description : '';
+        document.getElementById('roomAmenities').value = room ? (room.amenities || []).join(', ') : '';
+        var catSelect = document.getElementById('roomCategory');
+        catSelect.innerHTML = categories.map(function(c) { return '<option value="' + c.name + '" ' + (room && room.category === c.name ? 'selected' : '') + '>' + c.name + '</option>'; }).join('');
+        document.getElementById('roomModal').classList.add('show');
+      };
+
+      window.saveRoom = function() {
+        var data = {
+          number: document.getElementById('roomNumber').value,
+          category: document.getElementById('roomCategory').value,
+          floor: parseInt(document.getElementById('roomFloor').value),
+          price: parseFloat(document.getElementById('roomPrice').value),
+          status: document.getElementById('roomStatus').value,
+          capacity: parseInt(document.getElementById('roomCapacity').value),
+          bedType: document.getElementById('roomBedType').value,
+          description: document.getElementById('roomDescription').value,
+          amenities: document.getElementById('roomAmenities').value.split(',').map(function(a) { return a.trim(); }).filter(Boolean)
+        };
+        var id = document.getElementById('roomId').value;
+        if (id) { var idx = rooms.findIndex(function(r) { return r._id === id; }); if (idx > -1) { rooms[idx] = Object.assign(rooms[idx], data); } }
+        else { data._id = '_' + Math.random().toString(36).substr(2,9); rooms.push(data); }
+        closeRoomModal();
+        renderRooms();
+        Swal.fire({ icon:'success', title: id ? 'Room Updated' : 'Room Added', confirmButtonColor:'#D4AF37' });
+      };
+
+      window.deleteRoom = function(id) {
+        Swal.fire({ title:'Delete Room?',text:'This action cannot be undone.',icon:'warning',showCancelButton:true,confirmButtonColor:'#D4AF37',confirmButtonText:'Delete'}).then(function(r){if(r.isConfirmed){rooms=rooms.filter(function(rm){return rm._id!==id;});renderRooms();Swal.fire({icon:'success',title:'Deleted',confirmButtonColor:'#D4AF37'});}});
+      };
+
+      window.openCategoryModal = function() {
+        renderCategories();
+        document.getElementById('categoryModal').classList.add('show');
+      };
+
+      window.addCategory = function() {
+        var name = document.getElementById('newCategoryName').value.trim();
+        if (!name) return;
+        categories.push({ name: name });
+        document.getElementById('newCategoryName').value = '';
+        renderCategories();
+        var sel = document.getElementById('filterCategory');
+        sel.innerHTML = '<option value="">All Categories</option>' + categories.map(function(c) { return '<option value="' + c.name + '">' + c.name + '</option>'; }).join('');
+      };
+
+      window.deleteCategory = function(idx) {
+        categories.splice(idx, 1);
+        renderCategories();
+        var sel = document.getElementById('filterCategory');
+        sel.innerHTML = '<option value="">All Categories</option>' + categories.map(function(c) { return '<option value="' + c.name + '">' + c.name + '</option>'; }).join('');
+      };
+
+      function renderCategories() {
+        document.getElementById('categoriesList').innerHTML = categories.map(function(c, i) {
+          return '<div class="category-item"><span>' + c.name + '</span><button class="btn-outline-danger-sm" onclick="deleteCategory(' + i + ')"><i class="fa-solid fa-trash"></i></button></div>';
+        }).join('') || '<p class="text-center py-4" style="color:#94a3b8;">No categories yet</p>';
+      }
+
+      function renderRooms() {
+        var filtered = rooms.filter(function(r) {
+          var cat = document.getElementById('filterCategory').value;
+          var stat = document.getElementById('filterStatus').value;
+          var search = document.getElementById('filterSearch').value.toLowerCase();
+          if (cat && r.category !== cat) return false;
+          if (stat && r.status !== stat) return false;
+          if (search && !r.number.toLowerCase().includes(search)) return false;
+          return true;
+        });
+        document.getElementById('roomsTableBody').innerHTML = filtered.map(function(r) {
+          return '<tr class="hover:bg-beige transition-colors"><td class="px-6 py-3.5 text-sm font-semibold text-navy">' + r.number + '</td><td class="px-6 py-3.5 text-sm" style="color:#475569;">' + r.category + '</td><td class="px-6 py-3.5 text-sm" style="color:#475569;">' + r.floor + '</td><td class="px-6 py-3.5 text-sm font-semibold" style="color:#8B5E34;">KSh ' + Number(r.price||0).toLocaleString('en-KE') + '</td><td class="px-6 py-3.5"><span class="status-badge ' + r.status + '">' + r.status.charAt(0).toUpperCase() + r.status.slice(1) + '</span></td><td class="px-6 py-3.5"><div class="flex gap-1.5"><button class="btn-outline-primary-sm" onclick="openRoomModal(rooms.find(function(x){return x._id===\'' + r._id + '\';}))"><i class="fa-solid fa-pen"></i></button><button class="btn-outline-danger-sm" onclick="deleteRoom(\'' + r._id + '\')"><i class="fa-solid fa-trash"></i></button></div></td></tr>';
+        }).join('') || '<tr><td colspan="6" class="text-center py-8" style="color:#94a3b8;"><i class="fa-solid fa-bed text-2xl mb-2 block" style="color:rgba(212,175,55,0.4);"></i>No rooms found</td></tr>';
+      }
+
+      categories = [{ name: 'Standard' }, { name: 'Deluxe' }, { name: 'Suite' }];
+      document.getElementById('filterCategory').innerHTML = '<option value="">All Categories</option>' + categories.map(function(c) { return '<option value="' + c.name + '">' + c.name + '</option>'; }).join('');
+      rooms = fallbackRooms;
+      renderRooms();
+    })();
+  </script>
+</body>
+</html>

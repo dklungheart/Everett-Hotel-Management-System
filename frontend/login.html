@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Login to your Everett Hotel account to manage bookings, preferences, and more.">
+  <title>Login | Everett Hotel</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="preload" href="/vendor/fontawesome/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css"></noscript>
+  <link rel="stylesheet" href="css/main.css">
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: { navy: '#8B5E34', 'navy-light': '#A67C52', gold: '#D4AF37', 'gold-light': '#D4BC8A', beige: '#FAF7F2', charcoal: '#211A14', emerald: '#0F766E' },
+        fontFamily: { inter: ['Inter', 'sans-serif'] },
+      },
+    },
+  }
+  </script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #FAF7F2; color: #211A14; overflow-x: hidden; }
+    .gold-gradient-text { background: linear-gradient(135deg, #D4AF37 0%, #D4BC8A 50%, #D4AF37 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .btn-gold { background: #D4AF37; color: #8B5E34; font-weight: 700; letter-spacing: 0.5px; transition: all 0.3s ease; }
+    .btn-gold:hover { background: #D4BC8A; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,169,106,0.35); }
+    .booking-input:focus { border-color: #D4AF37; box-shadow: 0 0 0 3px rgba(200,169,106,0.15); outline: none; }
+    .page-loader { position: fixed; inset: 0; background: #24180F; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; transition: opacity 0.6s ease, visibility 0.6s ease; }
+    .page-loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-text { font-family: 'Playfair Display', serif; font-size: 3.2rem; letter-spacing: 14px; color: #D4AF37; font-weight: 400; animation: loaderPulse 1.6s ease-in-out infinite; }
+    .loader-sub { color: rgba(255,255,255,0.35); font-size: 0.65rem; letter-spacing: 8px; text-transform: uppercase; margin-top: 10px; }
+    .loader-line { width: 160px; height: 1px; background: rgba(212,175,55,0.2); margin-top: 24px; overflow: hidden; }
+    .loader-line::after { content: ''; display: block; width: 50%; height: 100%; background: #D4AF37; animation: loaderLine 1.4s ease-in-out infinite; }
+    @keyframes loaderPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+    @keyframes loaderLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+    .auth-error { display: none; background: rgba(220,53,69,0.1); border: 1px solid rgba(220,53,69,0.2); border-radius: 12px; padding: 12px 16px; font-size: 14px; color: #dc3545; }
+    .auth-error.show { display: flex; align-items: center; gap: 8px; }
+    .btn-auth { width: 100%; padding: 14px; font-size: 15px; font-weight: 700; border-radius: 12px; border: none; cursor: pointer; background: linear-gradient(135deg, #D4AF37, #D4BC8A); color: #8B5E34; font-family: 'Inter', sans-serif; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-auth:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(200,169,106,0.4); }
+    .btn-auth:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-auth .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(139,94,52,0.2); border-top-color: #8B5E34; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    .btn-auth.loading .spinner { display: inline-block; }
+    .btn-auth.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="font-inter">
+
+  <!-- Page Loader -->
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-text">EVERETT</div>
+    <div class="loader-sub">Luxury Hotel</div>
+    <div class="loader-line"></div>
+  </div>
+
+  <div class="min-h-screen flex">
+    <!-- Brand Side -->
+    <div class="hidden lg:flex flex-1 items-center justify-center relative overflow-hidden" style="background:linear-gradient(135deg, #8B5E34 0%, #A67C52 50%, #8B5E34 100%);">
+      <div class="absolute inset-0 opacity-10" style="background: url('images/gallery-main.jpg') center/cover no-repeat;"></div>
+      <div class="absolute inset-0" style="background:linear-gradient(135deg, rgba(139,94,52,0.92), rgba(139,94,52,0.85));"></div>
+      <div class="relative z-10 text-center max-w-md px-8">
+        <div class="mb-8">
+          <span class="text-white text-3xl tracking-[10px] font-light">EVERETT</span><br>
+          <span class="text-gold text-xs tracking-[5px] font-medium">HOTEL</span>
+        </div>
+        <div class="w-16 h-0.5 mx-auto mb-8" style="background:#D4AF37;"></div>
+        <p class="text-white/90 text-xl italic leading-relaxed mb-8" style="font-family:Georgia,serif;">"Where every moment is crafted with care, and every stay becomes a cherished memory."</p>
+        <span class="text-white/50 text-xs tracking-[3px] uppercase">Welcome Back</span>
+      </div>
+    </div>
+
+    <!-- Form Side -->
+    <div class="flex-1 flex flex-col justify-center items-center px-6 py-12 overflow-y-auto" style="background:#FAF7F2;">
+      <div class="w-full max-w-md">
+        <!-- Mobile Logo -->
+        <div class="lg:hidden text-center mb-8">
+          <a href="index.html" class="inline-block">
+            <span class="text-navy text-2xl tracking-[8px] font-light">EVERETT</span><br>
+            <span class="text-gold text-[10px] tracking-[4px] font-medium">HOTEL</span>
+          </a>
+        </div>
+
+        <h2 class="text-3xl font-extrabold mb-2" style="color:#8B5E34;">Sign In</h2>
+        <p class="text-sm mb-8" style="color:#888;">Enter your credentials to access your account</p>
+
+        <div class="auth-error" id="loginError">
+          <i class="fas fa-circle-exclamation"></i>
+          <span id="loginErrorText"></span>
+        </div>
+
+        <div id="sessionNotice" style="display:none;background:#F3E9DC;border:1px solid #D4AF37;color:#3B2A1A;border-radius:0.75rem;padding:0.85rem 1rem;font-size:0.85rem;margin-bottom:1.5rem;">
+          <i class="fas fa-user-clock"></i>
+          <span id="sessionNoticeText"></span>
+          <a href="#" id="sessionNoticeLogout" style="color:#8B5E34;font-weight:700;text-decoration:underline;">Sign out</a>
+        </div>
+
+        <form id="loginForm" novalidate class="space-y-5">
+          <div>
+            <label class="block text-sm font-semibold mb-2" style="color:#8B5E34;">Email Address</label>
+            <div class="relative">
+              <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+              <input type="email" class="booking-input w-full p-3.5 pl-11 rounded-xl border border-gray-200 text-sm bg-white" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-2" style="color:#8B5E34;">Password</label>
+            <div class="relative">
+              <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+              <input type="password" class="booking-input w-full p-3.5 pl-11 rounded-xl border border-gray-200 text-sm bg-white" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password" minlength="6">
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="remember" name="remember" class="w-4 h-4 accent-[#D4AF37]">
+              <span class="text-sm" style="color:#888;">Remember me</span>
+            </label>
+            <a href="forgot-password.html" class="text-sm font-semibold" style="color:#D4AF37;">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn-auth" id="loginBtn">
+            <span class="btn-text"><i class="fas fa-right-to-bracket"></i> Sign In</span>
+            <span class="spinner"></span>
+          </button>
+        </form>
+
+        <p class="text-center text-sm mt-8" style="color:#888;">
+          Don't have an account? <a href="register.html" class="font-bold" style="color:#D4AF37;">Create one</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/vendor/sweetalert2/sweetalert2.min.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/theme.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/animations.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() { document.getElementById('pageLoader').classList.add('hidden'); }, 1200);
+
+      var redirectParam = new URLSearchParams(window.location.search).get('redirect');
+
+      if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+        var user = Auth.getCurrentUser();
+        if (user && (user.role === CONFIG.ROLES.ADMIN || user.role === CONFIG.ROLES.SUPER_ADMIN)) {
+          window.location.href = 'admin/dashboard.html';
+          return;
+        }
+        var notice = document.getElementById('sessionNotice');
+        var noticeText = document.getElementById('sessionNoticeText');
+        var noticeLogout = document.getElementById('sessionNoticeLogout');
+        if (notice && noticeText) {
+          noticeText.textContent = ' You are signed in as ' + (user && (user.email || user.firstName || user.lastName) || 'a user') + '. Sign in below to switch accounts. ';
+          notice.style.display = 'block';
+        }
+        if (noticeLogout) {
+          noticeLogout.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (typeof Auth !== 'undefined' && Auth.removeUserKey) Auth.removeUserKey();
+            location.reload();
+          });
+        }
+      }
+
+      var loginForm = document.getElementById('loginForm');
+      var loginBtn = document.getElementById('loginBtn');
+      var loginError = document.getElementById('loginError');
+      var loginErrorText = document.getElementById('loginErrorText');
+
+      function showError(msg) { loginErrorText.textContent = msg; loginError.classList.add('show'); }
+      function hideError() { loginError.classList.remove('show'); }
+      function setLoading(loading) { loginBtn.disabled = loading; loginBtn.classList.toggle('loading', loading); }
+
+      loginForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        hideError();
+        var email = document.getElementById('email').value.trim();
+        var password = document.getElementById('password').value;
+        if (!email || !password) { showError('Please fill in all fields.'); return; }
+        setLoading(true);
+        try {
+          var response = await Auth.login(email, password);
+          if (typeof Swal !== 'undefined') {
+            await Swal.fire({ icon: 'success', title: 'Welcome Back!', text: 'You have successfully signed in.', confirmButtonColor: '#D4AF37', background: '#8B5E34', color: '#fff', timer: 2000, showConfirmButton: false });
+          }
+          var user = Auth.getCurrentUser();
+          if (user && (user.role === CONFIG.ROLES.ADMIN || user.role === CONFIG.ROLES.SUPER_ADMIN)) { window.location.href = 'admin/dashboard.html'; }
+          else if (user && CONFIG.STAFF_ROLES.indexOf(user.role) > -1) { window.location.href = 'employee/dashboard.html'; }
+          else { window.location.href = redirectParam || 'index.html'; }
+        } catch (err) {
+          showError(err.message || 'Login failed. Please try again.');
+          setLoading(false);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

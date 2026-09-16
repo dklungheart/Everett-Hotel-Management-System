@@ -1,0 +1,342 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Rate Your Stay at Everett Hotel - We value your feedback. Share your experience with us.">
+  <title>Rate Your Stay | Everett Hotel</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="css/luxury.css">
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          navy: '#8B5E34',
+          'navy-light': '#A67C52',
+          'navy-deep': '#24180F',
+          gold: '#D4AF37',
+          'gold-light': '#D4BC8A',
+          'gold-soft': '#C9A227',
+          beige: '#FAF7F2',
+          'beige-dark': '#EDE7DB',
+          ivory: '#F3E9DC',
+          charcoal: '#211A14',
+          emerald: '#0F766E',
+        },
+        fontFamily: {
+          inter: ['Inter', 'sans-serif'],
+          serif: ['Playfair Display', 'Georgia', 'serif'],
+        },
+      },
+    },
+  }
+  </script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #FAF7F2; color: #211A14; overflow-x: hidden; }
+    .font-serif { font-family: 'Playfair Display', Georgia, serif; }
+    .gold-gradient-text { background: linear-gradient(120deg, #E8C96A 0%, #D4AF37 40%, #F0DFA8 60%, #C9A227 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .page-loader { position: fixed; inset: 0; background: #24180F; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; transition: opacity 0.6s ease, visibility 0.6s ease; }
+    .page-loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-text { font-family: 'Playfair Display', serif; font-size: 3.2rem; letter-spacing: 14px; color: #D4AF37; font-weight: 400; animation: loaderPulse 1.6s ease-in-out infinite; }
+    .loader-sub { color: rgba(255,255,255,0.35); font-size: 0.65rem; letter-spacing: 8px; text-transform: uppercase; margin-top: 10px; }
+    .loader-line { width: 160px; height: 1px; background: rgba(212,175,55,0.2); margin-top: 24px; overflow: hidden; }
+    .loader-line::after { content: ''; display: block; width: 50%; height: 100%; background: #D4AF37; animation: loaderLine 1.4s ease-in-out infinite; }
+    @keyframes loaderPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+    @keyframes loaderLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+    .nav-scrolled { background: rgba(36,24,15,0.92) !important; backdrop-filter: blur(24px) !important; box-shadow: 0 8px 40px rgba(0,0,0,0.35) !important; }
+    .rating-btn { transition: all 0.2s ease; }
+    .rating-btn:hover { transform: scale(1.1); }
+    .rating-btn.selected { background: #D4AF37; color: #8B5E34; border-color: #D4AF37; transform: scale(1.15); }
+    .rating-btn.selected ~ .rating-label { opacity: 1; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeInUp 0.5s ease forwards; }
+    @keyframes pulse-gold { 0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); } }
+    .pulse-gold { animation: pulse-gold 2s infinite; }
+    .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+    @media (max-width: 768px) { .loader-text { font-size: 2.2rem; letter-spacing: 8px; } }
+  </style>
+</head>
+<body class="lux-body min-h-screen">
+
+  <!-- Page Loader -->
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-text">EVERETT</div>
+    <div class="loader-sub">Luxury Hotel</div>
+    <div class="loader-line"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" style="padding: 22px 0;">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <a href="index.html" class="flex flex-col items-center group">
+        <span class="text-white text-xl tracking-[10px] font-light group-hover:text-gold transition-colors">EVERETT</span>
+        <span class="text-gold text-[9px] tracking-[6px] font-medium uppercase">Hotel Nairobi</span>
+      </a>
+      <div class="hidden lg:flex items-center gap-9">
+        <a href="index.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Home</a>
+        <a href="about.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">About</a>
+        <a href="rooms.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Rooms</a>
+        <a href="services.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Services</a>
+        <a href="menu.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Menu</a>
+        <a href="gallery.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Gallery</a>
+        <a href="contact.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Contact</a>
+      </div>
+      <div class="hidden lg:flex items-center gap-5">
+        <button onclick="Theme.toggle()" class="text-white/60 hover:text-gold transition-colors" aria-label="Toggle theme">
+          <i class="fas fa-sun" id="themeIcon"></i>
+        </button>
+        <a href="login.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors" id="navLoginLink">Sign In</a>
+        <a href="booking.html" class="btn-gold px-7 py-3 rounded-full text-xs tracking-[2px] uppercase">Book Now</a>
+      </div>
+      <button class="lg:hidden text-white" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" aria-label="Menu">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden fixed inset-0 bg-navy/98 backdrop-blur-xl z-50 flex flex-col items-center justify-center gap-8">
+      <button onclick="this.parentElement.classList.add('hidden')" class="absolute top-6 right-6 text-white/60 hover:text-white"><i class="fas fa-times text-2xl"></i></button>
+      <span class="text-gold text-xs tracking-[8px] uppercase mb-4">Menu</span>
+      <a href="index.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Home</a>
+      <a href="about.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">About</a>
+      <a href="rooms.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Rooms</a>
+      <a href="services.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Services</a>
+      <a href="menu.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Menu</a>
+      <a href="gallery.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Gallery</a>
+      <a href="contact.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Contact</a>
+      <div class="mt-4 flex gap-4">
+        <a href="login.html" class="btn-outline-gold px-8 py-3 rounded-full text-xs tracking-[2px]">Sign In</a>
+        <a href="booking.html" class="btn-gold px-8 py-3 rounded-full text-xs tracking-[2px]">Book Now</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SUB HERO                                   -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="lux-hero">
+    <img src="images/gallery-main.jpg" alt="Everett Hotel Luxury" class="lux-hero-img" loading="eager">
+    <div class="max-w-7xl mx-auto px-6 lux-hero-content">
+      <div class="lux-breadcrumb">
+        <a href="index.html"><i class="fas fa-home"></i></a>
+        <span class="sep">/</span>
+        <span class="current">Rate Your Stay</span>
+      </div>
+      <div class="lux-eyebrow"><span class="eyebrow-line"></span> Guest Feedback</div>
+      <h1 class="lux-hero-title text-5xl md:text-6xl">Share Your <span class="gold-gradient-text italic">Experience</span></h1>
+      <p class="lux-hero-sub">Your words are the compass of our hospitality — every review refines the art of your next stay.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- RATING FORM                                -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="lux-section lux-section-soft">
+    <div id="rating-container" class="max-w-3xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <p class="flex items-center justify-center gap-3 text-gold text-xs tracking-[5px] uppercase font-semibold mb-4"><span class="eyebrow-line"></span> We Value Your Voice <span class="eyebrow-line"></span></p>
+        <h2 class="font-serif text-navy text-4xl md:text-5xl font-light">Tell Us How We <span class="italic">Did</span></h2>
+        <div class="gold-rule w-24 mx-auto mt-6"></div>
+      </div>
+
+      <div class="lux-card overflow-hidden shadow-2xl shadow-navy/10">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-navy to-navy-light p-8 md:p-10 text-center relative overflow-hidden">
+          <div class="absolute inset-0 opacity-[0.05]" style="background-image: radial-gradient(circle at 2px 2px, #D4AF37 1px, transparent 0); background-size: 30px 30px;"></div>
+          <div class="relative">
+            <div class="w-16 h-16 bg-gold/15 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-5">
+              <i class="fas fa-star text-gold text-2xl"></i>
+            </div>
+            <h1 class="font-serif text-white text-3xl md:text-4xl font-light mb-3">How was your stay?</h1>
+            <p class="text-gold/90 tracking-[2px] text-xs uppercase" id="guest-greeting">Thank you for choosing Everett Hotel</p>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <form id="rating-form" class="p-8 md:p-10 bg-white">
+          <input type="hidden" id="booking-ref" value="">
+          <input type="hidden" id="guest-name" value="">
+
+          <!-- Rating Scale -->
+          <div class="text-center mb-8">
+            <label class="lux-label text-center" for="rating-buttons">Rate your experience (1-10)</label>
+            <div class="flex flex-wrap justify-center gap-2 mb-3" id="rating-buttons">
+              <button type="button" class="rating-btn w-11 h-11 rounded-full border-2 border-navy/20 text-navy font-bold text-sm hover:border-gold hover:text-gold" data-rating="1">1</button>
+              <button type="button" class="rating-btn w-11 h-11 rounded-full border-2 border-navy/20 text-navy font-bold text-sm hover:border-gold hover:text-gold" data-rating="2">2</button>
+              <button type="button" class="rating-btn w-11 h-11 rounded-full border-2 border-navy/20 text-navy font-bold text-sm hover:border-gold hover:text-gold" data-rating="3">3</button>
+              <button type="button" class="rating-btn w-11 h-11 rounded-full border-2 border-navy/20 text-navy font-bold text-sm hover:border-gold hover:text-gold" data-rating="4">4</button>
+              <button type="button" class="rating-btn w-11 h-11 rounded-full border-2 border-navy/20 text-navy font-bold text-sm hover:border-gold hover:text-gold" data-rating="5">5</button>
+              <button type="button" class="rating-btn w-11 h-11 rounded-full border-2 border-navy/20 text-navy font-bold text-sm hover:border-gold hover:text-gold" data-rating="6">6</button>
+              <button type="button" class="rating-btn w-11 h-11 rounded-full border-2 border-navy/20 text-navy font-bold text-sm hover:border-gold hover:text-gold" data-rating="7">7</button>
+              <button type="button" class="rating-btn w-11 h-11 rounded-full border-2 border-navy/20 text-navy font-bold text-sm hover:border-gold hover:text-gold" data-rating="8">8</button>
+              <button type="button" class="rating-btn w-11 h-11 rounded-full border-2 border-navy/20 text-navy font-bold text-sm hover:border-gold hover:text-gold" data-rating="9">9</button>
+              <button type="button" class="rating-btn w-11 h-11 rounded-full border-2 border-navy/20 text-navy font-bold text-sm hover:border-gold hover:text-gold" data-rating="10">10</button>
+            </div>
+            <div class="flex justify-between text-xs text-charcoal/40 px-2 max-w-xs mx-auto">
+              <span>Poor</span>
+              <span>Average</span>
+              <span>Excellent</span>
+            </div>
+          </div>
+
+          <!-- Comment -->
+          <div class="mb-6">
+            <label class="lux-label" for="comment">Any comments? (Optional)</label>
+            <textarea id="comment" rows="3" class="lux-field resize-none" placeholder="Tell us about your experience..."></textarea>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" id="submit-btn" class="btn-gold w-full py-4 rounded-full text-xs tracking-[3px] uppercase font-semibold disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            Submit Feedback
+          </button>
+
+          <!-- Error -->
+          <p id="error-msg" class="text-red-500 text-sm text-center mt-3 hidden"></p>
+        </form>
+      </div>
+
+      <!-- Already Submitted -->
+      <div id="already-submitted" class="hidden text-center mt-12">
+        <div class="lux-card overflow-hidden p-10">
+          <div class="w-16 h-16 bg-emerald/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-check text-emerald text-2xl"></i>
+          </div>
+          <h2 class="font-serif text-navy text-3xl font-light mb-2">Thank You!</h2>
+          <p class="text-charcoal/60">You have already submitted your feedback for this stay. We appreciate your time!</p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <p class="text-center text-navy/40 text-xs mt-10 tracking-[2px] uppercase">&copy; 2026 Everett Hotel. All rights reserved.</p>
+    </div>
+  </section>
+
+  <!-- Scripts -->
+  <script src="/vendor/gsap/gsap.min.js" defer></script>
+  <script src="/vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="/vendor/lenis/lenis.min.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/theme.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/animations.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Page Loader
+      setTimeout(function() {
+        document.getElementById('pageLoader').classList.add('hidden');
+      }, 1200);
+
+      // Nav scroll effect
+      window.addEventListener('scroll', function() {
+        const nav = document.getElementById('mainNav');
+        if (window.scrollY > 80) { nav.classList.add('nav-scrolled'); }
+        else { nav.classList.remove('nav-scrolled'); }
+      });
+
+      // Auth link
+      if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+        const link = document.getElementById('navLoginLink');
+        if (link) { link.href = 'profile.html'; link.textContent = 'Dashboard'; }
+      }
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const params = new URLSearchParams(window.location.search);
+        const ref = params.get('ref') || '';
+        const guest = params.get('guest') || '';
+
+        document.getElementById('booking-ref').value = ref;
+        document.getElementById('guest-name').value = guest;
+
+        if (guest) {
+            document.getElementById('guest-greeting').textContent = `Hello ${guest}, we'd love your feedback!`;
+        }
+
+        if (!ref || !guest) {
+            document.getElementById('rating-form').innerHTML = `
+                <div class="text-center py-8">
+                    <i class="fas fa-exclamation-circle text-gold text-3xl mb-4"></i>
+                    <p class="text-navy font-semibold">Invalid Link</p>
+                    <p class="text-charcoal/60 text-sm mt-2">Please use the link provided in your SMS.</p>
+                </div>`;
+            return;
+        }
+
+        let selectedRating = 0;
+        const buttons = document.querySelectorAll('.rating-btn');
+        const submitBtn = document.getElementById('submit-btn');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                buttons.forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedRating = parseInt(this.dataset.rating);
+                submitBtn.disabled = false;
+            });
+        });
+
+        document.getElementById('rating-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!selectedRating) {
+                document.getElementById('error-msg').textContent = 'Please select a rating';
+                document.getElementById('error-msg').classList.remove('hidden');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
+
+            try {
+                const response = await fetch('/api/feedback/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        bookingReference: ref,
+                        guestName: guest,
+                        rating: selectedRating,
+                        comment: document.getElementById('comment').value.trim()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('rating-form').parentElement.innerHTML = `
+                        <div class="text-center py-8 fade-in">
+                            <div class="w-20 h-20 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-4 pulse-gold">
+                                <i class="fas fa-heart text-gold text-3xl"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold text-navy mb-2">Thank You, ${guest}!</h2>
+                            <p class="text-charcoal/60 mb-1">Your rating: <span class="font-bold text-gold text-lg">${selectedRating}/10</span></p>
+                            <p class="text-charcoal/60 text-sm mt-3">We truly appreciate your feedback. It helps us serve you better next time.</p>
+                            <p class="text-navy/40 text-xs mt-6">Everett Hotel &mdash; Luxury, Comfort, Excellence</p>
+                        </div>`;
+                } else {
+                    document.getElementById('error-msg').textContent = data.message || 'Something went wrong. Please try again.';
+                    document.getElementById('error-msg').classList.remove('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Submit Feedback';
+                }
+            } catch (error) {
+                document.getElementById('error-msg').textContent = 'Network error. Please try again.';
+                document.getElementById('error-msg').classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Submit Feedback';
+            }
+        });
+    });
+  </script>
+</body>
+</html>

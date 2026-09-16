@@ -1,0 +1,315 @@
+/* ============================================================
+   EVERETT HOTEL — LUXURY DESIGN SYSTEM v2.0
+   Warm Brown · Gold · Cream
+   Shared tokens + components for public, auth & booking pages.
+   Pair with Tailwind (utility) + css/main.css (legacy helpers).
+   ============================================================ */
+
+:root {
+  --brown: #8B5E34;
+  --brown-light: #A67C52;
+  --brown-dark: #3B2A1A;
+  --brown-deep: #24180F;
+  --gold: #D4AF37;
+  --gold-light: #D4BC8A;
+  --gold-soft: #C9A227;
+  --cream: #F3E9DC;
+  --beige: #FAF7F2;
+  --ink: #211A14;
+
+  /* Back-compat aliases used by earlier markup */
+  --navy: var(--brown);
+  --navy-light: var(--brown-light);
+  --navy-deep: var(--brown-deep);
+  --charcoal: var(--ink);
+
+  --font-serif: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Inter', 'Poppins', sans-serif;
+
+  --shadow-soft: 0 24px 60px rgba(59,42,26,0.10);
+  --shadow-gold: 0 14px 34px rgba(200,169,106,0.4);
+}
+
+/* ---------- Base ---------- */
+.lux-body {
+  font-family: var(--font-sans);
+  background: var(--beige);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.lux-serif { font-family: var(--font-serif); }
+
+.gold-gradient-text {
+  background: linear-gradient(120deg, #E8C96A 0%, #D4AF37 40%, #F0DFA8 60%, #C9A227 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.eyebrow-line { display: inline-block; width: 48px; height: 1px; background: var(--gold); vertical-align: middle; }
+
+.gold-rule { height: 1px; background: linear-gradient(90deg, var(--gold), rgba(212,175,55,0.1)); border: none; }
+
+/* ---------- Buttons ---------- */
+.btn-gold {
+  background: linear-gradient(120deg, #D4AF37, #C9A227);
+  color: var(--brown-deep);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.35s ease;
+}
+.btn-gold:hover {
+  background: linear-gradient(120deg, #E2C563, #D4AF37);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-gold);
+}
+
+.btn-outline-gold {
+  border: 1.5px solid rgba(212,175,55,0.7);
+  color: #E8C96A;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.35s ease;
+}
+.btn-outline-gold:hover {
+  background: var(--gold);
+  color: var(--brown-deep);
+  border-color: var(--gold);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-gold);
+}
+
+/* Legacy class name kept for compatibility (was navy ghost) */
+.btn-navy-ghost,
+.btn-ink-ghost {
+  background: transparent;
+  border: 1.5px solid rgba(59,42,26,0.25);
+  color: var(--brown-dark);
+  font-weight: 600;
+  letter-spacing: 1px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.35s ease;
+}
+.btn-navy-ghost:hover,
+.btn-ink-ghost:hover {
+  border-color: var(--brown-dark);
+  background: var(--brown-dark);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(59,42,26,0.25);
+}
+
+.btn-ghost-light {
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.35s ease;
+}
+.btn-ghost-light:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: translateY(-3px);
+}
+
+/* ---------- Sub-page Hero ---------- */
+.lux-hero {
+  position: relative;
+  min-height: 62vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: var(--brown-deep);
+}
+.lux-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  animation: heroKenburns 24s ease-in-out infinite alternate;
+}
+.lux-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(36,24,15,0.8) 0%, rgba(139,94,52,0.42) 45%, rgba(36,24,15,0.95) 100%);
+}
+.lux-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><rect fill="none" width="60" height="60"/><path d="M30 0L60 30L30 60L0 30Z" fill="none" stroke="rgba(212,175,55,0.07)" stroke-width="0.5"/></svg>') repeat;
+}
+@keyframes heroKenburns {
+  0% { transform: scale(1.08) translate(1.5%, 1%); }
+  100% { transform: scale(1.16) translate(-1.5%, -1%); }
+}
+.lux-hero-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  padding: 7rem 0 5rem;
+}
+
+.lux-breadcrumb { display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.5); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; }
+.lux-breadcrumb a { color: rgba(255,255,255,0.55); transition: color 0.3s ease; }
+.lux-breadcrumb a:hover { color: var(--gold); }
+.lux-breadcrumb .sep { color: rgba(212,175,55,0.6); font-size: 0.6rem; }
+.lux-breadcrumb .current { color: var(--gold); }
+
+.lux-hero-title {
+  font-family: var(--font-serif);
+  color: #fff;
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -0.5px;
+  margin: 1.4rem 0 1.1rem;
+}
+.lux-hero-sub { color: rgba(255,255,255,0.68); font-weight: 300; max-width: 40rem; }
+
+/* ---------- Sections ---------- */
+.lux-section { padding: 6rem 0; }
+.lux-section-soft { background: var(--cream); }
+.lux-section-dark {
+  background: linear-gradient(160deg, #8B5E34 0%, #A67C52 60%, #8B5E34 100%);
+  color: #fff;
+}
+.lux-section-deepdark {
+  background: linear-gradient(160deg, #3B2A1A, #24180F);
+  color: #fff;
+}
+
+.lux-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--gold);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+.lux-eyebrow.center { justify-content: center; }
+.lux-eyebrow.on-dark { color: var(--gold-light); }
+
+.lux-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.5px;
+}
+.lux-title.on-dark { color: #fff; }
+
+/* ---------- Cards ---------- */
+.lux-card {
+  background: #fff;
+  border: 1px solid rgba(59,42,26,0.07);
+  border-radius: 20px;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lux-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-soft);
+}
+.lux-card-dark {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(6px);
+}
+
+.lux-icon-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212,175,55,0.12);
+  color: var(--gold);
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lux-icon-badge.sm { width: 48px; height: 48px; font-size: 1rem; }
+
+.lux-card:hover .lux-icon-badge {
+  background: var(--gold);
+  color: var(--brown-deep);
+  transform: translateY(-4px) rotate(-6deg);
+}
+
+/* ---------- Forms ---------- */
+.lux-field { width: 100%; border: 1px solid rgba(33,26,20,0.12); border-radius: 14px; padding: 14px 16px; background: #fff; font-size: 0.9rem; color: var(--ink); transition: all 0.3s ease; }
+.lux-field:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,175,55,0.15); }
+.lux-label { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--brown-dark); margin-bottom: 8px; }
+.lux-field-dark { border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #fff; }
+.lux-field-dark::placeholder { color: rgba(255,255,255,0.35); }
+
+/* ---------- Feature list ---------- */
+.lux-check-list { list-style: none; padding: 0; margin: 0; }
+.lux-check-list li { display: flex; align-items: flex-start; gap: 12px; color: rgba(255,255,255,0.72); font-size: 0.95rem; line-height: 1.6; }
+.lux-check-list li i { color: var(--gold); margin-top: 4px; font-size: 0.8rem; }
+.lux-check-list li + li { margin-top: 12px; }
+
+/* ---------- Divider / chip ---------- */
+.lux-divider { display: flex; align-items: center; gap: 16px; }
+.lux-divider::before, .lux-divider::after { content: ''; height: 1px; flex: 1; background: linear-gradient(90deg, transparent, rgba(212,175,55,0.45)); }
+.lux-divider::after { background: linear-gradient(90deg, rgba(212,175,55,0.45), transparent); }
+
+.lux-chip { display: inline-flex; align-items: center; gap: 8px; background: rgba(212,175,55,0.12); color: var(--gold-soft); border: 1px solid rgba(212,175,55,0.35); border-radius: 999px; padding: 8px 16px; font-size: 0.65rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+
+/* ---------- Gallery ---------- */
+.lux-gallery-item { position: relative; border-radius: 16px; overflow: hidden; cursor: pointer; }
+.lux-gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+.lux-gallery-item:hover img { transform: scale(1.1); }
+.lux-gallery-overlay {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(36,24,15,0.65);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.lux-gallery-item:hover .lux-gallery-overlay { opacity: 1; }
+
+/* ---------- Reveal helpers (kept for JS) ---------- */
+.reveal-up, .reveal-left, .reveal-right, .reveal-scale, .fade-up, .slide-left, .slide-right, .hero-reveal { will-change: opacity, transform; }
+
+/* ---------- Swiper overrides ---------- */
+.lux-swiper .swiper-pagination-bullet { background: var(--gold); opacity: 0.35; }
+.lux-swiper .swiper-pagination-bullet-active { opacity: 1; width: 28px; border-radius: 4px; transition: width 0.4s ease; }
+.lux-swiper .swiper-button-next, .lux-swiper .swiper-button-prev { color: var(--gold); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .lux-hero-title { font-size: 2.6rem !important; }
+  .lux-section { padding: 4rem 0; }
+}

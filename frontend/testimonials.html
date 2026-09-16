@@ -1,0 +1,572 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Read guest testimonials and reviews for Everett Hotel Nairobi. Share your own rating and experience with us.">
+  <title>Guest Reviews & Testimonials | Everett Hotel</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="css/main.css">
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          navy: '#8B5E34',
+          'navy-light': '#A67C52',
+          'navy-deep': '#24180F',
+          gold: '#D4AF37',
+          'gold-light': '#D4BC8A',
+          'gold-soft': '#C9A227',
+          beige: '#FAF7F2',
+          'beige-dark': '#EDE7DB',
+          ivory: '#F3E9DC',
+          charcoal: '#211A14',
+          emerald: '#0F766E',
+        },
+        fontFamily: {
+          inter: ['Inter', 'sans-serif'],
+          serif: ['Playfair Display', 'Georgia', 'serif'],
+        },
+      },
+    },
+  }
+  </script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #FAF7F2; color: #211A14; overflow-x: hidden; }
+    .font-serif { font-family: 'Playfair Display', Georgia, serif; }
+    .gold-gradient-text { background: linear-gradient(120deg, #E8C96A 0%, #D4AF37 40%, #F0DFA8 60%, #C9A227 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .page-loader { position: fixed; inset: 0; background: #24180F; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; transition: opacity 0.6s ease, visibility 0.6s ease; }
+    .page-loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-text { font-family: 'Playfair Display', serif; font-size: 3.2rem; letter-spacing: 14px; color: #D4AF37; font-weight: 400; animation: loaderPulse 1.6s ease-in-out infinite; }
+    .loader-sub { color: rgba(255,255,255,0.35); font-size: 0.65rem; letter-spacing: 8px; text-transform: uppercase; margin-top: 10px; }
+    .loader-line { width: 160px; height: 1px; background: rgba(212,175,55,0.2); margin-top: 24px; overflow: hidden; }
+    .loader-line::after { content: ''; display: block; width: 50%; height: 100%; background: #D4AF37; animation: loaderLine 1.4s ease-in-out infinite; }
+    @keyframes loaderPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+    @keyframes loaderLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+    .nav-scrolled { background: rgba(36,24,15,0.92) !important; backdrop-filter: blur(24px) !important; box-shadow: 0 8px 40px rgba(0,0,0,0.35) !important; }
+    .gold-rule { height: 1px; background: linear-gradient(90deg, #D4AF37, rgba(212,175,55,0.1)); }
+    .eyebrow-line { display: inline-block; width: 48px; height: 1px; background: #D4AF37; vertical-align: middle; }
+    .lux-hero { position: relative; min-height: 62vh; display: flex; align-items: center; overflow: hidden; }
+    .lux-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .lux-hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(36,24,15,0.78) 0%, rgba(139,94,52,0.45) 55%, rgba(36,24,15,0.92) 100%); }
+    .lux-hero-content { position: relative; z-index: 2; padding-top: 130px; padding-bottom: 90px; }
+    .lux-breadcrumb { display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.6); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
+    .lux-breadcrumb a { color: #E8C96A; text-decoration: none; }
+    .lux-breadcrumb .sep { opacity: 0.4; }
+    .lux-eyebrow { display: flex; align-items: center; gap: 12px; color: #E8C96A; font-size: 12px; letter-spacing: 5px; text-transform: uppercase; font-weight: 600; margin-bottom: 20px; }
+    .lux-hero-title { color: #fff; }
+    .lux-hero-sub { color: rgba(255,255,255,0.7); font-size: 17px; line-height: 1.8; max-width: 640px; font-weight: 300; }
+    .star-input { font-size: 28px; color: #d9d2c4; cursor: pointer; transition: transform 0.15s ease, color 0.15s ease; }
+    .star-input:hover, .star-input.active { color: #D4AF37; transform: scale(1.15); }
+    .testimonial-card { background: #fff; border: 1px solid rgba(139,94,52,0.08); border-radius: 20px; transition: all 0.4s cubic-bezier(0.22,1,0.36,1); }
+    .testimonial-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(139,94,52,0.13); }
+    .testimonial-card.featured { border: 1px solid rgba(212,175,55,0.35); box-shadow: 0 18px 50px rgba(200,169,106,0.18); }
+    @media (max-width: 768px) { .loader-text { font-size: 2.2rem; letter-spacing: 8px; } }
+  </style>
+</head>
+<body class="font-inter">
+
+  <!-- Page Loader -->
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-text">EVERETT</div>
+    <div class="loader-sub">Luxury Hotel</div>
+    <div class="loader-line"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" style="padding: 22px 0;">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <a href="index.html" class="flex flex-col items-center group">
+        <span class="text-white text-xl tracking-[10px] font-light group-hover:text-gold transition-colors">EVERETT</span>
+        <span class="text-gold text-[9px] tracking-[6px] font-medium uppercase">Hotel Nairobi</span>
+      </a>
+      <div class="hidden lg:flex items-center gap-9">
+        <a href="index.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Home</a>
+        <a href="about.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">About</a>
+        <a href="rooms.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Rooms</a>
+        <a href="services.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Services</a>
+        <a href="menu.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Menu</a>
+        <a href="gallery.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Gallery</a>
+        <a href="testimonials.html" class="text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Reviews</a>
+        <a href="contact.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors nav-link-item">Contact</a>
+      </div>
+      <div class="hidden lg:flex items-center gap-5">
+        <button onclick="Theme.toggle()" class="text-white/60 hover:text-gold transition-colors" aria-label="Toggle theme">
+          <i class="fas fa-sun" id="themeIcon"></i>
+        </button>
+        <a href="login.html" class="text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors" id="navLoginLink">Sign In</a>
+        <div class="relative" id="navUserMenu" style="display:none;">
+          <button id="navUserBtn" class="flex items-center gap-2 text-white/85 hover:text-gold text-[13px] tracking-wider uppercase transition-colors" aria-label="Account menu">
+            <i class="fas fa-user-circle text-base"></i>
+            <span id="navUserName">Account</span>
+            <i class="fas fa-chevron-down text-[10px]"></i>
+          </button>
+          <div id="navUserDropdown" class="hidden absolute right-0 top-full mt-3 bg-[#24180F]/95 backdrop-blur-xl border border-white/15 rounded-2xl py-2 min-w-[210px] shadow-2xl">
+            <a id="navDashboardLink" href="profile.html" class="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:text-gold transition-colors"><i class="fas fa-gauge-high w-4 text-gold/70"></i> My Dashboard</a>
+            <div class="h-px bg-white/10 my-1"></div>
+            <a href="#" id="navLogoutBtn" class="flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:text-red-300 transition-colors"><i class="fas fa-right-from-bracket w-4"></i> Logout</a>
+          </div>
+        </div>
+        <a href="booking.html" class="btn-gold px-7 py-3 rounded-full text-xs tracking-[2px] uppercase">Book Now</a>
+      </div>
+      <button class="lg:hidden text-white" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" aria-label="Menu">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden fixed inset-0 bg-navy/98 backdrop-blur-xl z-50 flex flex-col items-center justify-center gap-8">
+      <button onclick="this.parentElement.classList.add('hidden')" class="absolute top-6 right-6 text-white/60 hover:text-white"><i class="fas fa-times text-2xl"></i></button>
+      <span class="text-gold text-xs tracking-[8px] uppercase mb-4">Menu</span>
+      <a href="index.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Home</a>
+      <a href="about.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">About</a>
+      <a href="rooms.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Rooms</a>
+      <a href="services.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Services</a>
+      <a href="menu.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Menu</a>
+      <a href="gallery.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Gallery</a>
+      <a href="testimonials.html" class="text-gold text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Reviews</a>
+      <a href="contact.html" class="text-white text-3xl font-serif font-light tracking-widest hover:text-gold transition-colors">Contact</a>
+      <div class="mt-4 flex gap-4">
+        <a href="login.html" id="mobileLoginBtn" class="btn-outline-gold px-8 py-3 rounded-full text-xs tracking-[2px]">Sign In</a>
+        <a href="booking.html" class="btn-gold px-8 py-3 rounded-full text-xs tracking-[2px]">Book Now</a>
+      </div>
+      <button id="mobileLogoutBtn" class="hidden mt-8 text-red-400 text-sm tracking-[3px] uppercase hover:text-red-300 transition-colors" onclick="Auth.logout()"><i class="fas fa-right-from-bracket mr-2"></i> Logout</button>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- HERO                                       -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="lux-hero">
+    <img src="images/gallery-main.jpg" alt="Everett Hotel" class="lux-hero-img" loading="eager">
+    <div class="max-w-7xl mx-auto px-6 lux-hero-content w-full">
+      <div class="lux-breadcrumb">
+        <a href="index.html"><i class="fas fa-home"></i></a>
+        <span class="sep">/</span>
+        <span class="current">Guest Reviews</span>
+      </div>
+      <div class="lux-eyebrow"><span class="eyebrow-line"></span> Guest Testimonials</div>
+      <h1 class="lux-hero-title font-serif text-5xl md:text-6xl">Words From Our <span class="gold-gradient-text italic">Guests</span></h1>
+      <p class="lux-hero-sub">Every review is a story worth telling. Discover why discerning travelers make Everett Hotel their sanctuary of luxury and refinement.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- RATING SUMMARY                             -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="py-16 bg-white border-b border-navy/5">
+    <div class="max-w-7xl mx-auto px-6">
+      <div id="ratingSummary" class="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16">
+        <div class="text-center">
+          <div class="font-serif text-6xl font-medium text-navy" id="avgRating">—</div>
+          <div class="text-gold text-lg mt-2" id="avgRatingStars"></div>
+          <p class="text-charcoal/45 text-xs tracking-[2px] uppercase mt-2"><span id="totalReviews">0</span> Guest Reviews</p>
+        </div>
+        <div class="h-16 w-px bg-navy/10 hidden md:block"></div>
+        <div class="flex-1 max-w-md" id="ratingDistribution"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TESTIMONIALS GRID                          -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="py-20 md:py-28 bg-beige">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-14">
+        <p class="flex items-center justify-center gap-3 text-gold text-xs tracking-[5px] uppercase font-semibold mb-4"><span class="eyebrow-line"></span> Testimonials <span class="eyebrow-line"></span></p>
+        <h2 class="font-serif text-navy text-4xl md:text-5xl font-light">What Our Guests <span class="italic">Say</span></h2>
+      </div>
+      <div id="testimonialsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="col-span-full py-16 text-center text-charcoal/40">
+          <i class="fas fa-spinner fa-spin text-2xl text-gold mb-4"></i>
+          <p>Loading guest reviews...</p>
+        </div>
+      </div>
+      <div id="loadMoreWrap" class="text-center mt-12 hidden">
+        <button id="loadMoreBtn" onclick="loadMoreReviews()" class="btn-navy-ghost px-9 py-4 rounded-full text-xs tracking-[2px] uppercase inline-flex items-center gap-3">
+          Load More Reviews <i class="fas fa-chevron-down text-xs"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- WRITE A REVIEW                             -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="py-20 md:py-28 bg-white" id="write-review">
+    <div class="max-w-3xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <p class="flex items-center justify-center gap-3 text-gold text-xs tracking-[5px] uppercase font-semibold mb-4"><span class="eyebrow-line"></span> Share Your Experience <span class="eyebrow-line"></span></p>
+        <h2 class="font-serif text-navy text-4xl md:text-5xl font-light">Rate Your <span class="italic">Stay</span></h2>
+        <p class="text-charcoal/50 text-sm mt-4">Tell us about your experience. Your review helps us serve you better.</p>
+      </div>
+
+      <div id="reviewFormWrap" class="bg-beige rounded-3xl p-8 md:p-12 border border-navy/5 shadow-xl shadow-navy/5">
+        <form id="reviewForm" class="space-y-6">
+          <div class="text-center">
+            <label class="block text-xs font-semibold text-navy tracking-[2px] uppercase mb-4">Your Rating</label>
+            <div class="flex items-center justify-center gap-2" id="starRating">
+              <span class="star-input" data-value="1"><i class="fa-solid fa-star"></i></span>
+              <span class="star-input" data-value="2"><i class="fa-solid fa-star"></i></span>
+              <span class="star-input" data-value="3"><i class="fa-solid fa-star"></i></span>
+              <span class="star-input" data-value="4"><i class="fa-solid fa-star"></i></span>
+              <span class="star-input" data-value="5"><i class="fa-solid fa-star"></i></span>
+            </div>
+            <p class="text-charcoal/40 text-xs mt-2" id="ratingLabel">Tap a star to rate</p>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-navy tracking-[2px] uppercase mb-2" for="reviewTitle">Title</label>
+            <input type="text" id="reviewTitle" maxlength="255" placeholder="e.g. An unforgettable stay" class="booking-input w-full bg-white border border-charcoal/10 rounded-xl px-4 py-4 text-sm transition-all" required>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-navy tracking-[2px] uppercase mb-2" for="reviewComment">Your Review</label>
+            <textarea id="reviewComment" rows="5" maxlength="2000" placeholder="Share the details of your experience with us..." class="booking-input w-full bg-white border border-charcoal/10 rounded-xl px-4 py-4 text-sm transition-all resize-none" required></textarea>
+          </div>
+          <button type="submit" id="reviewSubmitBtn" class="btn-gold w-full py-4 rounded-full text-xs tracking-[3px] uppercase font-semibold">
+            Submit Review
+          </button>
+          <p id="reviewError" class="text-red-500 text-sm text-center hidden"></p>
+        </form>
+        <div id="reviewSuccess" class="hidden text-center py-10">
+          <div class="w-16 h-16 bg-emerald/10 rounded-full flex items-center justify-center mx-auto mb-5">
+            <i class="fas fa-check text-emerald text-2xl"></i>
+          </div>
+          <h3 class="font-serif text-navy text-3xl font-light mb-2">Thank You!</h3>
+          <p class="text-charcoal/60 text-sm">Your review has been submitted and will be visible after approval by our team.</p>
+          <button onclick="resetReviewForm()" class="btn-navy-ghost px-8 py-3.5 rounded-full text-xs tracking-[2px] uppercase mt-6">Write Another Review</button>
+        </div>
+      </div>
+
+      <!-- Not logged in -->
+      <div id="loginPromptWrap" class="hidden bg-beige rounded-3xl p-10 border border-navy/5 text-center shadow-xl shadow-navy/5">
+        <div class="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-5">
+          <i class="fas fa-star text-gold text-2xl"></i>
+        </div>
+        <h3 class="font-serif text-navy text-3xl font-light mb-3">Share Your Experience</h3>
+        <p class="text-charcoal/55 text-sm mb-8 max-w-md mx-auto">Sign in to rate your stay and leave a review for future guests.</p>
+        <div class="flex justify-center gap-4">
+          <a href="login.html" class="btn-gold px-9 py-4 rounded-full text-xs tracking-[2px] uppercase font-semibold">Sign In</a>
+          <a href="register.html" class="btn-navy-ghost px-9 py-4 rounded-full text-xs tracking-[2px] uppercase font-semibold">Create Account</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- CTA                                        -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="py-20 newsletter-section relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.05]" style="background-image: radial-gradient(circle at 2px 2px, #D4AF37 1px, transparent 0); background-size: 40px 40px;"></div>
+    <div class="max-w-3xl mx-auto px-6 text-center relative z-10">
+      <h2 class="font-serif text-white text-4xl md:text-5xl font-light mb-4">Experience It <span class="italic gold-gradient-text">Yourself</span></h2>
+      <p class="text-white/45 mb-8">Join the guests who call Everett their home away from home.</p>
+      <a href="booking.html" class="btn-gold px-10 py-4 rounded-full text-xs tracking-[3px] uppercase font-semibold inline-flex items-center gap-3">
+        Book Your Stay <i class="fas fa-arrow-right text-sm"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- FOOTER                                     -->
+  <!-- ═══════════════════════════════════════════ -->
+  <footer class="bg-navy-deep pt-20 pb-8">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-12 mb-16">
+        <div>
+          <div class="flex flex-col items-start mb-6">
+            <span class="text-white text-2xl tracking-[10px] font-light">EVERETT</span>
+            <span class="text-gold text-[9px] tracking-[6px] font-medium uppercase mt-1">Hotel Nairobi</span>
+          </div>
+          <p class="text-white/35 text-sm leading-relaxed mb-6">Where timeless elegance meets contemporary comfort. A sanctuary of refined luxury in the heart of Nairobi.</p>
+          <div class="flex gap-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all"><i class="fab fa-facebook-f text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all"><i class="fab fa-instagram text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all"><i class="fab fa-twitter text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all"><i class="fab fa-linkedin-in text-sm"></i></a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-xs tracking-[3px] uppercase mb-6">Quick Links</h4>
+          <ul class="space-y-3.5">
+            <li><a href="about.html" class="text-white/35 text-sm hover:text-gold transition-colors">About Us</a></li>
+            <li><a href="rooms.html" class="text-white/35 text-sm hover:text-gold transition-colors">Rooms & Suites</a></li>
+            <li><a href="services.html" class="text-white/35 text-sm hover:text-gold transition-colors">Services</a></li>
+            <li><a href="menu.html" class="text-white/35 text-sm hover:text-gold transition-colors">Restaurant Menu</a></li>
+            <li><a href="gallery.html" class="text-white/35 text-sm hover:text-gold transition-colors">Gallery</a></li>
+            <li><a href="testimonials.html" class="text-white/35 text-sm hover:text-gold transition-colors">Guest Reviews</a></li>
+            <li><a href="contact.html" class="text-white/35 text-sm hover:text-gold transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-xs tracking-[3px] uppercase mb-6">Contact</h4>
+          <ul class="space-y-3.5">
+            <li class="flex items-center gap-3 text-white/35 text-sm"><i class="fas fa-map-marker-alt text-gold text-xs"></i> Westlands, Nairobi, Kenya</li>
+            <li class="flex items-center gap-3 text-white/35 text-sm"><i class="fas fa-phone text-gold text-xs"></i> +254 700 123 456</li>
+            <li class="flex items-center gap-3 text-white/35 text-sm"><i class="fas fa-envelope text-gold text-xs"></i> info@everetthotel.com</li>
+            <li class="flex items-center gap-3 text-white/35 text-sm"><i class="fas fa-clock text-gold text-xs"></i> 24/7 Front Desk</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-xs tracking-[3px] uppercase mb-6">Newsletter</h4>
+          <p class="text-white/35 text-sm mb-4">Get exclusive deals and travel inspiration.</p>
+          <form class="flex gap-2" onsubmit="return false;">
+            <input type="email" placeholder="Your email" class="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-white placeholder-white/25 text-sm focus:outline-none focus:border-gold transition-colors">
+            <button class="btn-gold px-5 py-2.5 rounded-full text-xs font-semibold"><i class="fas fa-paper-plane"></i></button>
+          </form>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-white/25 text-xs">&copy; 2026 Everett Hotel. All rights reserved.</p>
+        <div class="flex gap-6">
+          <a href="privacy-policy.html" class="text-white/25 text-xs hover:text-gold transition-colors">Privacy Policy</a>
+          <a href="terms.html" class="text-white/25 text-xs hover:text-gold transition-colors">Terms & Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SCRIPTS                                    -->
+  <!-- ═══════════════════════════════════════════ -->
+  <script src="/vendor/gsap/gsap.min.js" defer></script>
+  <script src="/vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="/vendor/lenis/lenis.min.js" defer></script>
+  <script src="/vendor/sweetalert2/sweetalert2.min.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/theme.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/animations.js" defer></script>
+  <script>
+  var currentPage = 1;
+  var totalPages = 1;
+  var selectedRating = 0;
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    var d = document.createElement('div');
+    d.textContent = String(str);
+    return d.innerHTML;
+  }
+
+  function renderStars(rating) {
+    var html = '';
+    for (var i = 1; i <= 5; i++) {
+      html += '<i class="' + (i <= rating ? 'fa-solid' : 'fa-regular') + ' fa-star"></i>';
+    }
+    return html;
+  }
+
+  function initials(name) {
+    var parts = (name || '').trim().split(/\s+/);
+    return parts.map(function(w) { return w.charAt(0); }).join('').toUpperCase().slice(0, 2) || 'G';
+  }
+
+  function renderTestimonial(r) {
+    var name = [r.first_name, r.last_name].filter(Boolean).join(' ') || 'Guest';
+    var title = r.title || 'Guest Review';
+    var comment = r.comment || 'No comment provided.';
+    var roomTag = r.room_number ? '<span class="inline-block mt-4 text-[10px] tracking-[2px] uppercase px-3 py-1.5 rounded-full bg-gold/10 text-gold font-semibold"><i class="fa-solid fa-bed mr-1"></i>Room ' + escapeHtml(r.room_number) + '</span>' : '';
+    var response = r.response ? '<div class="mt-5 pt-5 border-t border-navy/5"><p class="text-[10px] tracking-[2px] uppercase text-gold font-semibold mb-1.5"><i class="fa-solid fa-reply mr-1"></i>Hotel Response</p><p class="text-sm text-charcoal/55 italic leading-relaxed">"' + escapeHtml(r.response) + '"</p></div>' : '';
+    var featuredBadge = r.is_featured ? '<span class="absolute top-5 right-5 text-gold text-sm" title="Featured review"><i class="fa-solid fa-star"></i></span>' : '';
+    return '' +
+      '<div class="testimonial-card p-8 relative ' + (r.is_featured ? 'featured' : '') + '">' +
+        featuredBadge +
+        '<div class="flex items-center gap-4 mb-6">' +
+          '<div class="w-12 h-12 rounded-full bg-gradient-to-br from-navy to-navy-light text-gold flex items-center justify-center font-bold text-sm flex-shrink-0">' + initials(name) + '</div>' +
+          '<div class="min-w-0">' +
+            '<p class="font-semibold text-navy text-sm truncate">' + escapeHtml(name) + '</p>' +
+            '<p class="text-charcoal/40 text-xs mt-0.5">' + escapeHtml(title) + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="text-gold text-sm mb-4">' + renderStars(r.rating) + '</div>' +
+        '<p class="text-charcoal/65 text-sm leading-relaxed">"' + escapeHtml(comment) + '"</p>' +
+        roomTag +
+        response +
+      '</div>';
+  }
+
+  function loadReviews() {
+    api.getAllReviews({ page: currentPage, limit: 9 }).then(function(res) {
+      var data = res.data || {};
+      var reviews = data.reviews || [];
+      totalPages = (data.pagination && data.pagination.pages) || 1;
+      var grid = document.getElementById('testimonialsGrid');
+      grid.innerHTML = reviews.map(renderTestimonial).join('') ||
+        '<div class="col-span-full py-16 text-center text-charcoal/40"><i class="fa-solid fa-star text-2xl text-gold mb-4"></i><p>No reviews yet. Be the first to share your experience!</p></div>';
+      var lm = document.getElementById('loadMoreWrap');
+      lm.classList.toggle('hidden', currentPage >= totalPages);
+      renderSummary(data);
+    }).catch(function() {
+      document.getElementById('testimonialsGrid').innerHTML = '<div class="col-span-full py-16 text-center text-charcoal/40"><i class="fa-solid fa-triangle-exclamation text-2xl text-gold mb-4"></i><p>Unable to load reviews. Please try again later.</p></div>';
+    });
+  }
+
+  function loadMoreReviews() {
+    currentPage++;
+    api.getAllReviews({ page: currentPage, limit: 9 }).then(function(res) {
+      var data = res.data || {};
+      var reviews = data.reviews || [];
+      totalPages = (data.pagination && data.pagination.pages) || 1;
+      var grid = document.getElementById('testimonialsGrid');
+      grid.insertAdjacentHTML('beforeend', reviews.map(renderTestimonial).join(''));
+      var lm = document.getElementById('loadMoreWrap');
+      lm.classList.toggle('hidden', currentPage >= totalPages);
+    }).catch(function() {
+      currentPage--;
+    });
+  }
+
+  function renderSummary(data) {
+    var avg = parseFloat(data.averageRating) || 0;
+    var total = data.totalReviews || 0;
+    document.getElementById('avgRating').textContent = avg ? avg.toFixed(1) : '—';
+    document.getElementById('avgRatingStars').innerHTML = avg ? renderStars(Math.round(avg)) : '<span class="text-charcoal/30 text-sm">No ratings yet</span>';
+    document.getElementById('totalReviews').textContent = total;
+    var distWrap = document.getElementById('ratingDistribution');
+    var distHtml = '<p class="text-xs font-semibold text-navy tracking-[2px] uppercase mb-3">Rating Breakdown</p>';
+    for (var s = 5; s >= 1; s--) {
+      distHtml += '<div class="flex items-center gap-3 mb-2"><span class="text-xs text-charcoal/50 w-6">' + s + ' ★</span><div class="flex-1 h-2 rounded-full bg-navy/5 overflow-hidden"><div class="h-full bg-gold rounded-full dist-bar" data-star="' + s + '" style="width:0%"></div></div><span class="text-xs text-charcoal/45 w-8 text-right dist-count" data-star="' + s + '">0</span></div>';
+    }
+    distWrap.innerHTML = distHtml;
+    var dist = data.ratingDistribution || {};
+    if (total > 0) {
+      for (var s = 5; s >= 1; s--) {
+        var count = dist[s] || 0;
+        var bar = distWrap.querySelector('.dist-bar[data-star="' + s + '"]');
+        if (bar) bar.style.width = Math.round((count / total) * 100) + '%';
+        var cnt = distWrap.querySelector('.dist-count[data-star="' + s + '"]');
+        if (cnt) cnt.textContent = count;
+      }
+    }
+  }
+
+  function initRatingStars() {
+    var stars = document.querySelectorAll('.star-input');
+    stars.forEach(function(star) {
+      star.addEventListener('click', function() {
+        selectedRating = parseInt(this.dataset.value, 10);
+        stars.forEach(function(s) { s.classList.toggle('active', parseInt(s.dataset.value, 10) <= selectedRating); });
+        var labels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+        document.getElementById('ratingLabel').textContent = selectedRating + ' / 5 — ' + labels[selectedRating];
+      });
+      star.addEventListener('mouseenter', function() {
+        var v = parseInt(this.dataset.value, 10);
+        stars.forEach(function(s) { s.classList.toggle('active', parseInt(s.dataset.value, 10) <= v); });
+      });
+      star.addEventListener('mouseleave', function() {
+        stars.forEach(function(s) { s.classList.toggle('active', parseInt(s.dataset.value, 10) <= selectedRating); });
+      });
+    });
+  }
+
+  function resetReviewForm() {
+    document.getElementById('reviewForm').classList.remove('hidden');
+    document.getElementById('reviewSuccess').classList.add('hidden');
+    document.getElementById('reviewForm').reset();
+    selectedRating = 0;
+    document.querySelectorAll('.star-input').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById('ratingLabel').textContent = 'Tap a star to rate';
+    document.getElementById('reviewError').classList.add('hidden');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() { document.getElementById('pageLoader').classList.add('hidden'); }, 1200);
+
+    window.addEventListener('scroll', function() {
+      var nav = document.getElementById('mainNav');
+      if (window.scrollY > 80) { nav.classList.add('nav-scrolled'); }
+      else { nav.classList.remove('nav-scrolled'); }
+    });
+
+    if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+      var user = Auth.getCurrentUser();
+      var loginLink = document.getElementById('navLoginLink');
+      var userMenu = document.getElementById('navUserMenu');
+      var mobileLogin = document.getElementById('mobileLoginBtn');
+      var mobileLogout = document.getElementById('mobileLogoutBtn');
+      if (userMenu) {
+        if (loginLink) loginLink.style.display = 'none';
+        userMenu.style.display = '';
+        var nameEl = document.getElementById('navUserName');
+        var dashEl = document.getElementById('navDashboardLink');
+        var dropEl = document.getElementById('navUserDropdown');
+        var btnEl = document.getElementById('navUserBtn');
+        var logoutEl = document.getElementById('navLogoutBtn');
+        if (user) {
+          var first = user.firstName || 'Account';
+          var last = user.lastName || '';
+          if (nameEl) nameEl.textContent = last ? first + ' ' + last : first;
+          if (dashEl) {
+            if (user.role === 'admin' || user.role === 'super_admin') dashEl.href = 'admin/dashboard.html';
+            else if (typeof Auth.isStaff === 'function' && Auth.isStaff()) dashEl.href = 'employee/dashboard.html';
+          }
+        }
+        if (btnEl) {
+          btnEl.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (dropEl) dropEl.classList.toggle('hidden');
+          });
+        }
+        document.addEventListener('click', function() { if (dropEl) dropEl.classList.add('hidden'); });
+        if (logoutEl) {
+          logoutEl.addEventListener('click', function(e) { e.preventDefault(); Auth.logout(); });
+        }
+      }
+      if (mobileLogin) mobileLogin.style.display = 'none';
+      if (mobileLogout) mobileLogout.classList.remove('hidden');
+      document.getElementById('loginPromptWrap').classList.add('hidden');
+      document.getElementById('reviewFormWrap').classList.remove('hidden');
+    } else {
+      document.getElementById('loginPromptWrap').classList.remove('hidden');
+      document.getElementById('reviewFormWrap').classList.add('hidden');
+    }
+
+    initRatingStars();
+
+    var form = document.getElementById('reviewForm');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var errEl = document.getElementById('reviewError');
+        errEl.classList.add('hidden');
+        if (!selectedRating) {
+          errEl.textContent = 'Please select a rating.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+        var btn = document.getElementById('reviewSubmitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
+        api.createReview({
+          rating: selectedRating,
+          title: document.getElementById('reviewTitle').value.trim(),
+          comment: document.getElementById('reviewComment').value.trim()
+        }).then(function() {
+          form.classList.add('hidden');
+          document.getElementById('reviewSuccess').classList.remove('hidden');
+          document.getElementById('write-review').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }).catch(function(err) {
+          errEl.textContent = (err && err.message) || 'Something went wrong. Please try again.';
+          errEl.classList.remove('hidden');
+          btn.disabled = false;
+          btn.innerHTML = 'Submit Review';
+        });
+      });
+    }
+
+    loadReviews();
+  });
+  </script>
+</body>
+</html>

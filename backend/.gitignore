@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Environment / secrets — NEVER commit
+.env
+.env.local
+.env.*.local
+
+# Dev email sink output (captured .eml messages) — DELETE locally, never ship
+/maildev/
+scripts/maildev.js
+
+# Uploads handled by backend .gitignore elsewhere; nginx logs etc.
+*.log
+.DS_Store
+Thumbs.db

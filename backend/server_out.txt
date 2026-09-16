@@ -1,0 +1,17 @@
+
+  ╔══════════════════════════════════════════╗
+  ║     EVERETT HOTEL MANAGEMENT SYSTEM      ║
+  ║   Luxury, Comfort, Excellence.           ║
+  ╚══════════════════════════════════════════╝
+
+  Initializing...
+  ✓ Database connection 163 established
+  ✓ Database connected successfully
+  ↻ Database connection 163 released
+
+  ✓ Server running on port 5000
+  ✓ Environment: development
+  ✓ API URL: http://localhost:5000
+
+  Ready to serve luxury experiences.
+

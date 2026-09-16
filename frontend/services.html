@@ -1,0 +1,356 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Explore the premium services offered at Everett Hotel - Dining, Spa, Pool, Fitness, Concierge and more.">
+  <title>Services | Everett Hotel</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script src="/vendor/tailwindcss/tailwind.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="preload" href="/vendor/fontawesome/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css"></noscript>
+  <link rel="stylesheet" href="/vendor/swiper/swiper-bundle.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: { navy: '#8B5E34', 'navy-light': '#A67C52', gold: '#D4AF37', 'gold-light': '#D4BC8A', beige: '#FAF7F2', charcoal: '#211A14', emerald: '#0F766E' },
+        fontFamily: { inter: ['Inter', 'sans-serif'] },
+      },
+    },
+  }
+  </script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #FAF7F2; color: #211A14; overflow-x: hidden; }
+    .gold-gradient-text { background: linear-gradient(135deg, #D4AF37 0%, #D4BC8A 50%, #D4AF37 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .btn-gold { background: #D4AF37; color: #8B5E34; font-weight: 700; letter-spacing: 0.5px; transition: all 0.3s ease; }
+    .btn-gold:hover { background: #D4BC8A; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,169,106,0.35); }
+    .btn-outline-gold { border: 2px solid #D4AF37; color: #D4AF37; font-weight: 600; transition: all 0.3s ease; }
+    .btn-outline-gold:hover { background: #D4AF37; color: #8B5E34; }
+    .nav-scrolled { background: rgba(139,94,52,0.95) !important; backdrop-filter: blur(20px) !important; box-shadow: 0 4px 30px rgba(0,0,0,0.15) !important; }
+    .page-loader { position: fixed; inset: 0; background: #24180F; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; transition: opacity 0.6s ease, visibility 0.6s ease; }
+    .page-loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-text { font-family: 'Playfair Display', serif; font-size: 3.2rem; letter-spacing: 14px; color: #D4AF37; font-weight: 400; animation: loaderPulse 1.6s ease-in-out infinite; }
+    .loader-sub { color: rgba(255,255,255,0.35); font-size: 0.65rem; letter-spacing: 8px; text-transform: uppercase; margin-top: 10px; }
+    .loader-line { width: 160px; height: 1px; background: rgba(212,175,55,0.2); margin-top: 24px; overflow: hidden; }
+    .loader-line::after { content: ''; display: block; width: 50%; height: 100%; background: #D4AF37; animation: loaderLine 1.4s ease-in-out infinite; }
+    @keyframes loaderPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+    @keyframes loaderLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+    .service-card { background: white; border-radius: 20px; border: 1px solid rgba(0,0,0,0.06); transition: all 0.4s cubic-bezier(0.25,0.46,0.45,0.94); overflow: hidden; }
+    .service-card:hover { transform: translateY(-8px); box-shadow: 0 20px 60px rgba(139,94,52,0.12); border-color: rgba(200,169,106,0.3); }
+    .service-card:hover .service-icon { background: linear-gradient(135deg, #D4AF37, #D4BC8A); color: #8B5E34; transform: scale(1.1) rotate(5deg); }
+    .service-icon { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #D4AF37; background: linear-gradient(135deg, rgba(200,169,106,0.12), rgba(200,169,106,0.04)); transition: all 0.4s ease; flex-shrink: 0; }
+  </style>
+</head>
+<body class="font-inter">
+
+  <!-- Page Loader -->
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-text">EVERETT</div>
+    <div class="loader-sub">Luxury Hotel</div>
+    <div class="loader-line"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" style="padding: 20px 0;">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <a href="index.html" class="flex flex-col items-center group">
+        <span class="text-white text-xl tracking-[10px] font-light group-hover:text-gold transition-colors">EVERETT</span>
+        <span class="text-gold text-[9px] tracking-[6px] font-medium uppercase">Hotel Nairobi</span>
+      </a>
+      <div class="hidden lg:flex items-center gap-8">
+        <a href="index.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Home</a>
+        <a href="about.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">About</a>
+        <a href="rooms.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Rooms</a>
+        <a href="services.html" class="text-gold text-sm tracking-wide transition-colors font-semibold">Services</a>
+        <a href="menu.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Menu</a>
+        <a href="gallery.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Gallery</a>
+        <a href="testimonials.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Reviews</a>
+        <a href="contact.html" class="text-white/80 hover:text-gold text-sm tracking-wide transition-colors">Contact</a>
+      </div>
+      <div class="hidden lg:flex items-center gap-4">
+        <button onclick="Theme.toggle()" class="text-white/60 hover:text-gold transition-colors" aria-label="Toggle theme">
+          <i class="fas fa-sun" id="themeIcon"></i>
+        </button>
+        <a href="login.html" class="text-white/80 hover:text-gold text-sm transition-colors" id="navLoginLink">Sign In</a>
+        <a href="booking.html" class="btn-gold px-6 py-2.5 rounded-full text-sm">Book Now</a>
+      </div>
+      <button class="lg:hidden text-white" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" aria-label="Menu">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
+    <div id="mobileMenu" class="hidden fixed inset-0 bg-navy/98 backdrop-blur-xl z-50 flex flex-col items-center justify-center gap-8">
+      <button onclick="this.parentElement.classList.add('hidden')" class="absolute top-6 right-6 text-white/60 hover:text-white"><i class="fas fa-times text-2xl"></i></button>
+      <a href="index.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Home</a>
+      <a href="about.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">About</a>
+      <a href="rooms.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Rooms</a>
+      <a href="services.html" class="text-gold text-2xl font-light tracking-widest">Services</a>
+      <a href="menu.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Menu</a>
+      <a href="gallery.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Gallery</a>
+      <a href="testimonials.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Reviews</a>
+      <a href="contact.html" class="text-white text-2xl font-light tracking-widest hover:text-gold transition-colors">Contact</a>
+      <div class="mt-4 flex gap-4">
+        <a href="login.html" class="btn-outline-gold px-8 py-3 rounded-full text-sm">Sign In</a>
+        <a href="booking.html" class="btn-gold px-8 py-3 rounded-full text-sm">Book Now</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="relative min-h-[60vh] flex items-center justify-center overflow-hidden" style="background: #8B5E34;">
+    <img src="images/about.jpg" alt="Everett Hotel Services" class="absolute inset-0 w-full h-full object-cover opacity-30">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-20 left-20 w-72 h-72 bg-gold rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 right-20 w-96 h-96 bg-gold/30 rounded-full blur-3xl"></div>
+    </div>
+    <div class="relative z-10 text-center px-6">
+      <nav class="flex items-center justify-center gap-2 text-sm text-white/50 mb-8">
+        <a href="index.html" class="hover:text-gold transition-colors">Home</a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <span class="text-gold">Services</span>
+      </nav>
+      <span class="inline-block px-5 py-2 rounded-full text-xs font-semibold tracking-widest uppercase mb-6" style="background:rgba(200,169,106,0.15);color:#D4AF37;">World-Class Amenities</span>
+      <h1 class="text-5xl md:text-7xl font-extralight text-white mb-6" style="line-height:1.05;">Our <span class="gold-gradient-text font-light">Services</span></h1>
+      <p class="text-lg text-white/60 max-w-xl mx-auto font-light">World-class services designed to make your stay comfortable, relaxing, and truly memorable.</p>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 h-32" style="background: linear-gradient(to top, #FAF7F2, transparent);"></div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16 reveal-up">
+        <span class="inline-block text-xs font-bold tracking-[4px] uppercase mb-4" style="color:#D4AF37;">What We Offer</span>
+        <h2 class="text-4xl md:text-5xl font-extrabold" style="color:#8B5E34;">Premium <span class="gold-gradient-text">Services</span></h2>
+        <div class="flex justify-center items-center gap-4 mt-6 mb-6">
+          <div class="h-px flex-1 max-w-[80px]" style="background:linear-gradient(to right, transparent, #D4AF37);"></div>
+          <div class="w-3 h-3 rotate-45" style="background:#D4AF37;"></div>
+          <div class="h-px flex-1 max-w-[80px]" style="background:linear-gradient(to left, transparent, #D4AF37);"></div>
+        </div>
+        <p class="text-base max-w-2xl mx-auto" style="color:#666;line-height:1.9;">From world-class dining to rejuvenating spa treatments, we offer a comprehensive range of services to make your stay extraordinary.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+
+        <!-- Fine Dining -->
+        <div class="service-card reveal-up">
+          <div class="p-8 flex gap-6">
+            <div class="service-icon"><i class="fas fa-utensils"></i></div>
+            <div>
+              <h3 class="text-xl font-bold mb-3" style="color:#8B5E34;">Fine Dining Restaurant</h3>
+              <p class="text-sm mb-4" style="color:#666;line-height:1.8;">Experience culinary excellence at our award-winning restaurant. Our master chefs prepare exquisite dishes using the finest locally-sourced ingredients, offering a diverse menu of international cuisines paired with an exceptional wine collection.</p>
+              <div class="flex items-center gap-2 mb-4"><i class="fas fa-clock text-gold text-xs"></i><span class="text-xs" style="color:#999;">Breakfast 6-10 AM | Dinner 6-11 PM</span></div>
+              <a href="contact.html" class="inline-flex items-center gap-2 text-sm font-semibold transition-colors" style="color:#D4AF37;">Learn More <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spa & Wellness -->
+        <div class="service-card reveal-up">
+          <div class="p-8 flex gap-6">
+            <div class="service-icon"><i class="fas fa-spa"></i></div>
+            <div>
+              <h3 class="text-xl font-bold mb-3" style="color:#8B5E34;">Spa & Wellness Center</h3>
+              <p class="text-sm mb-4" style="color:#666;line-height:1.8;">Indulge in our luxurious spa featuring a full menu of treatments including deep tissue massage, aromatherapy, facials, and body wraps. Our skilled therapists use premium products to ensure complete rejuvenation.</p>
+              <div class="flex items-center gap-2 mb-4"><i class="fas fa-clock text-gold text-xs"></i><span class="text-xs" style="color:#999;">Open Daily 9 AM - 9 PM</span></div>
+              <a href="contact.html" class="inline-flex items-center gap-2 text-sm font-semibold transition-colors" style="color:#D4AF37;">Learn More <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Swimming Pool -->
+        <div class="service-card reveal-up">
+          <div class="p-8 flex gap-6">
+            <div class="service-icon"><i class="fas fa-person-swimming"></i></div>
+            <div>
+              <h3 class="text-xl font-bold mb-3" style="color:#8B5E34;">Swimming Pool</h3>
+              <p class="text-sm mb-4" style="color:#666;line-height:1.8;">Relax in our stunning infinity pool with breathtaking views. Enjoy poolside cocktails and gourmet snacks from our swim-up bar while lounging on premium sun beds under the warm sun.</p>
+              <div class="flex items-center gap-2 mb-4"><i class="fas fa-clock text-gold text-xs"></i><span class="text-xs" style="color:#999;">Open Daily 7 AM - 10 PM</span></div>
+              <a href="contact.html" class="inline-flex items-center gap-2 text-sm font-semibold transition-colors" style="color:#D4AF37;">Learn More <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fitness Center -->
+        <div class="service-card reveal-up">
+          <div class="p-8 flex gap-6">
+            <div class="service-icon"><i class="fas fa-dumbbell"></i></div>
+            <div>
+              <h3 class="text-xl font-bold mb-3" style="color:#8B5E34;">Fitness Center</h3>
+              <p class="text-sm mb-4" style="color:#666;line-height:1.8;">Stay in shape at our state-of-the-art fitness center equipped with the latest cardio and strength training equipment. Personal trainers are available upon request for customized workout sessions.</p>
+              <div class="flex items-center gap-2 mb-4"><i class="fas fa-clock text-gold text-xs"></i><span class="text-xs" style="color:#999;">Open 24/7 for Hotel Guests</span></div>
+              <a href="contact.html" class="inline-flex items-center gap-2 text-sm font-semibold transition-colors" style="color:#D4AF37;">Learn More <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Concierge Service -->
+        <div class="service-card reveal-up">
+          <div class="p-8 flex gap-6">
+            <div class="service-icon"><i class="fas fa-concierge-bell"></i></div>
+            <div>
+              <h3 class="text-xl font-bold mb-3" style="color:#8B5E34;">Concierge Service</h3>
+              <p class="text-sm mb-4" style="color:#666;line-height:1.8;">Our dedicated concierge team is available 24/7 to assist with restaurant reservations, tour arrangements, transportation, and any special requests to make your stay effortless.</p>
+              <div class="flex items-center gap-2 mb-4"><i class="fas fa-clock text-gold text-xs"></i><span class="text-xs" style="color:#999;">Available 24/7</span></div>
+              <a href="contact.html" class="inline-flex items-center gap-2 text-sm font-semibold transition-colors" style="color:#D4AF37;">Learn More <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Room Service -->
+        <div class="service-card reveal-up">
+          <div class="p-8 flex gap-6">
+            <div class="service-icon"><i class="fas fa-bell-concierge"></i></div>
+            <div>
+              <h3 class="text-xl font-bold mb-3" style="color:#8B5E34;">Room Service</h3>
+              <p class="text-sm mb-4" style="color:#666;line-height:1.8;">Enjoy the comfort of your room with our extensive in-room dining menu. From gourmet meals to late-night snacks, our room service team delivers excellence directly to your door.</p>
+              <div class="flex items-center gap-2 mb-4"><i class="fas fa-clock text-gold text-xs"></i><span class="text-xs" style="color:#999;">Available 24/7</span></div>
+              <a href="contact.html" class="inline-flex items-center gap-2 text-sm font-semibold transition-colors" style="color:#D4AF37;">Learn More <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Laundry & Dry Cleaning -->
+        <div class="service-card reveal-up">
+          <div class="p-8 flex gap-6">
+            <div class="service-icon"><i class="fas fa-shirt"></i></div>
+            <div>
+              <h3 class="text-xl font-bold mb-3" style="color:#8B5E34;">Laundry & Dry Cleaning</h3>
+              <p class="text-sm mb-4" style="color:#666;line-height:1.8;">Keep your wardrobe fresh with our professional laundry and dry cleaning services. Same-day service available for guests who need quick turnaround on their garments.</p>
+              <div class="flex items-center gap-2 mb-4"><i class="fas fa-clock text-gold text-xs"></i><span class="text-xs" style="color:#999;">Mon-Sat 8 AM - 6 PM</span></div>
+              <a href="contact.html" class="inline-flex items-center gap-2 text-sm font-semibold transition-colors" style="color:#D4AF37;">Learn More <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Airport Transfer -->
+        <div class="service-card reveal-up">
+          <div class="p-8 flex gap-6">
+            <div class="service-icon"><i class="fas fa-plane"></i></div>
+            <div>
+              <h3 class="text-xl font-bold mb-3" style="color:#8B5E34;">Airport Transfer</h3>
+              <p class="text-sm mb-4" style="color:#666;line-height:1.8;">Arrive and depart in style with our luxury airport transfer service. Choose from our fleet of premium vehicles including sedans, SUVs, and limousines for a seamless journey.</p>
+              <div class="flex items-center gap-2 mb-4"><i class="fas fa-clock text-gold text-xs"></i><span class="text-xs" style="color:#999;">Available 24/7 | Advance Booking</span></div>
+              <a href="contact.html" class="inline-flex items-center gap-2 text-sm font-semibold transition-colors" style="color:#D4AF37;">Learn More <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-20 md:py-28" style="background:linear-gradient(135deg, #8B5E34, #A67C52);">
+    <div class="max-w-4xl mx-auto px-6 text-center reveal-up">
+      <span class="inline-block text-xs font-bold tracking-[4px] uppercase mb-6" style="color:#D4AF37;">Ready to Experience Luxury?</span>
+      <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 text-white" style="line-height:1.1;">Indulge in <span class="gold-gradient-text">Unparalleled</span> Service</h2>
+      <p class="text-lg mb-10 max-w-2xl mx-auto" style="color:rgba(255,255,255,0.6);line-height:1.8;">Let our dedicated team craft an experience tailored to your every desire. Your perfect stay awaits.</p>
+      <a href="booking.html" class="inline-flex items-center gap-3 px-10 py-5 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 btn-gold">
+        <i class="fas fa-calendar-check"></i> Book Your Stay
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-20" style="background:#8B5E34;">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-12 mb-16">
+        <div>
+          <div class="flex flex-col items-start mb-6">
+            <span class="text-white text-xl tracking-[8px] font-light">EVERETT</span>
+            <span class="text-gold text-[10px] tracking-[4px] font-medium">HOTEL</span>
+          </div>
+          <p class="text-white/40 text-sm leading-relaxed mb-6">Where timeless elegance meets contemporary comfort. A sanctuary of refined luxury in the heart of Nairobi City.</p>
+          <div class="flex gap-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 transition-all"><i class="fab fa-facebook-f text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 transition-all"><i class="fab fa-instagram text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 transition-all"><i class="fab fa-twitter text-sm"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-gold/10 transition-all"><i class="fab fa-linkedin-in text-sm"></i></a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-6">Quick Links</h4>
+          <ul class="space-y-3">
+            <li><a href="about.html" class="text-white/40 text-sm hover:text-gold transition-colors">About Us</a></li>
+            <li><a href="rooms.html" class="text-white/40 text-sm hover:text-gold transition-colors">Rooms & Suites</a></li>
+            <li><a href="services.html" class="text-white/40 text-sm hover:text-gold transition-colors">Services</a></li>
+            <li><a href="menu.html" class="text-white/40 text-sm hover:text-gold transition-colors">Restaurant Menu</a></li>
+            <li><a href="gallery.html" class="text-white/40 text-sm hover:text-gold transition-colors">Gallery</a></li>
+            <li><a href="testimonials.html" class="text-white/40 text-sm hover:text-gold transition-colors">Guest Reviews</a></li>
+            <li><a href="contact.html" class="text-white/40 text-sm hover:text-gold transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-6">Contact</h4>
+          <ul class="space-y-3">
+            <li class="flex items-center gap-3 text-white/40 text-sm"><i class="fas fa-map-marker-alt text-gold text-xs"></i> Westlands, Nairobi, Kenya</li>
+            <li class="flex items-center gap-3 text-white/40 text-sm"><i class="fas fa-phone text-gold text-xs"></i> +254 700 123 456</li>
+            <li class="flex items-center gap-3 text-white/40 text-sm"><i class="fas fa-envelope text-gold text-xs"></i> info@everetthotel.com</li>
+            <li class="flex items-center gap-3 text-white/40 text-sm"><i class="fas fa-clock text-gold text-xs"></i> 24/7 Front Desk</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-6">Newsletter</h4>
+          <p class="text-white/40 text-sm mb-4">Get exclusive deals and travel inspiration.</p>
+          <form class="flex gap-2" onsubmit="return false;">
+            <input type="email" placeholder="Your email" class="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-white placeholder-white/30 text-sm focus:outline-none focus:border-gold transition-colors">
+            <button class="btn-gold px-5 py-2.5 rounded-full text-xs font-semibold"><i class="fas fa-paper-plane"></i></button>
+          </form>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-white/30 text-xs">&copy; 2026 Everett Hotel. All rights reserved.</p>
+        <div class="flex gap-6">
+          <a href="privacy-policy.html" class="text-white/30 text-xs hover:text-gold transition-colors">Privacy Policy</a>
+          <a href="terms.html" class="text-white/30 text-xs hover:text-gold transition-colors">Terms & Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/vendor/gsap/gsap.min.js" defer></script>
+  <script src="/vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="/vendor/lenis/lenis.min.js" defer></script>
+  <script src="/vendor/swiper/swiper-bundle.min.js" defer></script>
+  <script src="/vendor/sweetalert2/sweetalert2.min.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/theme.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/animations.js" defer></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() { document.getElementById('pageLoader').classList.add('hidden'); }, 1200);
+
+    window.addEventListener('scroll', function() {
+      var nav = document.getElementById('mainNav');
+      if (window.scrollY > 80) { nav.classList.add('nav-scrolled'); } else { nav.classList.remove('nav-scrolled'); }
+    });
+
+    if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+      var link = document.getElementById('navLoginLink');
+      if (link) { link.href = 'profile.html'; link.textContent = 'Dashboard'; }
+    }
+
+    var lenis = new Lenis({ duration: 1.2, smoothWheel: true });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.utils.toArray('.reveal-up').forEach(function(el) {
+      gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }, y: 60, opacity: 0, duration: 1, ease: 'power3.out' });
+    });
+  });
+  </script>
+</body>
+</html>
